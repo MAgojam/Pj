@@ -105,4 +105,8 @@ in the Pj analysis, and two saved PNG result resources. The example is declared
 in the module's Data Library. The maintainer subsequently confirmed successful
 loading and execution from Data Library after rebuilding. **Windows Data Library
 workflow: PASSED (13 October 2026).** A separate close/reopen check has not been
-confirmed for this example. No Linux or macOS execution is claimed yet.
+confirmed for this example. The maintainer also confirmed a clean GitHub clone,
+successful compilation on Ubuntu 26.04 LTS and loading/verification of all four
+Data Library OMVs, including this System Python example. **Ubuntu clean-clone
+build and Data Library workflow: PASSED (13 October 2026).** No macOS execution
+is claimed.

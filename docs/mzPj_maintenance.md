@@ -169,9 +169,13 @@ alignment and × removal work correctly on Windows. On 12 October 2026 the user
 also reported successful compilation on Ubuntu 26.04 LTS, without errors or
 problems, and successful execution of every script they tried there.
 
-The Ubuntu report does not enumerate script numbers, interpreter modes or the
-jamovi installation format. Do not infer a complete two-interpreter/Flatpak test
-matrix from it. Linux `.omv` reopening, exported results, editor-file round trips
+On 13 October 2026, the maintainer additionally confirmed a clean GitHub clone,
+successful compilation on Ubuntu 26.04 LTS and loading/verification of all four
+Data Library OMVs. **Ubuntu clean-clone build and all four examples: PASSED.**
+This verifies the published source distribution, rather than only a local
+development folder. Interpreter modes and the jamovi installation format were
+not enumerated separately; do not infer a complete two-interpreter/Flatpak matrix.
+Linux close/restart/reopen cycles, exported results, editor-file round trips
 and Pjp returned-column checks remain unconfirmed individually. macOS builds and
 desktop tests remain unverified. Automated inline transport checks exercise the
 protocol, not an actual Flatpak host.

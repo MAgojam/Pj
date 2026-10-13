@@ -43,10 +43,12 @@ optional: jamovi Python is supplied by jamovi itself.
 The current module version is **1.0.0**. Development and validation have used
 jamovi **28.9.0.0** on Windows, followed by example validation with the
 **28.11.0.0** portable installation. The declared minimum version is **28.3**.
-The maintainer has also reported successful
-compilation and execution of the scripts tried on **Ubuntu 26.04 LTS**.
-macOS compilation and desktop use have not yet been verified. The Ubuntu report
-does not establish a complete test matrix for both interpreters or Flatpak.
+On **13 October 2026**, the maintainer confirmed a clean GitHub clone, successful
+compilation on **Ubuntu 26.04 LTS**, and loading and verification of **all four
+OMV examples from Data Library**. All four examples also passed on Windows.
+macOS compilation and desktop use have not yet been verified. Individual
+interpreter modes and Flatpak-specific round trips were not enumerated in the
+Ubuntu confirmation.
 
 The core result functions do not require pandas or matplotlib. Examples using
 these libraries require them in the selected interpreter, normally System Python.
@@ -248,7 +250,8 @@ Two further editor-only examples are available:
 
 See the [interactive examples guide](docs/mzPj_interactive_examples.md) for
 settings, assumptions and interactions. The maintainer confirmed successful
-loading and execution of all four examples from Data Library on Windows
+loading and execution of all four examples from Data Library on Windows and
+Ubuntu 26.04 LTS, including a clean GitHub clone and compilation on Ubuntu
 (13 October 2026). All four Data Library
 documents contain their complete example code in the editor, with Browse empty.
 
