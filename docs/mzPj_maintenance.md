@@ -216,3 +216,9 @@ The maintainer subsequently loaded the corrected BCG OMV from Data Library on
 Windows and confirmed that True/False create/remove its Output columns correctly:
 **PASSED (13 October 2026)**. New Linux validation and release packages remain
 separate follow-up work.
+
+Patch 1.0.1 prepares distribution of the accepted Output-synchronization fix and
+repaired BCG OMV. Module versions in DESCRIPTION and 0000.yaml are 1.0.1;
+analysis schema versions remain unchanged. New platform assets must be compiled
+from these sources. The old 1.0.0 JMO files must not be relabeled as 1.0.1.
+Publish the patch release after the new Linux build is supplied and verified.

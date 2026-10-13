@@ -1,7 +1,7 @@
 ---
 title: Pj - Editor to run Python code inside jamovi
 name: Pj
-version: 1.0.0
+version: 1.0.1
 jms: '1.0'
 usesNative: true
 minApp: 28.3.0

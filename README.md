@@ -40,7 +40,7 @@ Python result functions and external service-script support.
 Install jamovi **28.3 or newer** and a Pj module build for your operating system. System Python is
 optional: jamovi Python is supplied by jamovi itself.
 
-The current module version is **1.0.0**. Development and validation have used
+The current source version is **1.0.1**. Development and validation have used
 jamovi **28.9.0.0** on Windows, followed by example validation with the
 **28.11.0.0** portable installation. The declared minimum version is **28.3**.
 On **13 October 2026**, the maintainer confirmed a clean GitHub clone, successful
@@ -62,17 +62,21 @@ In jamovi, open the module library and use its option to install a module from a
 local file. Select the `.jmo` built for your platform. The analyses appear under
 **Python → Pj**.
 
-Download the `.jmo` for your operating system from
-[GitHub Releases](https://github.com/MAgojam/Pj/releases/latest):
+Platform packages are published under
+[GitHub Releases](https://github.com/MAgojam/Pj/releases). The **1.0.1 patch is
+being prepared**, with these intended assets:
 
-- **Windows 64-bit:** `Pj_1.0.0_win64.jmo`.
-- **Linux:** `Pj_1.0.0_linux.jmo`, compiled and tested on Ubuntu 26.04 LTS.
+- **Windows 64-bit:** `Pj_1.0.1_win64.jmo`.
+- **Linux:** `Pj_1.0.1_linux.jmo`.
 
 The `.jmo` files are release assets, not versioned source files.
 
-The current sources include a Pjp Output-removal fix and a corrected BCG editor
-draft. These corrections are not included in the original v1.0.0 release assets;
-build from the current sources until updated platform packages are published.
+Version 1.0.1 fixes Pjp Output removal on successful reruns and repairs the saved
+BCG editor draft. The maintainer confirmed the corrected True/False workflow
+from Data Library on Windows. A new Linux build/validation is pending; the
+earlier Ubuntu clean-clone checks apply to 1.0.0. The original v1.0.0 release
+assets do not include these corrections. Build from current sources until the
+updated platform packages are published.
 
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
