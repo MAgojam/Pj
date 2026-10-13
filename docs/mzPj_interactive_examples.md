@@ -80,6 +80,8 @@ return `pj_fitted`, `pj_residual`, `pj_standardized_residual` and `pj_leverage`.
 Excluded rows retain missing values at their original positions. Keep the
 switch False for the distributed demonstration unless output columns are wanted;
 do not add these diagnostics to the predictor list.
+After creating them, change the switch back to False and Run to remove the
+four Output columns owned by this analysis. The original input columns remain.
 
 Expected results for the supplied data:
 

@@ -202,3 +202,17 @@ carry their complete Python examples in editor code only, with no service-file
 attachments. `.gitattributes` normalizes text to LF while explicitly preserving
 OMV, PNG and JMO files as binary. The repository contains GPL text in `COPYING`
 and the D3 license under `inst/licenses/`, alongside the existing Brace license.
+
+Pjp Output synchronization always sends a `createdColumns` Output after a
+successful run, even when its column list is empty. The R service constructs
+the corresponding native empty Output; omitting it would leave old columns in
+the dataset. jamovi removes only columns matching that analysis ID and Output
+option. Clear and errors continue to omit synchronization. The regression test
+`tests/mzPj_output_sync.R` checks populated/empty/populated native protobuf and
+that Pj ignores Output envelopes. The BCG OMV also has its saved editor draft
+repaired to False and its seven stale Output columns removed, preserving all
+original data and other analysis content.
+The maintainer subsequently loaded the corrected BCG OMV from Data Library on
+Windows and confirmed that True/False create/remove its Output columns correctly:
+**PASSED (13 October 2026)**. New Linux validation and release packages remain
+separate follow-up work.

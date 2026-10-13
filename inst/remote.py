@@ -207,12 +207,12 @@ def main():
                     "values": safe_values
                 })
         
-        if created_columns:
-            results["items"].append({
-                "type": "Output",
-                "name": "createdColumns",
-                "columns": created_columns
-            })
+        # L'elenco vuoto rimuove gli Output precedenti di questa analisi sul server jamovi.
+        results["items"].append({
+            "type": "Output",
+            "name": "createdColumns",
+            "columns": created_columns
+        })
     
     # Il report informativo e' indipendente dai risultati dello script.
     if local_pyinfo:
