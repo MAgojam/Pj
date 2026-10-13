@@ -64,8 +64,9 @@ GitHub releases will provide two separately compiled `.jmo` assets, clearly
 identified for **Windows** and **Linux**. Download the asset for your operating
 system. The repository will contain the module sources and documentation.
 
-This source tree is being prepared for publication; release downloads have not
-yet been published. Availability on GitHub does not imply availability from the
+Sources and documentation are available in the
+[Pj repository](https://github.com/MAgojam/Pj). Release downloads have not yet
+been published. Availability on GitHub does not imply availability from the
 public jamovi module library. No macOS release is currently planned or validated.
 
 ## First analysis
