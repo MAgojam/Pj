@@ -214,11 +214,15 @@ repaired to False and its seven stale Output columns removed, preserving all
 original data and other analysis content.
 The maintainer subsequently loaded the corrected BCG OMV from Data Library on
 Windows and confirmed that True/False create/remove its Output columns correctly:
-**PASSED (13 October 2026)**. New Linux validation and release packages remain
-separate follow-up work.
+**PASSED (13 October 2026)**. Runtime validation of the patch on Linux has not
+yet been confirmed.
 
-Patch 1.0.1 prepares distribution of the accepted Output-synchronization fix and
+Patch 1.0.1 distributes the accepted Output-synchronization fix and
 repaired BCG OMV. Module versions in DESCRIPTION and 0000.yaml are 1.0.1;
 analysis schema versions remain unchanged. New platform assets must be compiled
 from these sources. The old 1.0.0 JMO files must not be relabeled as 1.0.1.
-Publish the patch release after the new Linux build is supplied and verified.
+Release 1.0.1 was published as the latest release on 13 October 2026 with a signed,
+GitHub-verified tag. The Linux build was supplied after compilation on Ubuntu
+26.04 LTS. Both platform archives passed ZIP integrity checks and contain Python
+sources and all four OMVs identical to the current source files. GitHub asset
+SHA-256 digests match the local packages. The 1.0.0 release remains historical.
