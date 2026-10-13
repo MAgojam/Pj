@@ -62,13 +62,16 @@ In jamovi, open the module library and use its option to install a module from a
 local file. Select the `.jmo` built for your platform. The analyses appear under
 **Python → Pj**.
 
-GitHub releases will provide two separately compiled `.jmo` assets, clearly
-identified for **Windows** and **Linux**. Download the asset for your operating
-system. The repository will contain the module sources and documentation.
+Download the `.jmo` for your operating system from
+[GitHub Releases](https://github.com/MAgojam/Pj/releases/latest):
+
+- **Windows 64-bit:** `Pj_1.0.0_win64.jmo`.
+- **Linux:** `Pj_1.0.0_linux.jmo`, compiled and tested on Ubuntu 26.04 LTS.
+
+The `.jmo` files are release assets, not versioned source files.
 
 Sources and documentation are available in the
-[Pj repository](https://github.com/MAgojam/Pj). Release downloads have not yet
-been published. Availability on GitHub does not imply availability from the
+[Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
 public jamovi module library. No macOS release is currently planned or validated.
 
 ## First analysis
