@@ -12,6 +12,7 @@
 /pjscript/
 /docs/AUDIT_2026-10-12.md
 /docs/METAFORA_REFERENCE_NOTES.md
+/docs/mzPj_examples.md
 
 # Script di compilazione riservato all'ambiente locale del manutentore.
 /compile.r
