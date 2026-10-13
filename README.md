@@ -254,12 +254,14 @@ documents contain their complete example code in the editor, with Browse empty.
 
 - [Python results guide](docs/PYTHON_RESULTS_GUIDE.md): detailed function usage, parameters,
   errors, table styling and validation status.
-- [Examples and development catalogue](docs/mzPj_examples.md): the Data Library
-  examples and the local development scripts. The `pjscript/` folder is kept
-  locally and is excluded from the source repository; public examples are
-  distributed as OMV documents in `data/`.
+- [Interactive examples guide](docs/mzPj_interactive_examples.md): regression
+  diagnostics and paired measurements, including settings and interactions.
 - [Maintenance guide](docs/mzPj_maintenance.md): shared services, file responsibilities
   and platform considerations.
+
+Public examples are distributed as OMV documents in `data/`, with their code in
+the editors. The development scripts and their catalogue remain local until
+they have been reviewed for separate publication.
 
 The approved icon's transparent PNG is included in `inst/extdata`, alongside D3.
 The editor embeds the approved SVG directly in its header code.

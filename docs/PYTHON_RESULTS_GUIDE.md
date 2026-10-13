@@ -6,8 +6,10 @@ This guide documents the Python functions supplied by Pj/Pjp. Examples use
 English result labels and the public `mzpj` camelCase names.
 
 Public examples are distributed as OMV documents through **Open → Data Library → Pj**.
-The [example guide](mzPj_examples.md) distinguishes these from local development
-scripts, which are not published as standalone Python files.
+See the [BCG guide](mzPj_bcg_example.md),
+[pandas/matplotlib guide](mzPj_pandas_matplotlib_example.md) and
+[interactive examples guide](mzPj_interactive_examples.md) for the four available
+documents. Development scripts are not published as standalone Python files.
 
 ## 1. Python environments and dataset
 
