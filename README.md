@@ -63,20 +63,21 @@ local file. Select the `.jmo` built for your platform. The analyses appear under
 **Python → Pj**.
 
 Platform packages are published under
-[GitHub Releases](https://github.com/MAgojam/Pj/releases). The **1.0.1 patch is
-being prepared**, with these intended assets:
+[GitHub Releases](https://github.com/MAgojam/Pj/releases). The latest release is
+**[1.0.1](https://github.com/MAgojam/Pj/releases/tag/v1.0.1)**, with these assets:
 
-- **Windows 64-bit:** `Pj_1.0.1_win64.jmo`.
-- **Linux:** `Pj_1.0.1_linux.jmo`.
+- **[Windows 64-bit](https://github.com/MAgojam/Pj/releases/download/v1.0.1/Pj_1.0.1_win64.jmo)**.
+- **[Linux](https://github.com/MAgojam/Pj/releases/download/v1.0.1/Pj_1.0.1_linux.jmo)**.
 
 The `.jmo` files are release assets, not versioned source files.
 
 Version 1.0.1 fixes Pjp Output removal on successful reruns and repairs the saved
 BCG editor draft. The maintainer confirmed the corrected True/False workflow
-from Data Library on Windows. A new Linux build/validation is pending; the
-earlier Ubuntu clean-clone checks apply to 1.0.0. The original v1.0.0 release
-assets do not include these corrections. Build from current sources until the
-updated platform packages are published.
+from Data Library on Windows. The Linux package was compiled on Ubuntu 26.04 LTS.
+Both archives were verified against the updated Python sources and all four OMV
+examples. Runtime validation of this patch on Linux has not yet been confirmed;
+the earlier Ubuntu clean-clone checks apply to 1.0.0. Release 1.0.1 supersedes
+1.0.0, whose original assets remain available in the release history.
 
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
