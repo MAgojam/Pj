@@ -1,0 +1,77 @@
+---
+title: Pj - Editor to run Python code inside jamovi
+name: Pj
+version: 1.0.0
+jms: '1.0'
+usesNative: true
+minApp: 28.3.0
+authors:
+  - Maurizio Agosti
+maintainer: Maurizio Agosti <magosti@gmail.com>
+type: R
+description: >
+  Provides an editor allowing you to enter Python code, and analyse your data
+  using Python inside jamovi.
+analyses:
+  - title: Pj Editor
+    name: Pj
+    ns: Pj
+    menuGroup: Python
+    menuTitle: Pj Editor
+    menuSubgroup: Pj
+    arbitraryCode: true
+    arbitraryCode2: true
+    category: analyses
+  - title: Pj Editor +
+    name: Pjp
+    ns: Pj
+    menuGroup: Python
+    menuSubgroup: Pj
+    menuTitle: Pj Editor +
+    arbitraryCode: true
+    arbitraryCode2: true
+    category: analyses
+datasets:
+  - name: BCG vaccine - REML and D3 forest plot
+    path: Pj_BCG_vaccine.omv
+    description: >-
+      Pjp example with REML tables, a D3 forest plot and risk-of-bias columns.
+      Requires SciPy in the selected Python interpreter.
+    tags:
+      - Python
+      - Meta-analysis
+      - REML
+      - D3
+  - name: Synthetic participants - pandas and matplotlib
+    path: Pj_Pandas_Matplotlib.omv
+    description: >-
+      Pj example with descriptive tables, a grouped boxplot and a paired scatter
+      plot. Requires System Python with pandas and matplotlib installed.
+    tags:
+      - Python
+      - pandas
+      - matplotlib
+      - Descriptives
+  - name: Linear regression - linked D3 diagnostics
+    path: Pj_Linear_Regression.omv
+    description: >-
+      Pjp example with native regression tables and linked observed/fitted and
+      residual plots. Requires NumPy and SciPy in the selected Python
+      interpreter.
+    tags:
+      - Python
+      - Regression
+      - Diagnostics
+      - D3
+  - name: Paired measurements - interactive D3 explorer
+    path: Pj_Service_D3.omv
+    description: >-
+      Pj example with styled HTML tables, paired trajectories and mean-change
+      confidence intervals. Requires SciPy in the selected Python interpreter.
+    tags:
+      - Python
+      - Paired measurements
+      - Confidence intervals
+      - D3
+
+...

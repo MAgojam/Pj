@@ -1,0 +1,200 @@
+# Pj / Pjp maintenance map
+
+Updated: 13 October 2026. Public Python functions keep their `mzpj` camel-case
+names. New internal service filenames use the exact `mzPj_` prefix and
+underscores. Preserve filename case in every reference for Linux and macOS.
+Standard jamovi entry points and existing example filenames are retained.
+
+## Language and publication conventions
+
+Technical comments in project-owned implementation sources are in Italian.
+The editable Python scripts stored in public OMV examples use English comments
+and docstrings; their embedded JavaScript follows the same convention. Local
+internal R dataset generators retain Italian comments. Identifiers, interface strings,
+errors, result labels and user documentation are in English. Generated R help
+comments are user documentation and remain in English; third-party copyright
+and license notices retain their original wording.
+
+The compiler regenerates a technical warning in English at the top of the two R
+headers. The maintainer's local build normalizes that warning to Italian after
+compilation. Keep this normalization separate from generated R help text, which
+remains in English, and do not edit the compiler itself.
+
+The root README is the GitHub entry point. Planned release assets are separately
+compiled Windows and Linux `.jmo` files, identified by platform. Publication,
+commits and pushes remain separate from local preparation and validation.
+
+Keep `jamovi/js/node_modules/brace/` in the source repository. It is a bundled
+editor dependency, also present in the local Rj source tree. Pj imports Brace,
+its Python mode and its language-tools extension directly, and has no project
+package manifest or lockfile that recreates this directory. Do not apply a
+blanket `node_modules` exclusion to this module. Preserve the bundled licenses.
+
+## Shared architecture
+
+Pjp inherits `PjClass`. Both analyses use the same JavaScript controller and
+Python runner. A fix to a shared service therefore applies to both analyses.
+Generated `.h.R` files, compiled assets, Ace and D3 are not edited as services.
+
+| File | Responsibility |
+|---|---|
+| `R/pj.b.R` | Analysis lifecycle, service selection, transport, diagnostics, image rendering and saved-result restoration |
+| `R/pjp.b.R` | Pjp specialization and output-column enablement |
+| `R/mzPj_python_service.R` | UTF-8 resource reading, one encoded configuration, typed dataset preparation, process status and interpreter discovery |
+| `R/mzPj_results_service.R` | Result-envelope validation, native result construction and returned dataset columns |
+| `inst/remote.py` | Configuration decoding, dataset loading, shared service/editor execution, source-aware errors and result transport |
+| `inst/extdata/mzPj_icon_python.png` | Transparent PNG of the approved Python-inspired icon, used by example 05 |
+| `inst/python/mzPj_environment.py` | Optional imports and Python environment report |
+| `inst/python/mzPj_results.py` | Result-name policy, PNG validation/sizing, text/HTML/images, matplotlib capture and scalar serialization |
+| `inst/python/mzPj_tables.py` | Native/HTML table normalization, annotations, colors, transpose, accordion and viewport rendering |
+| `jamovi/js/main.js` | Shared editor integration, options, analysis/session lifecycle |
+| `jamovi/js/mzPj_editor_files.js` | Passive Load, draft persistence, replacement confirmation and native Save |
+| `jamovi/js/mzPj_service_header.js` | Native File control immediately after the analysis title; original Browse/label/pill nodes retained; delegated × updates the single File option and cancels click activation/propagation |
+| `jamovi/js/mzPj_editor_run.js` | Run, dataset-column requests, stale-request rejection and option-edit closure |
+| `jamovi/js/mzPj_editor_context.js` | Python string literals, string/comment context and variable completion entries |
+| `jamovi/js/suggest.js` | Completion integration and insertion; the static catalog remains in `funcs.js` |
+
+## Loading and portability
+
+R services load through the package namespace; there is no runtime `source()`.
+Internal R functions start with `.mzPj_` and stay outside the alphabetic export
+pattern. Keep helpers independent of R package file-loading order.
+
+R serializes a configuration object as UTF-8 JSON and base64. The runner has
+one replacement token. User code, filenames and options are data inside that
+object; they are never searched again for template tokens.
+
+Python helper sources travel in that same envelope and execute in one trusted
+module namespace, in the order environment → results → tables. This is
+intentional: it preserves shared counters, `results`, optional libraries and
+function globals. Do not replace it with ordinary filesystem imports: System
+Python launched on a Flatpak host cannot assume access to the installed R
+module directory. No third-party dependency was added.
+
+The dataset uses JSON column arrays in both transports. File mode uses temporary
+JSON files with existing cleanup; Flatpak-host mode carries the dataset inline
+and receives a framed result on stdout. Numeric, boolean and textual columns
+retain their types; factors transfer their labels. Missing/non-finite values
+become `None`; empty strings remain empty. Dates/times transfer as text. This
+preserves the public dictionary-of-lists API and does not require pandas.
+
+The hidden active `editorCleared` option distinguishes an intentional Clear from
+an empty editor used with a service script. Clear cancels pending frontend work,
+resets the passive draft and active code, and sets this flag. The R backend
+clears results and returns before interpreter/resource discovery. Run resets the
+flag before submission; the service file is retained. The flag persists in `.omv`.
+
+## Correctness and trust boundaries
+
+Structured Python errors take precedence over generic process failures. A
+nonzero process status, or a missing result after a zero exit, raises an analysis
+error. Explicit `SystemExit` in either script has source/line diagnostics.
+
+PNG input is checked for signature, chunk lengths/checksums, initial IHDR,
+positive dimensions, IDAT and terminal IEND before result registration. This is
+structural validation, not complete pixel decoding or a memory limit.
+
+Enabled Python and raw HTML remain active user code. This refactoring does not
+introduce a malware scanner, sandbox, execution timeout or output-memory limit.
+The existing jamovi enable-code gate is retained. Read the manual's trust section.
+
+## Bundled image resource
+
+The shared header embeds the Python-inspired SVG directly in
+`jamovi/js/mzPj_service_header.js`, before the native Pj/Pjp title. It is a
+decorative 38 px icon inside a 48 px white rounded frame with a subtle blue border,
+with no external file request or click action. The frame applies only to the
+header; the bundled PNG remains transparent. The icon replaces
+the visible Pj prefix, producing icon + Editor or icon + Editor +, while the
+accessible label retains the full analysis title. Repeated header updates keep
+a single icon and preserve the service selector. Original SVG files and the alternative PNG are kept separately from the module in
+the maintainer's `varie/svg` directory. If the approved vector changes, update
+the embedded paths and regenerate its PNG. The first design stays available;
+example 05 uses the approved second PNG. No jamovi ribbon override is added.
+
+The R configuration includes the PNG as base64 in `RESOURCES`. The Python runner
+requires strict base64; the R encoder removes CR/LF introduced by jsonlite before
+serialization. Regression checks must execute the R-generated runner in Python,
+rather than checking only Python-generated base64 or R-only decoding.
+The Python runner
+exposes `mzpjResourcePath(filename)` to both the service script and editor. It
+materializes only a requested bundled file in a per-execution temporary directory,
+reuses that path within the execution and removes it on completion or error.
+No temporary directory is created if the helper is unused. The same configuration
+transport supports embedded Python, system Python and the Flatpak host without
+sharing a module installation path. No additional Python package is required.
+
+Local build artifacts, the maintainer's build script, R history/project settings,
+the compiler-created translation directory and the private audit/Metafora notes
+are excluded from Git. They remain in the local working directory. Brace and its
+licenses stay included; compiled `.jmo` files are intended for release assets.
+
+## Validation and follow-up
+
+On 13 October 2026, `data/Pj_BCG_vaccine.omv` was registered in the module's
+`datasets` list as **BCG vaccine - REML and D3 forest plot**. Archive inspection
+confirmed 13 rows, 14 original columns, a saved Pjp analysis and the exact
+current example script, including English comments and proportional whole-plot
+zoom. The user confirmed successful zoom and optional dataset-column creation.
+The final OMV keeps `WRITE_COLUMNS = False` by default.
+
+`minApp` is 28.3.0, as requested by the maintainer. The local build
+configuration targets `Y:/A_Lavoro/jamovi-port` (28.11.0.0 at this update).
+The local `pjscript/` directory is ignored by Git; public documentation uses
+Data Library instructions without links to excluded script files. YAML, archive,
+script content, public links and build-script syntax checks passed. Windows
+compilation and installation against portable jamovi 28.11.0.0 subsequently
+passed. ZIP integrity checks confirmed `minApp: 28.3.0`, the datasets entry in
+both packaged YAML files and the OMV at `Pj/data/Pj_BCG_vaccine.omv`. The packaged
+OMV is byte-identical to the saved source; its archive and embedded script also
+passed inspection. D3, the approved PNG and Python services are present. Loading
+this example from Data Library in the live application was subsequently confirmed
+by the maintainer, together with successful execution: **PASSED on Windows**.
+After removing the old installed Pj copy and recompiling, the active installation
+at `C:/Users/MAgo/AppData/Roaming/jamovi/modules/Pj` was verified against the new
+JMO, including its datasets metadata and byte-identical BCG OMV.
+
+Regression checks cover both installed Windows interpreters, file and inline
+transports, typed/empty data, configuration markers, error origins, process
+termination, result names, PNG buffers/sizing, HTML viewport modes, annotations,
+13+14 service/editor execution, Pjp output values/row mapping, result protobuf
+restoration, passive Load/Save and asynchronous editor requests.
+
+Windows compilation and installation through `compile.r` passed on 12 October
+2026. The compiled package was executed with both interpreters, including
+zero-/one-row datasets; all three Python service files are present in the `.jmo`.
+
+The user subsequently confirmed that the revised Clear position, service-header
+alignment and × removal work correctly on Windows. On 12 October 2026 the user
+also reported successful compilation on Ubuntu 26.04 LTS, without errors or
+problems, and successful execution of every script they tried there.
+
+The Ubuntu report does not enumerate script numbers, interpreter modes or the
+jamovi installation format. Do not infer a complete two-interpreter/Flatpak test
+matrix from it. Linux `.omv` reopening, exported results, editor-file round trips
+and Pjp returned-column checks remain unconfirmed individually. macOS builds and
+desktop tests remain unverified. Automated inline transport checks exercise the
+protocol, not an actual Flatpak host.
+
+Remaining performance work should follow measurements: large HTML tables still
+render every cell and repeat inline styles; accordion/scroll limits are not
+pagination. Optional library imports still happen once per analysis process.
+D3 remains available to scripts on every execution. Debouncing draft persistence,
+lazy imports and cancellation/resource policies need separate lifecycle checks.
+
+On 13 October 2026, Pjp's VariableSupplier was aligned with the `vars` option:
+both permit factor, numeric and ID columns. Previously the supplier defaulted to
+factor/numeric even though the target already permitted ID. ID values can label
+script output and are not automatically statistical predictors. The regression
+example requires only its three numeric columns and uses original row numbers
+when the optional ID is absent. Its model tables agree exactly with/without ID
+in both Python interpreters. Windows compilation/installation passed; manual
+loading and execution of all four Data Library examples were subsequently
+confirmed by the maintainer on Windows. **All four: PASSED (13 October 2026).**
+No separate confirmation of dragging an ID in the revised supplier was recorded.
+
+Publication preparation keeps `pjscript/` local for now. The four OMVs in `data/`
+carry their complete Python examples in editor code only, with no service-file
+attachments. `.gitattributes` normalizes text to LF while explicitly preserving
+OMV, PNG and JMO files as binary. The repository contains GPL text in `COPYING`
+and the D3 license under `inst/licenses/`, alongside the existing Brace license.

@@ -1,0 +1,12 @@
+title: Pj Editor
+name: Pj
+jus: '2.0'
+compilerMode: tame
+events:
+  loaded: ./main::loaded
+  update: ./main::update
+  remoteDataChanged: ./main::onDataChanged
+children:
+  - type: File
+    name: scriptFile
+    label: 'Service script (.py)'

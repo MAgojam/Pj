@@ -1,0 +1,110 @@
+---
+name:  Pj
+title: Pj Editor
+menuGroup: Python
+menuSubgroup: Pj
+version: '1.0.0'
+jas: '1.2'
+arbitraryCode: true
+
+options:
+    - name: data
+      type: Data
+
+    - name: code
+      default: |
+        # print('Python code example')
+
+      type: String
+      hidden: true
+
+    - name: editorState
+      type: Group
+      hidden: true
+      passive: true
+      elements:
+        - name: draft
+          type: String
+          default: ''
+        - name: hasDraft
+          type: Bool
+          default: false
+        - name: filename
+          type: String
+          default: ''
+        - name: baseline
+          type: String
+          default: ''
+
+    - name: editorCleared
+      type: Bool
+      hidden: true
+      default: false
+
+    - name: saveEditorScript
+      type: Action
+      hidden: true
+      action: openExternal
+
+    - name: vars
+      type: Variables
+      hidden: true
+      permitted:
+        - factor
+        - numeric
+        - id
+
+    # - name: output
+    #   type: List
+    #   hidden: true
+    #   options:
+    #     - noEcho
+    #     - echo
+    #     - pyinfo
+    #   default: noEcho
+
+    - name: output
+      type: List
+      hidden: true
+      options:
+        - name: noEcho
+          title: No Echo
+        - name: echo
+          title: Echo
+        - name: pyinfo
+          title: Python Info
+      default: noEcho
+
+    - name: figWidth
+      type: String
+      default: ''
+      hidden: true
+
+    - name: figHeight
+      type: String
+      default: ''
+      hidden: true
+
+    - name: toggle
+      type: Bool
+      default: false
+      hidden: true
+
+    - name: scriptFile
+      type: File
+      title: Service script
+      extensions:
+        - py
+
+    - name: python
+      title: Python version
+      type: List
+      hidden: true
+      options:
+        - name: bundled
+          title: jamovi Python
+        - name: external
+          title: System Python
+      default: bundled
+
+...

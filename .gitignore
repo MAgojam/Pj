@@ -1,0 +1,17 @@
+
+/build/
+
+*.jmo
+
+.DS_Store
+.Rproj.user
+
+.Rhistory
+/Rj.Rproj
+/inst/i18n/
+/pjscript/
+/docs/AUDIT_2026-10-12.md
+/docs/METAFORA_REFERENCE_NOTES.md
+
+# Script di compilazione riservato all'ambiente locale del manutentore.
+/compile.r
