@@ -39,6 +39,15 @@ look like numbers. Empty strings remain empty strings; missing and non-finite
 values become `None`. Dates and times transfer as text. These rules apply to
 both interpreters and do not require pandas.
 
+In Pjp, new columns added to `data` are returned as analysis-owned Output columns.
+Every successful run synchronizes that set: if the script no longer creates
+these columns, an empty Output removes the previous columns owned by this
+analysis. Original dataset columns and Outputs from other analyses are retained.
+Keep generated Output columns out of the input selection. Clear and failed runs
+do not request Output removal. For example, the BCG script's `WRITE_COLUMNS`
+switch creates seven columns with `True` and removes them after a successful
+rerun with `False`.
+
 ```python
 print(list(data))
 mzpjShowTable(data, name="selected_data", title="Selected data")

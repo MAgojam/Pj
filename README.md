@@ -70,6 +70,10 @@ Download the `.jmo` for your operating system from
 
 The `.jmo` files are release assets, not versioned source files.
 
+The current sources include a Pjp Output-removal fix and a corrected BCG editor
+draft. These corrections are not included in the original v1.0.0 release assets;
+build from the current sources until updated platform packages are published.
+
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
 public jamovi module library. No macOS release is currently planned or validated.
@@ -101,6 +105,11 @@ In **Pjp**, `data` contains only the selected variables, including an ID column
 if you select it for labels. Unselected columns are unavailable to the script.
 Selecting an ID does not automatically give it a statistical role; the script
 decides which numeric columns enter its calculations.
+
+New columns created through Pjp's `data` become Outputs owned by that analysis.
+Each successful run replaces its Output set; rerunning without creating those
+columns removes its previous Outputs. Original input columns and Outputs from
+other analyses remain intact. Clear and failed runs do not request this removal.
 
 In **Pj**, Run transfers all dataset columns by default. To transfer a subset,
 start the editor with a first-line comment such as `# (group, before, after)`.

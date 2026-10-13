@@ -91,92 +91,91 @@
             self$saveColumns
         ) {
 
-            if (length(item$columns) > 0) {
+            # Anche un Output vuoto deve raggiungere jamovi per rimuovere le colonne precedenti.
 
-                tryCatch({
+            tryCatch({
 
-                    output <- self$results$get('createdColumns')
+                output <- self$results$get('createdColumns')
 
-                    if (is.null(output)) {
+                if (is.null(output)) {
 
-                        # self$results$clear() rimuove l'Output
-                        # pre-dichiarato: lo ricostruiamo da zero.
-                        colOption <- jmvcore::OptionOutput$new(
-                            'createdColumns'
-                        )
-
-                        colOption$value <- list(
-                            value=TRUE,
-                            vars=character(),
-                            synced=character()
-                        )
-
-                        localOptions <- jmvcore::Options$new()
-                        localOptions$.addOption(colOption)
-
-                        output <- jmvcore::Output$new(
-                            localOptions,
-                            'createdColumns',
-                            initInRun=TRUE
-                        )
-
-                        self$results$add(output)
-                    }
-
-                    columns <- item$columns
-                    values <- lapply(columns, function(column) {
-                        unlist(lapply(column$values, function(value) {
-                            if (is.null(value)) NA else value
-                        }), use.names=FALSE)
-                    })
-                    keys <- as.character(seq_along(columns))
-                    names <- vapply(columns, function(column) column$name, character(1))
-                    types <- vapply(values, function(value) {
-                        if (is.numeric(value)) 'continuous' else 'nominal'
-                    }, character(1))
-                    output$set(keys, names, rep('', length(columns)), types)
-                    for (i in seq_along(columns))
-                        output$setValues(key=keys[i], values[[i]])
-
-                    # L'allineamento degli indici di riga
-                    # richiede interi, non stringhe.
-                    rowNums <- as.integer(
-                        rownames(self$data)
+                    # self$results$clear() rimuove l'Output
+                    # pre-dichiarato: lo ricostruiamo da zero.
+                    colOption <- jmvcore::OptionOutput$new(
+                        'createdColumns'
                     )
 
-                    if (!any(is.na(rowNums)))
-                        output$setRowNums(rowNums)
-
-                }, error=function(e) {
-
-                    debugElem <- jmvcore::Preformatted$new(
-                        self$options,
-                        name='createdColumnsDebug',
-                        title="Column creation error"
+                    colOption$value <- list(
+                        value=TRUE,
+                        vars=character(),
+                        synced=character()
                     )
 
-                    debugElem$setContent(
-                        paste(
-                            "Error:",
-                            conditionMessage(e),
-                            "\n",
-                            "item$columns length:",
-                            length(item$columns),
-                            "\n",
-                            "Column names:",
-                            paste(
-                                sapply(
-                                    item$columns,
-                                    function(c) c$name
-                                ),
-                                collapse=', '
-                            )
-                        )
+                    localOptions <- jmvcore::Options$new()
+                    localOptions$.addOption(colOption)
+
+                    output <- jmvcore::Output$new(
+                        localOptions,
+                        'createdColumns',
+                        initInRun=TRUE
                     )
 
-                    self$results$add(debugElem)
+                    self$results$add(output)
+                }
+
+                columns <- item$columns
+                values <- lapply(columns, function(column) {
+                    unlist(lapply(column$values, function(value) {
+                        if (is.null(value)) NA else value
+                    }), use.names=FALSE)
                 })
-            }
+                keys <- as.character(seq_along(columns))
+                names <- vapply(columns, function(column) column$name, character(1))
+                types <- vapply(values, function(value) {
+                    if (is.numeric(value)) 'continuous' else 'nominal'
+                }, character(1))
+                output$set(keys, names, rep('', length(columns)), types)
+                for (i in seq_along(columns))
+                    output$setValues(key=keys[i], values[[i]])
+
+                # L'allineamento degli indici di riga
+                # richiede interi, non stringhe.
+                rowNums <- as.integer(
+                    rownames(self$data)
+                )
+
+                if (!any(is.na(rowNums)))
+                    output$setRowNums(rowNums)
+
+            }, error=function(e) {
+
+                debugElem <- jmvcore::Preformatted$new(
+                    self$options,
+                    name='createdColumnsDebug',
+                    title="Column creation error"
+                )
+
+                debugElem$setContent(
+                    paste(
+                        "Error:",
+                        conditionMessage(e),
+                        "\n",
+                        "item$columns length:",
+                        length(item$columns),
+                        "\n",
+                        "Column names:",
+                        paste(
+                            sapply(
+                                item$columns,
+                                function(c) c$name
+                            ),
+                            collapse=', '
+                        )
+                    )
+                )
+
+                self$results$add(debugElem)
+            })
         }
     }
 }

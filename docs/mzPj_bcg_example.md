@@ -78,6 +78,13 @@ studies contribute to the weights. Do not select these output variables as
 inputs when rerunning the example. This switch controls additional calculated
 columns returned by Pjp; it does not control reading the selected input variables.
 
+Change `WRITE_COLUMNS` back to `False`, then Run, to remove the seven Output
+columns belonging to this analysis. Original dataset columns and Outputs owned
+by other analyses are retained. Each successful Pjp run synchronizes the current
+Output set, including an empty set; Clear and failed runs do not perform this
+removal. The distributed OMV starts with `WRITE_COLUMNS = False`, a complete
+editor draft and only the 14 original dataset columns.
+
 ## Statistical scope and settings
 
 This is an intercept-only normal-normal random-effects model for independent
@@ -163,3 +170,16 @@ confidence limits, and that whole-plot zoom preserves these coordinates.
 The maintainer subsequently confirmed that the first example after this
 correction works when loaded from Data Library. **Corrected BCG forest plot and
 Windows Data Library execution: PASSED (13 October 2026).**
+
+An additional saved-draft correction replaced an incomplete `WRITE_COLUMNS =`
+line and removed seven stale Output columns from the example. Native protobuf
+inspection confirmed matching complete code/draft/baseline, and jmvReadWrite
+readback confirmed all 13 rows and 14 original columns, labels and attributes
+were preserved. Backend tests passed True/False/True with both Python
+interpreters and file/STDIO transports. The actual jamovi server handler, run
+against an in-memory dataset fixture using R-produced protobuf, removed only
+this analysis's Outputs and preserved original/name-collision/unrelated columns.
+The maintainer loaded the corrected example from Data Library on Windows and
+confirmed that True creates the columns and False removes them. **Corrected
+desktop Output toggle: PASSED (13 October 2026).** This new fix has not yet been
+confirmed on Linux.
