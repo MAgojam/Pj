@@ -980,12 +980,13 @@ services; keep actual analysis calls in the editor to avoid duplicate output.
 
 ## 9. Validation register
 
-Latest user confirmation, 12 October 2026: the revised Windows Clear placement,
-Service placement and × removal work correctly. The module also compiled on
-Ubuntu 26.04 LTS without errors/problems, and all scripts tried by the user
-worked there. The Ubuntu report did not enumerate script numbers, interpreter
-modes or installation format. Linux save/reopen/export and Pjp returned-column
-checks are not individually confirmed; macOS remains unverified. Earlier
+Latest user confirmation, 13 October 2026: a clean GitHub clone of Pj compiled
+successfully on Ubuntu 26.04 LTS, and all four public OMV examples were loaded
+and verified through Data Library. All four had already passed on Windows.
+The earlier Windows Clear placement, Service placement and × removal checks
+also remain accepted. Individual Ubuntu interpreter modes and installation
+format were not enumerated separately. Linux close/restart/reopen, export and
+Pjp returned-column checks are not individually confirmed; macOS remains unverified. Earlier
 feature rows retain their specific evidence and do not imply that every Linux
 check is still untested or that every check has now passed.
 
@@ -1016,8 +1017,8 @@ Update this register after each accepted feature change.
 | Audit corrections and `mzPj_` services | PASSED: user reported all Windows checks OK after refactoring | PASSED: A01–A09 regressions, typed/empty data, Pjp output values/row mapping, error/layout checks in both interpreters and transports, editor request/load/save logic; Windows compilation and installation; compiled-package execution with bundled services and zero-/one-row datasets. Actual Linux/Flatpak and macOS checks remain pending |
 | Clear editor and results | PASSED: user confirmed correct behavior and revised position before Python editor on Windows | PASSED: editor/draft/filename reset, pending load/run invalidation, retained service selection, Run resumption; compiled Pj/Pjp backend clears results without launching Python, even with Python info selected; compilation and installation passed |
 | Service selector in title header | PASSED: user confirmed placement immediately after title and × removal on Windows | PASSED: original control/label/pill nodes retained, label association and Browse preserved, old layout cells hidden, repeated placement and missing-header fallback; delegated × updates the native File option once and cancels default/propagation, including recreated/disabled pills in DOM simulation; editor regressions passed |
-| Ubuntu 26.04 LTS | PASSED: user compiled without errors/problems and all scripts tried worked | User-run desktop checks; exact script/interpreter/installation matrix not recorded. macOS and individually unconfirmed Linux round trips remain separate checks |
-| Four public Data Library examples | PASSED: maintainer loaded and executed all four on Windows, 13 October 2026 | ZIP integrity, exact saved scripts, no service attachments, dataset metadata and byte-identical source/JMO/installed documents passed. New examples 23/25/28 passed both interpreters; pandas/matplotlib example 24 passed System Python. Calculations of 23/25/28 were independently compared with R. New Linux/macOS example runs are unconfirmed |
+| Ubuntu 26.04 LTS | PASSED: clean GitHub clone, compilation and loading/verification of all four public Data Library OMVs, 13 October 2026 | User-run desktop checks of the published source distribution. Individual interpreter modes and installation format were not enumerated. macOS and unrecorded Linux round trips remain separate checks |
+| Four public Data Library examples | PASSED: maintainer loaded and verified all four on Windows and Ubuntu 26.04 LTS, 13 October 2026 | ZIP integrity, exact saved scripts, no service attachments, dataset metadata and byte-identical source/JMO/installed documents passed on Windows. Python checks for 23/25/28 passed both interpreters; 24 passed System Python. Calculations of 23/25/28 were independently compared with R. Clean-clone build and Data Library desktop verification passed on Ubuntu. macOS remains unverified |
 
 Pending manual checks: run the renamed examples in both interpreters where
 applicable, inspect Markdown/HTML/PNG/Table output, confirm editor completion,

@@ -237,5 +237,9 @@ present and `minApp` remains 28.3.0.
 The maintainer subsequently confirmed loading and successful execution of all
 four documents from Data Library on Windows. **Third/fourth Data Library
 workflow: PASSED (13 October 2026).** A separate close/restart/reopen cycle has
-not been recorded for these two examples. No Linux or macOS run is claimed for
-these new examples.
+not been recorded for these two examples. The maintainer also confirmed a clean
+GitHub clone, successful compilation on Ubuntu 26.04 LTS and loading/verification
+of all four Data Library OMVs, including both interactive examples. **Ubuntu
+clean-clone build and third/fourth Data Library workflow: PASSED (13 October
+2026).** Individual interpreter modes and Flatpak-specific checks were not
+enumerated separately. No macOS run is claimed.

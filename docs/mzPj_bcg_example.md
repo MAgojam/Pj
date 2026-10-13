@@ -149,7 +149,11 @@ file was inspected: it contains a Pjp analysis, the updated zoom script and
 the 14 original dataset columns. The maintainer subsequently confirmed correct
 module installation, visibility in Data Library, loading the registered BCG OMV
 and successful execution. **Windows Data Library workflow: PASSED.**
-No new Linux or macOS execution is claimed for this example.
+The maintainer also confirmed a clean GitHub clone and compilation on Ubuntu
+26.04 LTS, followed by loading and verification of all four Data Library OMVs,
+including this BCG example. **Ubuntu clean-clone build and Data Library workflow:
+PASSED (13 October 2026).** The interpreter matrix was not enumerated separately.
+No macOS execution is claimed.
 
 The subsequent prediction-interval correction passed execution in both Python
 interpreters and comparison with `metafor::predict()` using the same model.
