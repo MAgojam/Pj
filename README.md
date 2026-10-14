@@ -279,9 +279,13 @@ documents contain their complete example code in the editor, with Browse empty.
 - [Maintenance guide](docs/mzPj_maintenance.md): shared services, file responsibilities
   and platform considerations.
 
-Public examples are distributed as OMV documents in `data/`, with their code in
-the editors. The development scripts and their catalogue remain local until
-they have been reviewed for separate publication.
+Ready-to-run examples are distributed as OMV documents in `data/`, with their
+code in the editors. Reviewed standalone Python examples are also available in
+[`pjscript/`](pjscript), with English comments and a
+[step-by-step catalogue](docs/mzPj_examples.md). Download or clone these files
+to use them with Load script or combine service/editor pairs using Browse and
+Load. They are repository-only examples, excluded from R source packages and
+JMO installation; adding or updating them does not require new JMO downloads.
 
 The approved icon's transparent PNG is included in `inst/extdata`, alongside D3.
 The editor embeds the approved SVG directly in its header code.
@@ -303,7 +307,7 @@ or raw HTML safe. The jamovi prompt to enable code execution remains in place.
 ## Source conventions
 
 Project source files use UTF-8 and LF line endings. Technical code comments are
-in Italian. The editable Python scripts stored in public example OMVs use
+in Italian. The editable Python scripts in `pjscript/` and public example OMVs use
 English comments so users can follow and adapt them. Identifiers, interface labels, result messages and user documentation
 are in English. Shared service filenames use the `mzPj_` prefix and underscores;
 preserve their exact case on Linux and macOS. Third-party license notices retain

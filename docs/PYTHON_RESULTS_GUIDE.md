@@ -1,6 +1,6 @@
 # Python results in Pj and Pjp
 
-Working guide — updated 13 October 2026.
+Working guide — updated 14 October 2026.
 
 This guide documents the Python functions supplied by Pj/Pjp. Examples use
 English result labels and the public `mzpj` camelCase names.
@@ -9,7 +9,10 @@ Public examples are distributed as OMV documents through **Open → Data Library
 See the [BCG guide](mzPj_bcg_example.md),
 [pandas/matplotlib guide](mzPj_pandas_matplotlib_example.md) and
 [interactive examples guide](mzPj_interactive_examples.md) for the four available
-documents. Development scripts are not published as standalone Python files.
+documents. Reviewed standalone Python files are also available in
+[`pjscript/`](../pjscript); the [example catalogue](mzPj_examples.md) explains
+their requirements and service/editor combinations. These files are excluded
+from JMO installation and must be downloaded separately.
 
 ## 1. Python environments and dataset
 
@@ -958,9 +961,9 @@ names. Examples and editor completion suggestions use the same names. `print()`,
 
 ## 8. External library plus editor
 
-For the local development pair, select `13_service_library.py` using **Browse...**,
-then paste `14_editor_with_services.py` into the editor. These standalone files
-are kept locally, rather than published in the repository. The same workflow
+For the [service/editor pair](mzPj_examples.md), select `13_service_library.py` using **Browse...**,
+then load `14_editor_with_services.py` into the editor. Download these standalone
+files from `pjscript/` in the repository; they are not installed by the JMO. The same workflow
 applies to your own helper and analysis files. The external script executes first; its imports, variables and
 functions are available directly to the editor code in the same namespace.
 No `import 13_service_library` or filesystem path lookup is needed.

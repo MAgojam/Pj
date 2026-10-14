@@ -9,10 +9,12 @@
 .Rhistory
 /Rj.Rproj
 /inst/i18n/
-/pjscript/
+# I generatori R dei dataset restano strumenti locali del manutentore.
+/pjscript/*.R
+/pjscript/__pycache__/
+/pjscript/*.pyc
 /docs/AUDIT_2026-10-12.md
 /docs/METAFORA_REFERENCE_NOTES.md
-/docs/mzPj_examples.md
 
 # Script di compilazione riservato all'ambiente locale del manutentore.
 /compile.r
