@@ -140,7 +140,7 @@ The final OMV keeps `WRITE_COLUMNS = False` by default.
 
 `minApp` is 28.3.0, as requested by the maintainer. The local build
 configuration targets `Y:/A_Lavoro/jamovi-port` (28.11.0.0 at this update).
-The local `pjscript/` directory is ignored by Git; public documentation uses
+At initial publication, `pjscript/` was ignored by Git and public documentation used
 Data Library instructions without links to excluded script files. YAML, archive,
 script content, public links and build-script syntax checks passed. Windows
 compilation and installation against portable jamovi 28.11.0.0 subsequently
@@ -197,7 +197,7 @@ loading and execution of all four Data Library examples were subsequently
 confirmed by the maintainer on Windows. **All four: PASSED (13 October 2026).**
 No separate confirmation of dragging an ID in the revised supplier was recorded.
 
-Publication preparation keeps `pjscript/` local for now. The four OMVs in `data/`
+Initial publication kept `pjscript/` local. The four OMVs in `data/`
 carry their complete Python examples in editor code only, with no service-file
 attachments. `.gitattributes` normalizes text to LF while explicitly preserving
 OMV, PNG and JMO files as binary. The repository contains GPL text in `COPYING`
@@ -226,3 +226,32 @@ GitHub-verified tag. The Linux build was supplied after compilation on Ubuntu
 26.04 LTS. Both platform archives passed ZIP integrity checks and contain Python
 sources and all four OMVs identical to the current source files. GitHub asset
 SHA-256 digests match the local packages. The 1.0.0 release remains historical.
+
+## Standalone example review — 14 October 2026
+
+The 28 numbered Python examples in `pjscript/` are prepared for repository
+publication with English comments/docstrings and a linked catalogue in
+`docs/mzPj_examples.md`. The two R dataset generators remain local and ignored
+by Git. `pjscript` is explicitly excluded by `.Rbuildignore`; it is not an
+installed runtime directory. No module runtime source, dataset, version or JMO
+is changed by this publication.
+
+The first example now handles an empty selection with an informative message.
+The simple D3 example uses a unique chart ID. matplotlib and pandas examples
+state their requirements and report missing imports clearly. The regression
+example explains rerunning with False to remove its output columns.
+
+Validation uses the real Python runner, both Windows interpreters, original OMV
+data read into memory, service/editor pairs and output-column creation. The
+embedded interpreter's expected missing-package paths are distinct from passed
+analysis runs. Browser checks and package-exclusion checks complement execution;
+they do not replace all manual platform/interpreter tests.
+
+Review results: 34 System Python execution checks and 30 embedded Python checks
+passed, with three expected embedded dependency/interpreter errors verified.
+Chrome rendered 23 HTML results without JavaScript errors; accordion, scrolling
+and distinct D3 chart-container checks passed. A trial R source archive excluded
+`pjscript`; existing JMO and OMV SHA-256 hashes remained unchanged.
+The maintainer subsequently confirmed successful manual execution of all 28
+standalone scripts: **PASSED (14 October 2026)**. No full platform/interpreter
+matrix was specified in that confirmation.

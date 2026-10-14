@@ -1,6 +1,6 @@
 # BCG vaccine: REML tables and a D3 forest plot
 
-Development script: `pjscript/23_bcg_reml_forest_d3.py` (kept locally).
+Standalone script: [23_bcg_reml_forest_d3.py](../pjscript/23_bcg_reml_forest_d3.py).
 Dataset: [Pj_BCG_vaccine.omv](../data/Pj_BCG_vaccine.omv).
 
 The example's comments are in English because users can read and edit this code

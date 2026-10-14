@@ -5,15 +5,15 @@ They work with either **jamovi Python** or **System Python** when the required
 scientific packages are available. No internet connection, pandas or matplotlib
 is required. The scripts do not install packages.
 
-The numbered Python files are local development material in `pjscript/`. The
-finished public examples will be distributed as OMV documents with editable
-scripts saved inside their analyses. Their code comments are therefore English.
+The numbered Python files are available in [`pjscript/`](../pjscript), with a
+[standalone example catalogue](mzPj_examples.md). The finished Data Library OMVs
+also contain editable scripts saved inside their analyses. Their code comments are English.
 The service functions below belong to these examples, not the built-in Pj API.
 
 ## Third example: Pjp linear regression
 
 Dataset: [Pj_Linear_Regression.omv](../data/Pj_Linear_Regression.omv).
-Local script: `pjscript/25_pjp_linear_regression_d3.py`.
+Standalone script: [25_pjp_linear_regression_d3.py](../pjscript/25_pjp_linear_regression_d3.py).
 Requirements: NumPy, SciPy and bundled D3.
 
 ### Prepare and save in jamovi
@@ -133,9 +133,9 @@ end. Loading it copies all code into the editor, where users can read and edit
 it. The saved library document requires no service attachment, external path or
 original `.py` file. Browse remains empty.
 
-The alternative split version, service 26 plus editor 27, remains local material
-that can be shared when users ask about service scripts on the forum. It is not
-the library version and is not published as a separate repository folder.
+The alternative split version, service 26 plus editor 27, is available in
+[`pjscript/`](../pjscript) for learning and forum discussions about service files.
+It is not the Data Library version and is not installed by the JMO.
 The README explains how users prepare their own helper and active-analysis files
 and combine Browse with Load. Save script exports editor code only.
 
