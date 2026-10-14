@@ -127,6 +127,36 @@ The statistical settings and assumptions are explained in the
 
 ## Validation and package boundaries
 
+### General D3 examples: 29 and 30
+
+[29_d3_scatter.py](../pjscript/29_d3_scatter.py) and
+[30_d3_histogram.py](../pjscript/30_d3_histogram.py) use the new built-in Pj D3
+functions. They require Pj 1.1.0 or newer.
+See the [D3 plotting guide](mzPj_d3_plots.md). Both read the already open regression
+dataset and require no optional scientific libraries. Their validation status
+is separate from the maintainer's earlier approval of examples 01–28. The
+maintainer has now also tested 29 and 30 and confirmed them working.
+
+### General and university teaching examples: 31–39
+
+Examples 31–35 add box plots, bars, profiles, supplied intervals and an interactive
+normal-population/sample-mean explorer. Examples 36–39 combine calculations,
+native tables and D3 graphics for independent/paired tests, ANOVA, ANCOVA and
+MANOVA/MANCOVA. See the [teaching guide](mzPj_teaching_plots.md) for the exact
+built-in jamovi dataset, columns, interpreter and assumptions of each script.
+Examples 31/32 use Tooth Growth, 33/36 use Bugs, and 37–39 use Iris; 34/35 need
+no dataset. The four Pj library OMVs remain unchanged. These later
+examples require Pj 1.1.0 or newer; the maintainer has now confirmed
+all 31–39 working.
+
+### Linked explorers: 40–42
+
+The [linked explorer guide](mzPj_linked_d3.md) covers 40 (Big 5 correlation
+matrix/scatter), 41 (Bugs individual paired profiles/differences) and 42
+(theoretical t, chi-square and F distributions; no dataset). These use the
+standard library in either Python. The maintainer confirmed all 40–42
+**PASSED on 14 October 2026**, completing manual approval of D3 examples 29–42.
+
 Review checks use both Windows Python environments with the real Pj runner and
 the original OMV datasets read without modification. They check Python syntax,
 result generation, service/editor combinations, empty-data handling where

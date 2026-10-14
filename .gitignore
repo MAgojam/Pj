@@ -7,6 +7,8 @@
 .Rproj.user
 
 .Rhistory
+__pycache__/
+*.pyc
 /Rj.Rproj
 /inst/i18n/
 # I generatori R dei dataset restano strumenti locali del manutentore.

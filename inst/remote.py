@@ -16,6 +16,8 @@ import math
 # L’unica sostituzione contiene esclusivamente base64, mai codice interpolato.
 _config = json.loads(base64.b64decode('{{MZPJ_CONFIG}}').decode('utf-8'))
 _pj_resources = _config.get('RESOURCES', {})
+_pj_plot_js = _config.get('PLOT_JS', '')
+_pj_plot_css = _config.get('PLOT_CSS', '')
 for _key in ('DATASET', 'OUTPATH', 'CODE', 'SCRIPT_NAMES', 'EXTSCRIPT',
              'DATASET_INLINE', 'EXTSCRIPT_INLINE', 'D3_INLINE', 'STDIO_MODE',
              'FIGWIDTH', 'FIGHEIGHT', 'OUTPUT_MODE', 'PYTHON_MODE', 'SAVECOLUMNS'):
@@ -90,6 +92,16 @@ def execute_user_code(code, ext_script_path=""):
     local_vars['mzpjShowHtml'] = _pj_add_html
     local_vars['mzpjShowText'] = _pj_add_text
     local_vars['mzpjShowTable'] = _pj_add_table
+    local_vars['mzpjShowScatter'] = _pj_show_scatter
+    local_vars['mzpjShowHistogram'] = _pj_show_histogram
+    local_vars['mzpjShowBoxPlot'] = _pj_show_boxplot
+    local_vars['mzpjShowBar'] = _pj_show_bar
+    local_vars['mzpjShowLine'] = _pj_show_line
+    local_vars['mzpjShowIntervals'] = _pj_show_intervals
+    local_vars['mzpjShowDistribution'] = _pj_show_distribution
+    local_vars['mzpjShowCorrelation'] = _pj_show_correlation
+    local_vars['mzpjShowPaired'] = _pj_show_paired
+    local_vars['mzpjShowTestDistribution'] = _pj_show_test_distribution
     local_vars['mzpjFigureSize'] = {
         'width': _pj_figure_dimension(FIGWIDTH, 600),
         'height': _pj_figure_dimension(FIGHEIGHT, 500)
