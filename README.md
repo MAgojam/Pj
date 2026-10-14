@@ -26,6 +26,20 @@ Python result functions and external service-script support.
 
 ## Features
 
+Version **1.1.0** adds ten general D3 plotting functions: scatter plots,
+histograms, box plots, bars, lines, supplied intervals, normal and test-distribution
+explorers, linked correlation matrices and individual paired profiles. They work
+with either Python interpreter without additional scientific libraries. See the
+[D3 plotting guide](docs/mzPj_d3_plots.md),
+[university teaching examples](docs/mzPj_teaching_plots.md) and
+[linked explorer guide](docs/mzPj_linked_d3.md).
+
+The teaching examples use jamovi's built-in Tooth Growth, Bugs, Iris and Big 5
+datasets, or require no dataset. The maintainer confirmed all standalone examples
+01–42 working; the four existing Pj Data Library OMVs are retained unchanged.
+Calculations in some teaching scripts require libraries specified in their headers,
+separately from the dependency-free plotting functions.
+
 - Python editor with syntax highlighting, completion and error locations.
 - Load and save UTF-8 Python scripts; preserve editor drafts in `.omv` documents.
 - Combine reusable functions in an external service script with analysis code in the editor.
@@ -40,15 +54,18 @@ Python result functions and external service-script support.
 Install jamovi **28.3 or newer** and a Pj module build for your operating system. System Python is
 optional: jamovi Python is supplied by jamovi itself.
 
-The current source version is **1.0.1**. Development and validation have used
-jamovi **28.9.0.0** on Windows, followed by example validation with the
-**28.11.0.0** portable installation. The declared minimum version is **28.3**.
-On **13 October 2026**, the maintainer confirmed a clean GitHub clone, successful
-compilation on **Ubuntu 26.04 LTS**, and loading and verification of **all four
-OMV examples from Data Library**. All four examples also passed on Windows.
-macOS compilation and desktop use have not yet been verified. Individual
-interpreter modes and Flatpak-specific round trips were not enumerated in the
-Ubuntu confirmation.
+The current version is **1.1.0**. Its Windows and Linux packages were compiled
+and installed using jamovi **28.11.0.0**; the Linux build used Ubuntu **22.04 WSL2**
+and the desktop Flatpak environment. The declared minimum jamovi version remains
+**28.3**. Python plotting checks passed with Windows System/embedded Python and
+Linux host/Flatpak Python. The maintainer confirmed examples 29–42 PASSED on
+14 October 2026; that confirmation does not enumerate every platform/interpreter
+combination.
+
+Earlier clean-clone compilation and all four Pj Data Library examples were
+verified by the maintainer on **Ubuntu 26.04 LTS**, as well as Windows. These
+four OMVs are unchanged in 1.1.0. macOS compilation and desktop use have not yet
+been verified.
 
 The core result functions do not require pandas or matplotlib. Examples using
 these libraries require them in the selected interpreter, normally System Python.
@@ -64,20 +81,15 @@ local file. Select the `.jmo` built for your platform. The analyses appear under
 
 Platform packages are published under
 [GitHub Releases](https://github.com/MAgojam/Pj/releases). The latest release is
-**[1.0.1](https://github.com/MAgojam/Pj/releases/tag/v1.0.1)**, with these assets:
+**[1.1.0](https://github.com/MAgojam/Pj/releases/tag/v1.1.0)**, with these assets:
 
-- **[Windows 64-bit](https://github.com/MAgojam/Pj/releases/download/v1.0.1/Pj_1.0.1_win64.jmo)**.
-- **[Linux](https://github.com/MAgojam/Pj/releases/download/v1.0.1/Pj_1.0.1_linux.jmo)**.
+- **[Windows 64-bit](https://github.com/MAgojam/Pj/releases/download/v1.1.0/Pj_1.1.0_win64.jmo)**.
+- **[Linux](https://github.com/MAgojam/Pj/releases/download/v1.1.0/Pj_1.1.0_linux.jmo)**.
 
-The `.jmo` files are release assets, not versioned source files.
-
-Version 1.0.1 fixes Pjp Output removal on successful reruns and repairs the saved
-BCG editor draft. The maintainer confirmed the corrected True/False workflow
-from Data Library on Windows. The Linux package was compiled on Ubuntu 26.04 LTS.
-Both archives were verified against the updated Python sources and all four OMV
-examples. Runtime validation of this patch on Linux has not yet been confirmed;
-the earlier Ubuntu clean-clone checks apply to 1.0.0. Release 1.0.1 supersedes
-1.0.0, whose original assets remain available in the release history.
+The `.jmo` files are release assets, not versioned source files. Version 1.1.0
+retains the 1.0.1 Pjp Output synchronization fix and adds the general D3 library,
+standalone examples 29–42 and their guides. Previous releases remain available
+in the [release history](https://github.com/MAgojam/Pj/releases).
 
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
@@ -139,6 +151,35 @@ from a separate Python package.
 supported. Explicit result names must begin with an ASCII letter and contain
 only ASCII letters, digits and underscores. Reserved names and incompatible
 duplicate names are rejected.
+
+### General D3 plotting API
+
+| Function | Graphic / interaction |
+|---|---|
+| `mzpjShowScatter` | Scatter with optional groups and observation selection |
+| `mzpjShowHistogram` | Frequency or density histogram |
+| `mzpjShowBoxPlot` | Box plots and optional individual observations |
+| `mzpjShowBar` | Counts, means, sums or supplied category values |
+| `mzpjShowLine` | Observed or precomputed profiles, with explicit gap handling |
+| `mzpjShowIntervals` | Supplied estimates and labeled interval limits |
+| `mzpjShowDistribution` | Normal population/sample-mean explorer with N, mean and SD controls |
+| `mzpjShowCorrelation` | Pearson/Spearman matrix linked to scatter and brushing |
+| `mzpjShowPaired` | Individual paired profiles linked to differences and group filters |
+| `mzpjShowTestDistribution` | Theoretical t, chi-square and F tails and critical regions |
+
+These functions create independent HTML results, with plot-size zoom, reset and
+optional collapsible sections. They do not install libraries. Local controls do
+not rerun Python or change the dataset; observation selections are descriptive
+and do not silently refit inferential models. The guides document signatures,
+missing-data rules, assumptions and each chart's interactions.
+
+For a first D3 example, open **Big 5** in jamovi's Data Library and select
+`Extraversion` and `Neuroticism` in Pjp:
+
+```python
+mzpjShowScatter(data, x='Extraversion', y='Neuroticism',
+               title='Big 5: two personality scores')
+```
 
 For example, this HTML table works without an additional Python library:
 
@@ -236,7 +277,7 @@ with the retained service script and editor code.
 
 ## Documentation and examples
 
-After installing the rebuilt module, open **Open → Data Library → Pj** and select
+After installing the module, open **Open → Data Library → Pj** and select
 **BCG vaccine - REML and D3 forest plot**. The OMV contains the BCG dataset,
 a Pjp analysis with selected variables and an editable Python script already in
 the editor. Enable code execution when jamovi asks, then run with jamovi Python
@@ -276,6 +317,9 @@ documents contain their complete example code in the editor, with Browse empty.
   errors, table styling and validation status.
 - [Interactive examples guide](docs/mzPj_interactive_examples.md): regression
   diagnostics and paired measurements, including settings and interactions.
+- [D3 plotting guide](docs/mzPj_d3_plots.md): general chart APIs and display options.
+- [University teaching guide](docs/mzPj_teaching_plots.md): tests and models with built-in datasets.
+- [Linked explorer guide](docs/mzPj_linked_d3.md): correlation, paired observations and theoretical test distributions.
 - [Maintenance guide](docs/mzPj_maintenance.md): shared services, file responsibilities
   and platform considerations.
 

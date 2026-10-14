@@ -1,7 +1,7 @@
 Package: Pj
 Type: Package
 Title: Editor to run Python code inside jamovi
-Version: 1.0.1
+Version: 1.1.0
 Author: Maurizio Agosti
 Maintainer: Maurizio Agosti <magosti@gmail.com>
 Description: Provides an editor allowing you to enter Python code, and analyse your

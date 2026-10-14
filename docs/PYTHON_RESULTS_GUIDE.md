@@ -16,6 +16,12 @@ from JMO installation and must be downloaded separately.
 
 ## 1. Python environments and dataset
 
+Pj 1.1.0 supplies ten general D3 functions, including
+`mzpjShowCorrelation`, `mzpjShowPaired` and `mzpjShowTestDistribution`, without
+optional scientific libraries. See the [linked explorer guide](mzPj_linked_d3.md). See the
+[D3 plotting guide](mzPj_d3_plots.md) for signatures, options, missing-value rules
+and examples. These plotting functions require Pj 1.1.0 or newer.
+
 Choose the interpreter under **Configuration → Python Version**:
 
 - **jamovi Python** is included with jamovi. The functions below do not require
@@ -992,53 +998,29 @@ services; keep actual analysis calls in the editor to avoid duplicate output.
 
 ## 9. Validation register
 
-Latest user confirmation, 13 October 2026: a clean GitHub clone of Pj compiled
-successfully on Ubuntu 26.04 LTS, and all four public OMV examples were loaded
-and verified through Data Library. All four had already passed on Windows.
-The earlier Windows Clear placement, Service placement and × removal checks
-also remain accepted. Individual Ubuntu interpreter modes and installation
-format were not enumerated separately. Linux close/restart/reopen, export and
-Pjp returned-column checks are not individually confirmed; macOS remains unverified. Earlier
-feature rows retain their specific evidence and do not imply that every Linux
-check is still untested or that every check has now passed.
+Updated 14 October 2026 for Pj 1.1.0. The maintainer confirmed manual execution
+of all standalone examples 01–42, including all D3 examples 29–42. This is not
+a claim that every option, export format, operating system and interpreter was
+tested in every combination. Detailed earlier evidence is retained in the
+[maintenance log](mzPj_maintenance.md).
 
-`PASSED` is recorded only for the specific check stated. A successful automated
-test does not certify browser rendering, export or a complete `.omv` round trip.
-Update this register after each accepted feature change.
+| Area | Recorded evidence |
+|---|---|
+| Standalone scripts 01–42 | Maintainer confirmed PASSED; scripts state their interpreter/package requirements |
+| Four Pj Data Library OMVs | Maintainer confirmed Windows and Ubuntu 26.04 LTS loading/execution, including an earlier clean-clone build; the four files are unchanged in 1.1.0 |
+| Editor/service workflow | Windows Load, Run and Save passed; exported script 14A matched script 14; Windows save/restart/reopen with retained scripts passed |
+| Editor layout and diagnostics | Clear, service placement/removal and lightweight error-details layout accepted by the maintainer |
+| New D3 contract | 24 tests passed in each of Windows System/embedded and Linux host/Flatpak Python |
+| Runner regression | 48 System Python checks passed; 43 embedded checks passed, with four expected dependency/interpreter errors distinguished from successful analyses |
+| Browser rendering | 47 HTML results rendered without JavaScript errors; linked brushing, keyboard selection, group filters, independent controls and reset checked |
+| Theoretical distributions | 245 density/tail references and 175 quantiles matched SciPy, including df=1 and extreme tails |
+| Teaching analysis calculations | Welch, Mann–Whitney, paired t and signed-rank matched R; Iris ANOVA, Kruskal–Wallis, ANCOVA and MANOVA/MANCOVA Wilks/Pillai results matched R |
+| R/Python bridge | All ten chart types returned through actual serialized R configuration in both Windows interpreters |
+| Packaging | Windows and WSL Linux compilation/install passed; Python sources, all three minified assets, unchanged OMVs and exclusions verified |
 
-| Feature | Previous user confirmation in jamovi | Checks for renamed API |
-|---|---|---|
-| Text | Existing feature; no new confirmation recorded here | PASSED: Python result payload and guide example in both interpreters; visual check pending |
-| HTML | Python environment report accepted; custom renamed HTML pending | PASSED: Python result payload and guide examples in both interpreters; rendering pending |
-| PNG Image | Existing feature; renamed image display pending | PASSED: PNG bytes, dimensions and buffer/file inputs in both interpreters; display pending |
-| Table | PASSED: row dictionaries, direct `data`, pandas summary | PASSED: renamed guide examples in both interpreters; pandas example passed in System Python |
-| New names; old names removed | New change | PASSED: four new functions available, four old names absent; editor-code and external-script paths in both interpreters |
-| Editor completion | New change | PASSED: JavaScript syntax and four unique completion entries; editor UI check pending |
-| D3 example | Bundled D3 previously reported working; resized example pending | PASSED: Python HTML generation in both interpreters; resized layout rendering pending |
-| Figure size | Automatic Image fit within 800 × 600, proportional single-axis sizing, explicit two-axis sizing; D3 uses `mzpjFigureSize` | PASSED: 16 sizing cases in both Python interpreters, unchanged PNG bytes, no default enlargement; matplotlib tested in System Python; visual/mouse-resize check pending |
-| Rich native tables | PASSED: user confirmed example 15 layout in Windows Pj | PASSED: both Python interpreters, validation and native jmvcore protobuf round trip for headers, combined labels, footnotes and symbols; native layout and .omv reopen of this example remain pending |
-| Styled HTML tables | New example 16; manual check pending | PASSED: both Python interpreters and transports, style precedence, escaped text, formatting, annotations, validation and native Html protobuf restoration; visual rendering/copy/export and Linux remain pending |
-| Table transpose | New example 18; manual appearance/reopen check pending | PASSED: both Python interpreters and transports, label/format/style/annotation mapping, native transpose flag protobuf restoration and non-transposed table regression checks |
-| Simple/two-color zebra | New example 19; visual check pending | PASSED: both Python interpreters and transports, full-row single/two-color alternation, None, transpose, style overrides and validation |
-| HTML accordion and scrollable tables | PASSED: user confirmed scripts 20/21 execute and accordion styling is light and elegant; after the horizontal-overflow correction, user reported the revised layout and scrolling work as designed | PASSED: both Python interpreters and file/inline transports, default/native behavior, initial accordion state, SVG and scoped CSS, escaped text, width containment markup, five scrolling choices and wrapping rules, validation, grouped sticky-header markup, 120 rows retained, transpose, styles and annotations; actual Pj Html branch and jmvcore protobuf restoration. Copy/export, .omv reopening and Linux/Flatpak desktop rendering remain separate manual checks |
-| Script error diagnostics | PASSED: user confirmed editor error and instruction in Windows Pj, and accepted the single-block layout with a subtle separator as elegant and lightweight | PASSED: both Python interpreters and file/inline transports; editor/service syntax, indentation and runtime errors, nested calls, library/result-function errors, Unicode and multiline messages; full R backend, original service filename, single Html details result with escaped script text and protobuf restoration, no duplicate headline or separate spacer, and removal on successful rerun. Scripts 13/14 still execute successfully. Linux/Flatpak desktop rendering pending |
-| Save/reopen `.omv` | PASSED: user saved the document, closed and restarted jamovi, reopened it, and successfully ran the retained service script 13 and editor script 14 in Windows Pj | Table and editor-state protobuf restoration passed; an unexecuted draft and Pjp/Linux reopening remain separate checks |
-| Original 12 example scripts | PASSED: user ran all 12 using Browse... with the editor empty | Applicable Python execution checks passed; save/reopen/export remain separate |
-| External service library + editor | PASSED: user confirmed the combination of scripts 13 and 14 | PASSED: both actual Python interpreters, file and STDIO paths, shared functions/imports, optional library handling, no duplicate results, no numeric data |
-| Editor Load/Save | PASSED: Windows Pj Load → Run → Save; exported script 14A identical byte-for-byte to script 14; layout confirmed from screenshot | PASSED: interaction logic, installed-server passive updates for Pj/Pjp, native R export, exact UTF-8 bytes, repeated save, preserved results and draft protobuf restoration; Windows compilation/install passed. Windows Pj .omv reopen and execution confirmed by user; Pjp UI and Linux/Flatpak execution pending |
-| Audit corrections and `mzPj_` services | PASSED: user reported all Windows checks OK after refactoring | PASSED: A01–A09 regressions, typed/empty data, Pjp output values/row mapping, error/layout checks in both interpreters and transports, editor request/load/save logic; Windows compilation and installation; compiled-package execution with bundled services and zero-/one-row datasets. Actual Linux/Flatpak and macOS checks remain pending |
-| Clear editor and results | PASSED: user confirmed correct behavior and revised position before Python editor on Windows | PASSED: editor/draft/filename reset, pending load/run invalidation, retained service selection, Run resumption; compiled Pj/Pjp backend clears results without launching Python, even with Python info selected; compilation and installation passed |
-| Service selector in title header | PASSED: user confirmed placement immediately after title and × removal on Windows | PASSED: original control/label/pill nodes retained, label association and Browse preserved, old layout cells hidden, repeated placement and missing-header fallback; delegated × updates the native File option once and cancels default/propagation, including recreated/disabled pills in DOM simulation; editor regressions passed |
-| Ubuntu 26.04 LTS | PASSED: clean GitHub clone, compilation and loading/verification of all four public Data Library OMVs, 13 October 2026 | User-run desktop checks of the published source distribution. Individual interpreter modes and installation format were not enumerated. macOS and unrecorded Linux round trips remain separate checks |
-| Four public Data Library examples | PASSED: maintainer loaded and verified all four on Windows and Ubuntu 26.04 LTS, 13 October 2026 | ZIP integrity, exact saved scripts, no service attachments, dataset metadata and byte-identical source/JMO/installed documents passed on Windows. Python checks for 23/25/28 passed both interpreters; 24 passed System Python. Calculations of 23/25/28 were independently compared with R. Clean-clone build and Data Library desktop verification passed on Ubuntu. macOS remains unverified |
-
-Pending manual checks: run the renamed examples in both interpreters where
-applicable, inspect Markdown/HTML/PNG/Table output, confirm editor completion,
-check an unexecuted editor draft after `.omv` reopening, Pjp and Linux/Flatpak,
-and check result export. No changes to Rj are involved.
-
-All 12 Python code blocks passed execution with System Python. Ten passed with
-jamovi Python; the two examples requiring matplotlib and pandas were skipped
-because those packages are unavailable there. The PNG filename placeholder was
-replaced by a generated local PNG fixture during testing. These checks validate
-the Python examples and their result descriptions, not browser rendering.
+User scripts execute with the interpreter's permissions; test results do not
+certify arbitrary code or HTML as safe. Model checks validate implementations,
+not statistical suitability for a different dataset/design. Specific export,
+close/reopen and returned-column scenarios should be recorded individually when
+tested. macOS desktop compilation/use and a complete OS/interpreter matrix remain
+unverified.

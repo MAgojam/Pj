@@ -255,3 +255,112 @@ and distinct D3 chart-container checks passed. A trial R source archive excluded
 The maintainer subsequently confirmed successful manual execution of all 28
 standalone scripts: **PASSED (14 October 2026)**. No full platform/interpreter
 matrix was specified in that confirmation.
+
+## General D3 plots — local development preview
+
+`inst/python/mzPj_plots.py` adds `mzpjShowScatter` and `mzpjShowHistogram`, exposed
+in the editor namespace and completion. The R Python service includes the two
+generated assets in its serialized configuration; Python embeds them in an
+independent HTML result. No pandas, matplotlib, NumPy or SciPy is required.
+Histogram bins and frequencies are computed in Python, while JavaScript handles
+presentation and interaction. Payload text cannot close its script element.
+
+Only `inst/extdata/mzPj_d3.min.js` and `mzPj_d3.min.css` are distributed graphics
+assets; their editable sources, npm tools and build script remain outside this
+repository, as requested by the maintainer. Version metadata and GitHub releases
+are unchanged pending manual validation and the next release decision.
+
+Eleven plot contract tests passed with each of four interpreters: Windows System
+Python, Windows embedded Python, Linux host Python, and Flatpak Python. Regression
+checks passed for 36 System Python cases and 32 embedded cases, with three expected
+embedded dependency/interpreter errors. The R/Python transport and Chrome checks
+for independent charts, keyboard selection, group visibility, proportional zoom,
+reset, accordions and responsive layout passed.
+
+Separate Windows and WSL Linux previews compiled and installed successfully.
+Archive checks confirmed the generated assets and Python helper match the
+working sources, all four OMVs are unchanged, and private bundle sources are
+absent. Published 1.0.1 assets remain unchanged. Examples 29 and 30 and the
+[plotting guide](mzPj_d3_plots.md) are ready for manual jamovi validation; these
+previews are not a new published release.
+
+## Teaching graphics extension — local preview
+
+The maintainer confirmed examples 29 and 30 as PASSED. The extension adds
+`mzpjShowBoxPlot`, `mzpjShowBar`, `mzpjShowLine`, `mzpjShowIntervals` and
+`mzpjShowDistribution`. The normal explorer changes population parameters and N
+locally; it does not rerun Python analyses. Examples 31–39 cover descriptive
+graphics, independent/paired comparisons, ANOVA, ANCOVA, MANOVA and MANCOVA.
+See the [teaching guide](mzPj_teaching_plots.md) for datasets, dependencies and
+the interpretation of each result. Manual jamovi validation of 31–39 is pending.
+
+Eighteen plotting contract tests passed in Windows System/embedded and Linux
+host/Flatpak Python. Runtime checks passed for 45 System Python cases and 40
+embedded cases, with four expected embedded dependency/interpreter errors.
+Chrome rendered 42 HTML results without JavaScript errors. Interaction checks
+covered missing-value line breaks, interval row order, keyboard selection,
+independent chart controls and the normal explorer's N/SE relationship.
+The actual R/Python bridge returned all seven chart types successfully with
+both Windows interpreters. Teaching test results were compared with R; ANOVA
+and ANCOVA calculations were also compared with statsmodels OLS references.
+
+Both platform previews compiled and installed successfully. ZIP integrity,
+current plotting assets, all four unchanged OMVs and package exclusions were
+verified. The published 1.0.1 packages remain unchanged. No new GitHub release,
+commit or module-version change is included in this development preview.
+
+### Built-in dataset adaptation
+
+At the maintainer's request, examples 31–39 now use jamovi's existing Data Library
+entries instead of the synthetic Pj OMVs: Tooth Growth for 31/32, Bugs for 33/36,
+and Iris for 37–39; 34/35 still require no dataset. The scripts read only selected
+Pjp columns, without importing files. Bugs condition labels do not imply a
+before/after design. Iris examples use formula-safe aliases and MANCOVA profiles
+at a common covariate value within the species' observed overlapping range.
+The teaching guide lists exact variable names and a Big 5 scatter/histogram snippet.
+
+Both Windows interpreter suites passed again (45 System executions; 40 embedded,
+plus four expected dependency/interpreter errors). Chrome rendered 42 HTML results.
+Updated Bugs tests match R; Iris ANOVA, Kruskal–Wallis, ANCOVA and MANOVA/MANCOVA
+Wilks and Pillai statistics also match base R. Manual approval remains pending.
+No dataset, runtime code, version, JMO or published release is changed by this
+script/documentation adaptation; standalone scripts are excluded from compilation.
+
+## Linked D3 explorers — 1.1.0 development preview
+
+The maintainer confirmed all scripts 31–39 working. Three further standard-library
+functions are now exposed in Python and editor completion: `mzpjShowCorrelation`,
+`mzpjShowPaired` and `mzpjShowTestDistribution`. See the
+[linked explorer guide](mzPj_linked_d3.md) for API contracts, selection behavior,
+missing-data handling, theoretical-model limits and examples 40–42. The new
+examples use built-in Big 5/Bugs or no dataset and await manual jamovi approval.
+
+Twenty-four plot contract tests passed with each Windows System/embedded and
+Linux host/Flatpak interpreter. Runtime suites passed 48 System Python cases
+and 43 embedded cases, with four expected dependency/interpreter errors.
+Chrome rendered 47 HTML results. New interaction checks covered keyboard/mouse
+selection, linked brushing, paired filtering, resets and independent distribution
+controls. Browser density/tail calculations matched 245 SciPy references and
+175 quantiles, including df=1 and extreme tails. Actual R/Python configuration
+transport returned all ten HTML chart types. The native Output synchronization
+regression test also passed against the compiled Windows package.
+
+Bundle guards now identify generated source revisions rather than only version
+numbers, allowing newly added helpers to load alongside saved preview HTML.
+Editable bundle sources and npm tools remain outside the repository and JMO.
+Only generated minified graphics assets are distributed.
+
+DESCRIPTION and module metadata are now 1.1.0; minApp remains 28.3. Windows and
+WSL Linux previews compiled and installed successfully. Final archives contain
+all three minified assets, current Python helpers and the four unchanged OMVs;
+standalone scripts/private JS sources are absent. Published 1.0.1 packages remain
+untouched. No GitHub commit, tag or release was created for this preview.
+
+
+## Manual approval of linked explorers — 14 October 2026
+
+The maintainer confirmed scripts 40–42 PASSED. Together with earlier approvals,
+all D3 examples 29–42 have now passed manual execution. No complete platform/
+interpreter matrix was specified. Guides and the example catalogue now reflect
+this status. No runtime, JMO, GitHub commit, tag or release is changed by this
+validation-record update.

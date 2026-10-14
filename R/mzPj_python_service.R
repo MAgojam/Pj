@@ -11,7 +11,9 @@
         gsub('[\r\n]', '', jsonlite::base64_enc(
             readBin(iconPath, what='raw', n=file.info(iconPath)$size)))
     }), resourceNames)
-    services <- c('mzPj_environment.py', 'mzPj_results.py', 'mzPj_tables.py')
+    config$PLOT_JS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPj_d3.min.js'))
+    config$PLOT_CSS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPj_d3.min.css'))
+    services <- c('mzPj_environment.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py')
     config$SERVICES <- lapply(services, function(filename) {
         list(filename=filename, source=.mzPj_readText(file.path(
             dirname(path), 'python', filename)))
