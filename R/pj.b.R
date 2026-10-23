@@ -127,7 +127,13 @@ PjClass <- R6::R6Class(
             serviceLabel <- 'Service script'
             if (!is.null(scriptFile$filename) && nzchar(scriptFile$filename))
                 serviceLabel <- paste0(serviceLabel, ' (', scriptFile$filename, ')')
+            pythonPath <- if (self$options$python == 'external')
+                private$.findSystemPython()
+            else
+                private$.findPython()
+            libraries <- .mzPj_prepareLibraries(scriptPath, pythonPath, flatpakExternal)
             script <- .mzPj_pythonScript(scriptPath, list(
+                LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error,
                 DATASET=datasetPathFixed, OUTPATH=outputPathFixed, CODE=code,
                 SCRIPT_NAMES=list(service=serviceLabel), EXTSCRIPT=extScriptPathFixed,
                 DATASET_INLINE=if (flatpakExternal) datasetInline else '',
@@ -137,11 +143,6 @@ PjClass <- R6::R6Class(
                 FIGHEIGHT=if (is.null(figHeight)) '' else as.character(figHeight),
                 OUTPUT_MODE=outputMode, PYTHON_MODE=self$options$python,
                 SAVECOLUMNS=tolower(as.character(self$saveColumns))))
-
-            pythonPath <- if (self$options$python == 'external')
-                private$.findSystemPython()
-            else
-                private$.findPython()
 
             pythonArgs <- c('-')
 
@@ -163,6 +164,16 @@ PjClass <- R6::R6Class(
                 stdout=TRUE,
                 stderr=TRUE,
                 input=script)
+
+            # Pjp eredita lo stesso percorso; il controllo vale solo per Linux Flatpak esterno.
+            flatpakError <- .mzPj_flatpakHostError(result, flatpakExternal)
+            if (!is.null(flatpakError)) {
+                help <- jmvcore::Html$new(options=self$options,
+                    name='systemPythonHelp', title='System Python setup')
+                help$setContent(flatpakError$html)
+                self$results$add(help)
+                stop(flatpakError$headline, call.=FALSE)
+            }
 
             hasError <- FALSE
             rawOutput <- character()

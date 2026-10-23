@@ -182,6 +182,24 @@ const css = `
     grid-row: 3 ;
 }
 
+#menu > #code-label {
+    grid-column: 1 / -1 ;
+    max-width: none ;
+    display: flex ;
+    align-items: center ;
+    gap: 8px ;
+    overflow: visible ;
+}
+
+#pj-module-version {
+    color: #64748b ;
+    background: #f0f5fa ;
+    border-radius: 4px ;
+    padding: 1px 6px ;
+    font-size: 11px ;
+    font-weight: 400 ;
+}
+
 /* =====================================================
    VARIABLE SUPPLIER (Pjp) - le variabili qui selezionate
    diventano il dizionario "data" nel codice Python.

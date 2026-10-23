@@ -26,6 +26,14 @@ Python result functions and external service-script support.
 
 ## Features
 
+Version **1.2.0** adds eight explicitly activated pure-Python
+libraries: SymPy, mpmath, Jinja2, MarkupSafe, tabulate, uncertainties, SimPy and
+more-itertools. They are supplied with Pj for both interpreters, with no pip or
+network access needed at run time. Activate one with `mzpjUseLibrary('sympy')`,
+or inspect the catalog with `mzpjListLibraries()`. See the
+[bundled-library guide](docs/mzPj_bundled_libraries.md) and examples 43–51.
+The update also includes targeted Linux Flatpak/System Python setup diagnostics.
+
 Version **1.1.0** adds ten general D3 plotting functions: scatter plots,
 histograms, box plots, bars, lines, supplied intervals, normal and test-distribution
 explorers, linked correlation matrices and individual paired profiles. They work
@@ -36,7 +44,8 @@ with either Python interpreter without additional scientific libraries. See the
 
 The teaching examples use jamovi's built-in Tooth Growth, Bugs, Iris and Big 5
 datasets, or require no dataset. The maintainer confirmed all standalone examples
-01–42 working; the four existing Pj Data Library OMVs are retained unchanged.
+01–42 working; the four existing Pj Data Library OMVs are retained unchanged,
+and Learning Lab adds a fifth document with Pj and Pjp teaching analyses.
 Calculations in some teaching scripts require libraries specified in their headers,
 separately from the dependency-free plotting functions.
 
@@ -51,25 +60,31 @@ separately from the dependency-free plotting functions.
 
 ## Requirements and platform status
 
+Version **1.2.0** includes targeted Linux Flatpak/System Python setup diagnostics. See the
+[Linux System Python guide](docs/mzPj_linux_system_python.md).
+
 Install jamovi **28.3 or newer** and a Pj module build for your operating system. System Python is
 optional: jamovi Python is supplied by jamovi itself.
 
-The current version is **1.1.0**. Its Windows and Linux packages were compiled
-and installed using jamovi **28.11.0.0**; the Linux build used Ubuntu **22.04 WSL2**
-and the desktop Flatpak environment. The declared minimum jamovi version remains
-**28.3**. Python plotting checks passed with Windows System/embedded Python and
-Linux host/Flatpak Python. The maintainer confirmed examples 29–42 PASSED on
-14 October 2026; that confirmation does not enumerate every platform/interpreter
-combination.
+The 1.2.0 Windows and Linux packages were compiled and installed using jamovi
+**28.14.0.0**; the Linux build used **Ubuntu 26.04 WSL2** and the desktop Flatpak
+environment. Package checks verified all five Data Library documents, supplied
+resources and exclusion of standalone scripts. Backend checks passed with both
+interpreters on both systems, including calculated-column creation/removal and
+independent R numerical references for the Learning Lab analyses. The declared
+minimum jamovi version remains **28.3**.
 
 Earlier clean-clone compilation and all four Pj Data Library examples were
 verified by the maintainer on **Ubuntu 26.04 LTS**, as well as Windows. These
-four OMVs are unchanged in 1.1.0. macOS compilation and desktop use have not yet
+four OMVs are retained in 1.2.0 alongside Learning Lab. macOS compilation and desktop use have not yet
 been verified.
 
 The core result functions do not require pandas or matplotlib. Examples using
 these libraries require them in the selected interpreter, normally System Python.
 Pj does not install Python packages or modify jamovi's embedded Python installation.
+Its supplied pure-Python libraries are extracted into a separate user cache and
+activated explicitly; they require Python **3.10 or newer**. This requirement
+concerns the bundled-library feature, not every existing user script.
 Use **Show Python info** to inspect the active environment; detection of a library
 does not guarantee that all of its dependencies can be loaded.
 
@@ -80,16 +95,15 @@ local file. Select the `.jmo` built for your platform. The analyses appear under
 **Python → Pj**.
 
 Platform packages are published under
-[GitHub Releases](https://github.com/MAgojam/Pj/releases). The latest release is
-**[1.1.0](https://github.com/MAgojam/Pj/releases/tag/v1.1.0)**, with these assets:
+[GitHub Releases](https://github.com/MAgojam/Pj/releases). For version 1.2.0,
+select **Pj_1.2.0_win64.jmo** for Windows or **Pj_1.2.0_linux.jmo** for Linux
+when that release is available. Each includes all five Data Library documents;
+standalone `.py` examples are downloaded separately from the repository.
 
-- **[Windows 64-bit](https://github.com/MAgojam/Pj/releases/download/v1.1.0/Pj_1.1.0_win64.jmo)**.
-- **[Linux](https://github.com/MAgojam/Pj/releases/download/v1.1.0/Pj_1.1.0_linux.jmo)**.
-
-The `.jmo` files are release assets, not versioned source files. Version 1.1.0
-retains the 1.0.1 Pjp Output synchronization fix and adds the general D3 library,
-standalone examples 29–42 and their guides. Previous releases remain available
-in the [release history](https://github.com/MAgojam/Pj/releases).
+The `.jmo` files are release assets, not versioned source files. Version 1.2.0
+retains the Pjp Output synchronization fix and the general D3 library, and adds
+the supplied Python libraries and Learning Lab. Previous releases remain
+available in the [release history](https://github.com/MAgojam/Pj/releases).
 
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
@@ -312,6 +326,15 @@ loading and execution of all four examples from Data Library on Windows and
 Ubuntu 26.04 LTS, including a clean GitHub clone and compilation on Ubuntu
 (13 October 2026). All four Data Library
 documents contain their complete example code in the editor, with Browse empty.
+
+**Learning Lab - resampling and prediction**, added in 1.2.0, contains 96
+synthetic students and two editable analyses. Pj explores paired changes,
+bootstrap uncertainty and an omnibus permutation comparison of groups. Pjp
+models follow-up score using initial score and study hours, with interactive
+D3 prediction scenarios, leave-one-out validation and two optional output
+columns. Both interpreters can use the pure-Python libraries supplied by Pj;
+this example requires Python 3.10 or newer. All five Data Library documents
+are included in the JMO; standalone files in `pjscript` are excluded.
 
 - [Python results guide](docs/PYTHON_RESULTS_GUIDE.md): detailed function usage, parameters,
   errors, table styling and validation status.

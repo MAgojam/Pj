@@ -11,6 +11,8 @@ const initEditorFiles = require('./mzPj_editor_files');
 const runEditor = require('./mzPj_editor_run');
 const placeServiceHeader = require('./mzPj_service_header');
 const SuggestIcons = require('./suggesticons');
+// Sostituito dal compilatore leggendo 0000.yaml e verificando DESCRIPTION.
+const moduleVersion = '__MZPJ_MODULE_VERSION__';
 
 function arrayEquals(a, b) {
     return Array.isArray(a) &&
@@ -173,7 +175,7 @@ const events = {
         
         $config.innerHTML = `
             <div id="menu">
-                <label id="code-label">Python Code</label>
+                <label id="code-label"><span>Python Code</span><span id="pj-module-version"></span></label>
                 <label id="python-label">Python Version</label>
                 <select id="python-version">
                     <option value="bundled">jamovi Python</option>
@@ -197,6 +199,7 @@ const events = {
             </div>`;
 
         this.$editor = $contents.querySelector('#editor');
+        $config.querySelector('#pj-module-version').textContent = 'Pj v' + moduleVersion;
         this.$run = $contents.querySelector('#run');
         this.$menu = $contents.querySelector('#menu');
 

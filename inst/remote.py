@@ -18,6 +18,9 @@ _config = json.loads(base64.b64decode('{{MZPJ_CONFIG}}').decode('utf-8'))
 _pj_resources = _config.get('RESOURCES', {})
 _pj_plot_js = _config.get('PLOT_JS', '')
 _pj_plot_css = _config.get('PLOT_CSS', '')
+_pj_library_catalog = _config.get('LIBRARY_CATALOG', {})
+_pj_library_path = _config.get('LIBRARY_PATH')
+_pj_library_error = _config.get('LIBRARY_ERROR', '')
 for _key in ('DATASET', 'OUTPATH', 'CODE', 'SCRIPT_NAMES', 'EXTSCRIPT',
              'DATASET_INLINE', 'EXTSCRIPT_INLINE', 'D3_INLINE', 'STDIO_MODE',
              'FIGWIDTH', 'FIGHEIGHT', 'OUTPUT_MODE', 'PYTHON_MODE', 'SAVECOLUMNS'):

@@ -1,12 +1,62 @@
 # Standalone Python examples
 
 The reviewed Python files are available in [`pjscript/`](../pjscript). Their
-comments, instructions and result text are in English. They complement the four
+comments, instructions and result text are in English. They complement the five
 ready-to-run OMV documents in **Open → Data Library → Pj**.
 
 The standalone files are repository examples: **they are not installed with the
 module and are not included in the JMO**. Download or clone the repository to
-use them. The existing 1.0.1 packages and saved OMV examples remain unchanged.
+use them. Version 1.2.0 retains the four original OMVs and adds Learning Lab,
+which embeds separate Pj resampling and Pjp prediction analyses.
+
+## New in 1.2.0: libraries supplied by Pj
+
+All seven examples below require no dataset, work in either editor and use
+explicit bundled-library activation. No pip installation is required.
+See the [library guide](mzPj_bundled_libraries.md).
+
+| File | Demonstrates |
+|---|---|
+| [43_bundled_libraries.py](../pjscript/43_bundled_libraries.py) | Catalog, SymPy, mpmath and tabulate |
+| [44_jinja_markup_report.py](../pjscript/44_jinja_markup_report.py) | Jinja2 HTML report and MarkupSafe escaping |
+| [45_uncertainty_propagation.py](../pjscript/45_uncertainty_propagation.py) | Measurement uncertainty and correlated reuse |
+| [46_simpy_waiting_times.py](../pjscript/46_simpy_waiting_times.py) | Discrete-event simulation with a D3 bar plot |
+| [47_more_itertools_windows.py](../pjscript/47_more_itertools_windows.py) | Moving windows, batching and permutations |
+| [48_bundle_diagnostics.py](../pjscript/48_bundle_diagnostics.py) | Verify all eight ZIP-supplied libraries, versions, source and calculations |
+| [49_symbolic_sampling_report.py](../pjscript/49_symbolic_sampling_report.py) | Bernoulli-model uncertainty, symbolic/numerical calculations and report |
+
+Automated runs of these examples passed in Pj/Pjp with both interpreters on
+Windows and Ubuntu26 WSL. The maintainer subsequently confirmed PASSED on both
+operating systems and both interpreters after testing the supplied-library
+examples and the example 49 tooltip correction.
+
+## Learning Lab: two analyses on one dataset
+
+Open **Learning Lab - resampling and prediction** from **Data Library → Pj**.
+The OMV contains 96 synthetic students, the dataset and both editor scripts.
+The standalone copies below allow the same analyses to be loaded manually.
+
+| File | Analysis | Dataset columns and purpose |
+|---|---|---|
+| [50_pj_learning_lab.py](../pjscript/50_pj_learning_lab.py) | Pj | The first-line directive requests all six columns. Paired summaries, bootstrap uncertainty, D3 profiles/correlations and an omnibus permutation comparison of simulated groups. |
+| [51_pjp_learning_prediction.py](../pjscript/51_pjp_learning_prediction.py) | Pjp | Select `pre_score`, `post_score`, `study_hours`; `participant_id` is optional for labels. OLS prediction, leave-one-out validation and interactive conditional scenarios. |
+
+Both use the supplied pure-Python libraries and work with either interpreter
+on Python 3.10 or newer, without NumPy, SciPy, pandas or matplotlib. Keep Browse
+empty. Only Pjp 51 returns dataset columns: `WRITE_COLUMNS = True` creates
+`pj_lab_expected` and `pj_lab_loo_error`; changing it to `False` and running
+again removes this analysis's output columns. Do not select generated columns
+as inputs. Missing model rows remain missing in the outputs.
+
+Pj 50 does not modify the dataset. Its within-group paired tests do not compare
+groups; the omnibus permutation test assumes exchangeability under its null.
+Pjp 51 estimates adjusted associations, not causal effects. Its mean-response
+confidence band differs from an individual prediction interval. Chart controls
+do not refit the Python model or rerun inferential calculations.
+
+The maintainer saved the completed OMV. Backend comparisons against independent
+R calculations, output values/row alignment and browser interactions passed
+on the tested paths; these checks do not establish validity for other datasets.
 
 ## Load and run an example
 
@@ -44,7 +94,7 @@ load text into the editor, while Load does not attach a service file. Both files
 run in the **same selected Python interpreter**; loading a service cannot supply
 pandas or matplotlib if that interpreter cannot import them.
 
-The four Data Library OMVs contain complete editor code with Browse empty. They
+The five Data Library OMVs contain complete editor code with Browse empty. They
 do not depend on the standalone service files or paths on the maintainer's PC.
 
 ## Examples 01–14: data and result objects

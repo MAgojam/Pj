@@ -4,6 +4,8 @@
 }
 
 .mzPj_pythonScript <- function(path, config) {
+    config$LIBRARY_CATALOG <- jsonlite::fromJSON(file.path(dirname(path),
+        'extdata', 'mzPj_python_libraries.json'), simplifyVector=FALSE)
     resourceNames <- 'mzPj_icon_python.png'
     config$RESOURCES <- setNames(lapply(resourceNames, function(filename) {
         iconPath <- file.path(dirname(path), 'extdata', filename)
@@ -13,7 +15,7 @@
     }), resourceNames)
     config$PLOT_JS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPj_d3.min.js'))
     config$PLOT_CSS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPj_d3.min.css'))
-    services <- c('mzPj_environment.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py')
+    services <- c('mzPj_libraries.py', 'mzPj_environment.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py')
     config$SERVICES <- lapply(services, function(filename) {
         list(filename=filename, source=.mzPj_readText(file.path(
             dirname(path), 'python', filename)))
@@ -22,6 +24,39 @@
         jsonlite::toJSON(config, auto_unbox=TRUE, null='null', na='null', digits=NA)))))
     sub('{{MZPJ_CONFIG}}', gsub('\n', '', payload, fixed=TRUE),
         .mzPj_readText(path), fixed=TRUE)
+}
+
+.mzPj_prepareLibraries <- function(path, pythonPath, flatpakExternal=FALSE) {
+    # La cache appartiene all'interprete effettivo, anche quando gira sull'host Flatpak.
+    catalog <- jsonlite::fromJSON(file.path(dirname(path), 'extdata',
+        'mzPj_python_libraries.json'), simplifyVector=FALSE)
+    helper <- .mzPj_readText(file.path(dirname(path), 'python', 'mzPj_libraries.py'))
+    encode <- function(value) gsub('[\r\n]', '', jsonlite::base64_enc(charToRaw(
+        enc2utf8(as.character(jsonlite::toJSON(value, auto_unbox=TRUE, null='null'))))))
+    run <- function(archive=NULL) {
+        payload <- encode(list(catalog=catalog, archive=archive))
+        bootstrap <- paste0(helper, '\nimport json, base64\n',
+            "_pj_boot = json.loads(base64.b64decode('", payload, "'))\n",
+            "print('__MZPJ_CACHE__ ' + json.dumps(_pj_library_bootstrap(**_pj_boot)))\n")
+        args <- if (flatpakExternal) c('--host', '--directory=/tmp', '/usr/bin/python3', '-') else '-'
+        result <- suppressWarnings(system2(pythonPath, args=args, input=bootstrap,
+                                          stdout=TRUE, stderr=TRUE))
+        status <- attr(result, 'status')
+        if (!is.null(status) && status != 0L)
+            return(list(path=NULL, error=paste('Pj bundled libraries could not be prepared.',
+                paste(tail(result, 3L), collapse='\n'))))
+        response <- result[startsWith(result, '__MZPJ_CACHE__ ')]
+        if (length(response) != 1L)
+            return(list(path=NULL, error='Pj bundled libraries did not return a cache status.'))
+        jsonlite::fromJSON(substring(response, 16L), simplifyVector=FALSE)
+    }
+    prepared <- run()
+    if (identical(prepared$ready, FALSE)) {
+        archive <- file.path(dirname(path), 'extdata', catalog$archive)
+        raw <- readBin(archive, what='raw', n=file.info(archive)$size)
+        prepared <- run(gsub('[\r\n]', '', jsonlite::base64_enc(raw)))
+    }
+    prepared
 }
 
 .mzPj_dataset <- function(data) {
@@ -34,6 +69,59 @@
     # Una lista vuota deve restare un oggetto, non un array JSON.
     if (!length(columns)) return(jsonlite::fromJSON('{}', simplifyVector=FALSE))
     columns
+}
+
+.mzPj_flatpakHostError <- function(result, flatpakExternal=FALSE) {
+    # Riconosce il guasto del launcher, senza confonderlo con errori dello script.
+    status <- attr(result, 'status')
+    if (!isTRUE(flatpakExternal) || is.null(status) || status == 0L)
+        return(NULL)
+    lines <- as.character(result)
+    if (any(grepl('^__PJ_(ERROR|RESULT)__ ', lines)))
+        return(NULL)
+    diagnostic <- paste(lines, collapse='\n')
+    hostHint <- grepl('--host only works when the Flatpak is allowed to talk to org.freedesktop.Flatpak',
+                      diagnostic, fixed=TRUE)
+    portalError <- grepl('Portal call failed:', diagnostic, fixed=TRUE) &&
+        grepl('org\\.freedesktop\\.DBus\\.Error\\.(ServiceUnknown|AccessDenied)', diagnostic)
+    if (!hostHint && !portalError)
+        return(NULL)
+
+    # La diagnostica esterna va sempre trattata come testo, non come markup HTML.
+    escaped <- gsub('&', '&amp;', diagnostic, fixed=TRUE)
+    escaped <- gsub('<', '&lt;', escaped, fixed=TRUE)
+    escaped <- gsub('>', '&gt;', escaped, fixed=TRUE)
+    codeStyle <- paste0('margin:0.5em 0 1em;padding:0.6em 0.8em;',
+        'background:#f3f7fc;border-radius:4px;white-space:pre-wrap;',
+        'overflow-wrap:anywhere;font-size:0.95em')
+    list(
+        headline='System Python: Flatpak host access is unavailable.',
+        html=paste0(
+            '<section aria-label="System Python setup" style="padding-top:3em">',
+            '<div style="border-top:1px solid rgba(62,109,169,0.2);padding-top:0.8em;line-height:1.5">',
+            '<div style="color:#3e6da9;font-weight:600">System Python on Linux Flatpak</div>',
+            '<p>Flatpak could not access the <code>org.freedesktop.Flatpak</code> service ',
+            'to start Python on your computer, outside the jamovi container. ',
+            'This usually means that host execution has not been permitted. ',
+            'The failure occurred before your Python script started.</p>',
+            '<p>Close all jamovi windows. In a Linux terminal outside jamovi, ',
+            'choose one of the following options:</p>',
+            '<p><strong>Allow access for one launch:</strong></p>',
+            '<pre style="', codeStyle, '"><code>',
+            'flatpak run --talk-name=org.freedesktop.Flatpak org.jamovi.jamovi',
+            '</code></pre>',
+            '<p><strong>Allow access persistently for your user:</strong></p>',
+            '<pre style="', codeStyle, '"><code>',
+            'flatpak override --user --talk-name=org.freedesktop.Flatpak org.jamovi.jamovi',
+            '</code></pre>',
+            '<p>After the persistent setting, reopen jamovi normally, including from its icon. ',
+            'This permission allows jamovi to start processes on the host system. ',
+            'Then select System Python and run your script again.</p>',
+            '<p>If the same error persists after granting access, check that the Flatpak ',
+            'host service is available in your Linux session.</p>',
+            '<details><summary style="color:#3e6da9">Original Flatpak message</summary>',
+            '<pre style="', codeStyle, '">', escaped, '</pre></details>',
+            '</div></section>'))
 }
 
 .mzPj_checkProcess <- function(result) {

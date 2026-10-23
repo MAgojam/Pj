@@ -1,0 +1,7 @@
+{
+  "name": "mzpj-ui-build",
+  "private": true,
+  "browserify": {
+    "transform": ["./jamovi/js/mzPj_metadata_transform.js"]
+  }
+}
