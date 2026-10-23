@@ -102,6 +102,15 @@ def _pj_python_info():
     )
     diagnostics = ''.join('<p class="pj-pyinfo-note">' + escape(note) + '</p>'
                           for note in dict.fromkeys(notes))
+    bundled = globals().get('mzpjListLibraries', lambda: [])()
+    bundle_html = ('<details><summary>Pj bundled libraries (' + str(len(bundled)) +
+        ')</summary><p class="pj-pyinfo-note">Activate with mzpjUseLibrary(name). '
+        'Bundled versions are independent of packages installed in this interpreter.</p><ul>' +
+        ''.join('<li><span>' + escape(item['Library']) + '</span> <small>' +
+                escape(item['Version']) + (' · active' if item['Active'] else '') +
+                '</small></li>' for item in bundled) + '</ul>' +
+        ('<p class="pj-pyinfo-note">The bundled library cache is unavailable.</p>'
+         if bundled and not bundled[0]['Available'] else '') + '</details>') if bundled else ''
     return '''<section class="pj-pyinfo">
 <style>
 .pj-pyinfo { width: 960px; max-width: 100%; color: #1e293b; font: 13px/1.55 sans-serif; }
@@ -131,7 +140,7 @@ def _pj_python_info():
 </style>
 <div class="pj-pyinfo-header"><h3>Python environment</h3>
 <span class="pj-pyinfo-badge">''' + interpreter + '''</span></div>
-<dl>''' + rows + '''</dl>
+<dl>''' + rows + '''</dl>''' + bundle_html + '''
 <details><summary>Available libraries and modules (''' + str(len(libraries)) + ''')</summary>
 <p class="pj-pyinfo-note">Detected in this interpreter without importing additional libraries.
 Presence does not guarantee that all runtime dependencies can load.

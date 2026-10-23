@@ -6,6 +6,8 @@ module.exports = [
     {"name": "mzpjShowHtml", "value": "mzpjShowHtml", "meta": "Pj results", "type": "func"},
     {"name": "mzpjShowImage", "value": "mzpjShowImage", "meta": "Pj results", "type": "func"},
     {"name": "mzpjShowTable", "value": "mzpjShowTable", "meta": "Pj results", "type": "func"},
+    {"name": "mzpjUseLibrary", "value": "mzpjUseLibrary", "meta": "Pj libraries", "type": "func"},
+    {"name": "mzpjListLibraries", "value": "mzpjListLibraries", "meta": "Pj libraries", "type": "func"},
     {"name": "mzpjShowScatter", "value": "mzpjShowScatter", "meta": "Pj D3 plots", "type": "func"},
     {"name": "mzpjShowHistogram", "value": "mzpjShowHistogram", "meta": "Pj D3 plots", "type": "func"},
     {"name": "mzpjShowBoxPlot", "value": "mzpjShowBoxPlot", "meta": "Pj D3 plots", "type": "func"},

@@ -364,3 +364,77 @@ all D3 examples 29–42 have now passed manual execution. No complete platform/
 interpreter matrix was specified. Guides and the example catalogue now reflect
 this status. No runtime, JMO, GitHub commit, tag or release is changed by this
 validation-record update.
+
+## Linux Flatpak host-access diagnostic — 1.1.1 working patch
+
+On the maintainer's request, the shared backend now recognizes failed
+flatpak-spawn host launches with the explicit permission hint or a portal
+ServiceUnknown/AccessDenied response. Only Linux Flatpak System Python uses
+this branch. Python error/result protocol markers and unrelated failures are
+not reclassified. A short error headline accompanies setup HTML containing the
+temporary launch command, the persistent per-user setting and a collapsed,
+escaped original diagnostic. No permission change is executed by the module.
+
+The pure R recognition/escaping test passed. Integration tests with the actual
+compiled R6 Pj/Pjp backends passed inside Flatpak both without access (setup help)
+and with a temporary grant (successful execution). Embedded Python passed in
+both cases. Windows runtime tests with System/embedded Python in Pj/Pjp passed
+without this message. Browser checks of the actual help HTML passed, including
+both commands and its diagnostic accordion.
+
+Windows and Linux preview builds/installations of 1.1.1 passed; ZIP integrity,
+versions and unchanged Data Library OMVs/graphics assets were checked. The
+maintainer visually approved the new message and applied the persistent user
+override in Ubuntu26 WSL. The diagnostic is now included in the 1.2.0 development
+update; no 1.1.1 commit or release was published. The stable release remains 1.1.0.
+
+## Bundled Python libraries — 1.2.0 development update
+
+Added a pinned source-only ZIP and provenance/license catalog, a Python cache
+bootstrap and explicit import finder, and mzpjUseLibrary/mzpjListLibraries.
+The cache is per bundle digest and interpreter major/minor version. R probes
+the actual interpreter before transferring the archive on a miss; Linux Flatpak
+System Python prepares a host-visible cache through flatpak-spawn. No whole-cache
+sys.path insertion or automatic replacement of previously imported packages.
+MarkupSafe uses its upstream Python fallback, with no native extension shipped.
+
+Eight libraries and five repository-only examples 43–47 are documented in the
+bundled-library guide. Scientific inference limitations are stated in examples.
+The four Data Library OMVs are unchanged. A D3 renderer correction removes the
+root SVG title that could overlap point tooltips; the accessible aria-label remains.
+
+Calculation/metadata/source-isolation/cache/archive checks passed with Windows
+System3.14.7 and embedded3.14.5, Ubuntu26 System3.14.4 and embedded3.13.16,
+and Ubuntu22 System3.10.12. Forty actual backend runs of examples43–47 passed
+(Pj/Pjp x both interpreters x Windows/Ubuntu26), including the Python-info report.
+Output and Flatpak diagnostic unit checks passed. Manual approval of the new
+examples is pending, distinct from prior maintainer PASSED of scripts01–42.
+
+## Module version in the editor settings
+
+The shared Pj/Pjp popup displays Python Code with a small Pj version badge.
+Browserify's package-level build transform reads jamovi/0000.yaml and checks
+DESCRIPTION for consistency. It injects the version while compiling main.js,
+including when jmvtools first copies sources into build/js. No metadata is
+fetched by the browser and no manually maintained UI version is introduced.
+package.json configures that build transform and is excluded from the R build.
+
+## Final 1.2.0 package checks — 23 October 2026
+
+Windows and Linux builds using jamovi28.14 passed package and runtime checks.
+All five declared OMVs are included, including the maintainer-saved Learning
+Lab with both Pj and Pjp analyses. Standalone pjscript files remain excluded
+from JMO builds, while their source copies belong in the repository.
+Twelve Learning Lab backend runs passed: Pj resampling and Pjp prediction with
+output enabled/disabled, across two interpreters and two operating systems.
+Checks compare paired-t/omnibus F/OLS estimates, intervals and probabilities
+with R; LOO errors are checked by independent R refits. Output names, numeric
+values, missing-row alignment and empty-output removal contracts passed.
+The existing Output and Flatpak diagnostic tests also passed. This does not
+claim new manual GUI validation on every platform or a macOS build.
+
+The maintainer approved analysis-pj.svg as the ribbon monogram without code
+brackets. It is kept at the repository root for Core Team integration; the
+editor's inline icon retains its brackets. No jamovi client patch is shipped.
+Earlier pending-approval and four-document notes above describe intermediate
+development states, not the final 1.2.0 package contents.

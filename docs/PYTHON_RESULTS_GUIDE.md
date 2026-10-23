@@ -1,6 +1,6 @@
 # Python results in Pj and Pjp
 
-Working guide — updated 14 October 2026.
+Working guide — updated 23 October 2026.
 
 This guide documents the Python functions supplied by Pj/Pjp. Examples use
 English result labels and the public `mzpj` camelCase names.
@@ -31,6 +31,9 @@ Choose the interpreter under **Configuration → Python Version**:
   using pandas or matplotlib require those packages in that interpreter.
 
 Pj/Pjp does not install packages or modify jamovi's embedded Python.
+For Linux Flatpak System Python host access, see the
+[setup guide](mzPj_linux_system_python.md). Patch 1.1.1 adds a targeted help result
+when the Flatpak launcher reports the host-access failure.
 **Show Python info** displays the active interpreter and detected modules.
 Detection does not guarantee that every module's runtime dependencies can load.
 
@@ -1024,3 +1027,13 @@ not statistical suitability for a different dataset/design. Specific export,
 close/reopen and returned-column scenarios should be recorded individually when
 tested. macOS desktop compilation/use and a complete OS/interpreter matrix remain
 unverified.
+## Libraries supplied by Pj 1.2.0
+
+Use `mzpjUseLibrary(name, source='bundled')` to activate a supplied library and
+return its module. Required bundled dependencies are activated together.
+Use `mzpjListLibraries()` for a table-ready catalog of versions and status.
+These functions work in Pj/Pjp and with either Python interpreter, with no pip
+installation. Source selection must precede imports; `source='system'` requests
+the ordinary environment of the selected interpreter. See the
+[complete library guide](mzPj_bundled_libraries.md) for cache behavior, versions,
+dependencies, examples, limitations and licensing.
