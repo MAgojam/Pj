@@ -1,0 +1,89 @@
+name: Build Pj macOS JMO
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/macos-jmo.yml'
+      - '.github/scripts/macos/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }} - jamovi 28.14
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+            download_arch: arm64
+            sha256: fd42054f4801416d2b78e622cceb1c076d149cd1009a3147bfe327c363b48c12
+          - runner: macos-15-intel
+            arch: x86_64
+            download_arch: x64
+            sha256: d17ccdc9e3c2151f8c237875b859963685e98627f5d293def8fd95694c12781d
+    runs-on: ${{ matrix.runner }}
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      JAMOVI_VERSION: 28.14.0.0
+      EXPECTED_ARCH: ${{ matrix.arch }}
+      DMG_SHA256: ${{ matrix.sha256 }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: ci
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          ref: v1.2.0
+          path: module
+          persist-credentials: false
+      - name: Download and verify jamovi
+        env:
+          DOWNLOAD_ARCH: ${{ matrix.download_arch }}
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = "$EXPECTED_ARCH"
+          URL="https://www.jamovi.org/downloads/jamovi-${JAMOVI_VERSION}-macos-${DOWNLOAD_ARCH}.dmg"
+          curl --fail --location --retry 3 --referer https://www.jamovi.org/download.html "$URL" -o "$RUNNER_TEMP/jamovi.dmg"
+          printf '%s  %s\n' "$DMG_SHA256" "$RUNNER_TEMP/jamovi.dmg" | shasum -a 256 --check
+          hdiutil verify "$RUNNER_TEMP/jamovi.dmg"
+          mkdir -p "$RUNNER_TEMP/jamovi-mount"
+          hdiutil attach "$RUNNER_TEMP/jamovi.dmg" -readonly -nobrowse -mountpoint "$RUNNER_TEMP/jamovi-mount"
+          trap 'hdiutil detach "$RUNNER_TEMP/jamovi-mount"' EXIT
+          ditto "$RUNNER_TEMP/jamovi-mount/jamovi.app" /Applications/jamovi.app
+          test -x /Applications/jamovi.app/Contents/MacOS/jamovi
+          RH=/Applications/jamovi.app/Contents/Frameworks/R.framework/Versions/Current/Resources
+          test -x "$RH/bin/Rscript"
+          echo "JAMOVI_R_HOME=$RH" >> "$GITHUB_ENV"
+          mkdir -p "$GITHUB_WORKSPACE/results"
+          sw_vers > "$GITHUB_WORKSPACE/results/environment.txt"
+          uname -a >> "$GITHUB_WORKSPACE/results/environment.txt"
+          file "$RH/bin/exec/R" >> "$GITHUB_WORKSPACE/results/environment.txt"
+          lipo "$RH/bin/exec/R" -verify_arch "$EXPECTED_ARCH"
+      - name: Compile with the embedded jamovi R
+        run: |
+          set -euo pipefail
+          export R_HOME="$JAMOVI_R_HOME"
+          "$R_HOME/bin/Rscript" --vanilla ci/.github/scripts/macos/build.R "$GITHUB_WORKSPACE/module" "$GITHUB_WORKSPACE/results" 2>&1 | tee results/build.log
+      - name: Verify the JMO package
+        run: python3 ci/.github/scripts/macos/verify.py module results "$EXPECTED_ARCH"
+      - name: Test the compiled R and Python backends
+        run: |
+          set -euo pipefail
+          export R_HOME="$JAMOVI_R_HOME"
+          "$R_HOME/bin/Rscript" --vanilla ci/.github/scripts/macos/check.R "$GITHUB_WORKSPACE/module" "$GITHUB_WORKSPACE/results" 2>&1 | tee results/backend.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Pj-macos-${{ matrix.arch }}-jamovi28.14
+          path: results/
+          if-no-files-found: error
+          retention-days: 14
