@@ -3,3 +3,4 @@
 ^jamovi/.*$
 ^pjscript$
 ^package\.json$
+^\.github$

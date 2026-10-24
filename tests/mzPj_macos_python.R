@@ -1,0 +1,46 @@
+# Verifica percorsi reali e con spazi, fallback e assenza di interpreti nell'app.
+args <- commandArgs(trailingOnly=TRUE)
+root <- if (length(args)) args[1] else '.'
+source(file.path(root,'R','mzPj_python_service.R'))
+temporary <- tempfile('mzPj-macos-paths-')
+dir.create(temporary)
+contents <- file.path(temporary,'Application Folder','jamovi.app','Contents')
+rHome <- file.path(contents,'Frameworks','R.framework','Versions','4.6','Resources')
+dir.create(file.path(rHome,'bin'),recursive=TRUE)
+launcher <- file.path(contents,'MacOS','python')
+dir.create(dirname(launcher),recursive=TRUE)
+stopifnot(file.create(launcher))
+expected <- normalizePath(launcher,winslash='/')
+stopifnot(identical(.mzPj_findMacPython(rHome),expected),
+          identical(.mzPj_findMacPython(file.path(rHome,'bin','..')),expected))
+if (Sys.info()[['sysname']] != 'Windows') {
+    current <- file.path(dirname(dirname(rHome)),'Current')
+    stopifnot(file.symlink(dirname(rHome),current))
+    stopifnot(identical(.mzPj_findMacPython(file.path(current,'Resources')),expected))
+}
+framework <- file.path(contents,'Frameworks','Python.framework','Versions')
+for (version in c('3.9','3.11','3.14')) dir.create(file.path(framework,version,'bin'),recursive=TRUE)
+legacy <- file.path(framework,'3.11','bin','python3')
+older <- file.path(framework,'3.9','bin','python3')
+stopifnot(file.create(legacy),file.create(older))
+stopifnot(identical(.mzPj_findMacPython(rHome),expected))
+unlink(launcher)
+stopifnot(identical(.mzPj_findMacPython(rHome),normalizePath(legacy,winslash='/')))
+unlink(c(legacy,older))
+fallback <- file.path(contents,'Frameworks','python','bin','python3')
+dir.create(dirname(fallback),recursive=TRUE)
+stopifnot(file.create(fallback))
+stopifnot(identical(.mzPj_findMacPython(rHome),normalizePath(fallback,winslash='/')))
+unlink(fallback)
+stopifnot(is.null(.mzPj_findMacPython(rHome)))
+dir.create(launcher)
+stopifnot(is.null(.mzPj_findMacPython(rHome)))
+outside <- file.path(temporary,'system-R','Resources')
+dir.create(outside,recursive=TRUE)
+stopifnot(is.null(.mzPj_findMacPython(outside)))
+# La pulizia riguarda soltanto la directory temporanea creata da questo test.
+stopifnot(identical(dirname(normalizePath(temporary,winslash='/')),
+                    normalizePath(tempdir(),winslash='/')),
+          startsWith(basename(temporary),'mzPj-macos-paths-'))
+unlink(temporary,recursive=TRUE)
+cat('macOS Python discovery: app layout, spaces, bin/.., priority, version order, fallback and absent executable PASSED\n')

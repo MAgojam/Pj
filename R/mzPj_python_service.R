@@ -144,6 +144,30 @@
     paths[order(numeric_version(labels), decreasing=TRUE)]
 }
 
+.mzPj_findMacPython <- function(rHome) {
+    # R può trovarsi dietro Current e includere bin/..: risalire dall'ubicazione reale.
+    current <- normalizePath(rHome, winslash='/', mustWork=FALSE)
+    repeat {
+        parent <- dirname(current)
+        if (basename(current) == 'Contents' && grepl('\\.app$', basename(parent), ignore.case=TRUE))
+            break
+        if (identical(parent, current))
+            return(NULL)
+        current <- parent
+    }
+    frameworks <- file.path(current, 'Frameworks')
+    candidates <- file.path(current, 'MacOS', c('python', 'python3'))
+    versionsPath <- file.path(frameworks, 'Python.framework', 'Versions')
+    if (dir.exists(versionsPath)) {
+        versions <- .mzPj_orderVersions(list.dirs(versionsPath, recursive=FALSE, full.names=TRUE))
+        candidates <- c(candidates, file.path(versions, 'bin', 'python3'))
+    }
+    candidates <- c(candidates, file.path(frameworks, 'python', 'bin', 'python3'))
+    available <- candidates[file.exists(candidates) & !dir.exists(candidates)]
+    if (!length(available)) return(NULL)
+    normalizePath(available[1], winslash='/', mustWork=TRUE)
+}
+
 .mzPj_findPython <- function() {
     os <- Sys.info()[['sysname']]
     rHome <- R.home()
@@ -153,31 +177,7 @@
     if (os == 'Windows') {
         pythonPath <- file.path(frameworksDir, 'python', 'python.exe')
     } else if (os == 'Darwin') {
-        pythonFramework <- file.path(frameworksDir, 'Python.framework', 'Versions')
-        if (dir.exists(pythonFramework)) {
-            versions <- list.dirs(
-                pythonFramework,
-                full.names=FALSE,
-                recursive=FALSE
-            )
-            if (length(versions) > 0) {
-                latestVersion <- .mzPj_orderVersions(versions)[1]
-                pythonPath <- file.path(
-                    pythonFramework,
-                    latestVersion,
-                    'bin',
-                    'python3'
-                )
-            }
-        }
-
-        if (is.null(pythonPath) || !file.exists(pythonPath))
-            pythonPath <- file.path(
-                frameworksDir,
-                'python',
-                'bin',
-                'python3'
-            )
+        return(.mzPj_findMacPython(rHome))
     } else {
         pythonPath <- Sys.which('python3')
 

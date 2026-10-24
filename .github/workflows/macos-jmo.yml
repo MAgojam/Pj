@@ -6,6 +6,8 @@ on:
     paths:
       - '.github/workflows/macos-jmo.yml'
       - '.github/scripts/macos/**'
+      - 'R/mzPj_python_service.R'
+      - 'tests/mzPj_macos_python.R'
 
 permissions:
   contents: read
@@ -32,6 +34,7 @@ jobs:
       JAMOVI_VERSION: 28.14.0.0
       EXPECTED_ARCH: ${{ matrix.arch }}
       DMG_SHA256: ${{ matrix.sha256 }}
+      SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
     defaults:
       run:
         shell: bash
@@ -42,7 +45,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v7
         with:
-          ref: v1.2.0
+          ref: ${{ env.SOURCE_COMMIT }}
           path: module
           persist-credentials: false
       - name: Download and verify jamovi

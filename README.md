@@ -26,6 +26,11 @@ Python result functions and external service-script support.
 
 ## Features
 
+The **1.2.1 portability update in preparation** corrects discovery of jamovi's
+embedded Python on macOS. It locates the interpreter relative to the app that
+contains R, including relocated apps and framework symlinks. Intel and Apple
+Silicon packages are being checked separately; desktop validation is pending.
+
 Version **1.2.0** adds eight explicitly activated pure-Python
 libraries: SymPy, mpmath, Jinja2, MarkupSafe, tabulate, uncertainties, SimPy and
 more-itertools. They are supplied with Pj for both interpreters, with no pip or
@@ -107,7 +112,8 @@ available in the [release history](https://github.com/MAgojam/Pj/releases).
 
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
-public jamovi module library. No macOS release is currently planned or validated.
+public jamovi module library. macOS package validation is in progress; no manual
+macOS desktop approval is claimed.
 
 ## First analysis
 
