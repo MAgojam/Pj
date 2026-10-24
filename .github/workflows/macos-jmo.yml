@@ -68,10 +68,12 @@ jobs:
           uname -a >> "$GITHUB_WORKSPACE/results/environment.txt"
           file "$RH/bin/exec/R" >> "$GITHUB_WORKSPACE/results/environment.txt"
           lipo "$RH/bin/exec/R" -verify_arch "$EXPECTED_ARCH"
+          sed -n '1,38p' "$RH/bin/R" >> "$GITHUB_WORKSPACE/results/environment.txt"
       - name: Compile with the embedded jamovi R
         run: |
           set -euo pipefail
           export R_HOME="$JAMOVI_R_HOME"
+          export RHOME="$JAMOVI_R_HOME"
           "$R_HOME/bin/Rscript" --vanilla ci/.github/scripts/macos/build.R "$GITHUB_WORKSPACE/module" "$GITHUB_WORKSPACE/results" 2>&1 | tee results/build.log
       - name: Verify the JMO package
         run: python3 ci/.github/scripts/macos/verify.py module results "$EXPECTED_ARCH"
@@ -79,6 +81,7 @@ jobs:
         run: |
           set -euo pipefail
           export R_HOME="$JAMOVI_R_HOME"
+          export RHOME="$JAMOVI_R_HOME"
           "$R_HOME/bin/Rscript" --vanilla ci/.github/scripts/macos/check.R "$GITHUB_WORKSPACE/module" "$GITHUB_WORKSPACE/results" 2>&1 | tee results/backend.log
       - uses: actions/upload-artifact@v4
         if: always()
