@@ -18,8 +18,10 @@ assert commit=='16b50110ed4d6e3b8615842a841381d9b0527732'
 with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
     assert z.testzip() is None
     description=z.read('Pj/R/Pj/DESCRIPTION').decode()
-    assert 'Version: 1.2.0' in description and 'apple-darwin' in description
-    assert ('aarch64' if arch=='arm64' else 'x86_64') in description
+    assert 'Version: 1.2.0' in description and 'Built: R 4.6.' in description
+    runtime=(out/'runtime.txt').read_text()
+    assert 'apple-darwin' in runtime
+    assert ('aarch64' if arch=='arm64' else 'x86_64') in runtime
     meta=z.read('Pj/jamovi.yaml').decode()
     assert '28.3' in meta and '1.2.0' in meta
     datasets=re.findall(r'^\s+path:\s*(\S+\.omv)\s*$',meta,re.M)
