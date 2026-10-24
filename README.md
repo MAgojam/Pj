@@ -29,7 +29,9 @@ Python result functions and external service-script support.
 The **1.2.1 portability update in preparation** corrects discovery of jamovi's
 embedded Python on macOS. It locates the interpreter relative to the app that
 contains R, including relocated apps and framework symlinks. Intel and Apple
-Silicon packages are being checked separately; desktop validation is pending.
+Silicon package and automated backend checks passed with jamovi28.14, embedded
+Python3.11.9 and System Python3.14.7. Windows/Linux regression checks also passed.
+Manual macOS desktop validation and publication of 1.2.1 remain pending.
 
 Version **1.2.0** adds eight explicitly activated pure-Python
 libraries: SymPy, mpmath, Jinja2, MarkupSafe, tabulate, uncertainties, SimPy and

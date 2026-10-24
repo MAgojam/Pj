@@ -457,3 +457,12 @@ The runner's native Node avoids an ARM-only executable in the node R package
 on Intel. RHOME is set for the relocated Rscript launcher. Package checks,
 backend tests and desktop approval remain distinct; do not infer a GUI PASSED
 from a successful compile. No release 1.2.1 is published by this preparation.
+
+Automated validation completed on 24 October2026 from signed commit f928641:
+GitHub run40113732611 passed both macOS15 runner jobs with jamovi28.14/R4.6.0.
+Both discovered Contents/MacOS/python and ran Python3.11.9 plus their native
+Homebrew System Python3.14.7. Supplied-library calculations, metadata, cache,
+source isolation, archive protections, Pj/Pjp execution and Output contracts
+passed. Windows/Linux1.2.1 builds also passed resource/five-OMV checks and
+twelve Learning Lab backend regression runs with independent R references.
+This records automatic coverage only; no macOS desktop GUI approval is claimed.
