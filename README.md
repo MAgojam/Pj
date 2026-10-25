@@ -26,12 +26,13 @@ Python result functions and external service-script support.
 
 ## Features
 
-The **1.2.1 portability update in preparation** corrects discovery of jamovi's
+The **1.2.1 portability update** corrects discovery of jamovi's
 embedded Python on macOS. It locates the interpreter relative to the app that
 contains R, including relocated apps and framework symlinks. Intel and Apple
 Silicon package and automated backend checks passed with jamovi28.14, embedded
 Python3.11.9 and System Python3.14.7. Windows/Linux regression checks also passed.
-Manual macOS desktop validation and publication of 1.2.1 remain pending.
+Manual use on an Apple Silicon Mac was reported PASSED on 25 October 2026.
+Manual Intel Mac validation remains pending; its automated backend checks passed.
 
 Version **1.2.0** adds eight explicitly activated pure-Python
 libraries: SymPy, mpmath, Jinja2, MarkupSafe, tabulate, uncertainties, SimPy and
@@ -83,8 +84,10 @@ minimum jamovi version remains **28.3**.
 
 Earlier clean-clone compilation and all four Pj Data Library examples were
 verified by the maintainer on **Ubuntu 26.04 LTS**, as well as Windows. These
-four OMVs are retained in 1.2.0 alongside Learning Lab. macOS compilation and desktop use have not yet
-been verified.
+four OMVs are retained alongside Learning Lab. Version 1.2.1 adds separate
+macOS Apple Silicon (arm64) and Intel (x86_64) packages built with jamovi28.14.
+Both passed automated package and backend checks; Apple Silicon also passed
+a reported manual desktop trial. Manual Intel desktop validation remains pending.
 
 The core result functions do not require pandas or matplotlib. Examples using
 these libraries require them in the selected interpreter, normally System Python.

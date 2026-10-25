@@ -439,7 +439,7 @@ editor's inline icon retains its brackets. No jamovi client patch is shipped.
 Earlier pending-approval and four-document notes above describe intermediate
 development states, not the final 1.2.0 package contents.
 
-## macOS discovery correction — 1.2.1 in preparation
+## macOS discovery correction — 1.2.1
 
 Inspection of the official jamovi28.14 Intel and ARM DMGs identified the embedded
 executable as Contents/MacOS/python. The 1.2.0 Darwin branch assumed both the
@@ -456,7 +456,7 @@ using the corresponding checksum-pinned jamovi image and its actual R runtime.
 The runner's native Node avoids an ARM-only executable in the node R package
 on Intel. RHOME is set for the relocated Rscript launcher. Package checks,
 backend tests and desktop approval remain distinct; do not infer a GUI PASSED
-from a successful compile. No release 1.2.1 is published by this preparation.
+from a successful compile.
 
 Automated validation completed on 24 October2026 from signed commit f928641:
 GitHub run40113732611 passed both macOS15 runner jobs with jamovi28.14/R4.6.0.
@@ -465,4 +465,7 @@ Homebrew System Python3.14.7. Supplied-library calculations, metadata, cache,
 source isolation, archive protections, Pj/Pjp execution and Output contracts
 passed. Windows/Linux1.2.1 builds also passed resource/five-OMV checks and
 twelve Learning Lab backend regression runs with independent R references.
-This records automatic coverage only; no macOS desktop GUI approval is claimed.
+On 25 October2026 the maintainer reported a manual Apple Silicon Mac trial
+PASSED. Individual examples and interpreter modes were not specified, so this
+does not claim a complete manual test matrix. Intel manual desktop validation
+remains pending; its automatic package and backend checks passed.
