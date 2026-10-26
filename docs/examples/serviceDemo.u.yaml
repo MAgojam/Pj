@@ -1,0 +1,19 @@
+---
+name: serviceDemo
+title: Python via Pj
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    children:
+      - type: TargetLayoutBox
+        label: Numeric variable
+        children:
+          - type: VariablesListBox
+            name: x
+            isTarget: true
+            maxItemCount: 1
+  - type: ComboBox
+    name: python

@@ -20,6 +20,12 @@ for (python in c(embedded,external)) {
     stopifnot(system2(python,shQuote(file.path(root,'tests/mzPj_libraries.py')))==0L)
 }
 source(file.path(root,'tests/mzPj_output_sync.R'))
+source(file.path(root,'tests/mzPj_service_api.R'))
+exampleRoot <- readLines(file.path(out,'SERVICE_EXAMPLE_ROOT.txt'),warn=FALSE)[1]
+for(scenario in c('available','missing')) {
+    hostArgs <- c('--vanilla',file.path(root,'tests','mzPj_service_host.R'),root,exampleRoot,libs,scenario)
+    stopifnot(system2(file.path(R.home(),'bin','Rscript'),vapply(hostArgs,shQuote,character(1)))==0L)
+}
 source(file.path(root,'tests/mzPj_flatpak_diagnostic.R'))
 code <- paste(readLines(file.path(root,'pjscript/48_bundle_diagnostics.py'),warn=FALSE),collapse='\n')
 for (prefix in c('Pj','Pjp')) for (mode in c('bundled','external')) {

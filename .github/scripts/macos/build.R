@@ -25,7 +25,7 @@ setwd(root)
 status <- system2(node, c(compiler, '--build', shQuote(root), '--home', shQuote(home)))
 stopifnot(status==0L)
 version <- read.dcf(file.path(root,'DESCRIPTION'),fields='Version')[1,1]
-stopifnot(version=='1.2.1')
+stopifnot(version=='1.3.0')
 package <- file.path(root,paste0('Pj_',version,'.jmo'))
 stopifnot(file.exists(package))
 dest <- file.path(out,paste0('Pj_',version,'_macos_',Sys.getenv('EXPECTED_ARCH'),'_jamovi28.14.jmo'))
@@ -33,3 +33,7 @@ stopifnot(file.copy(package,dest,overwrite=FALSE))
 writeLines(c(paste('R:',R.version.string),paste('Platform:',R.version$platform),
              paste('R.home:',R.home()),paste('jmvtools:',packageVersion('jmvtools'))),
            file.path(out,'runtime.txt'))
+source(file.path(root,'.github','scripts','build-service-example.R'))
+exampleRoot <- file.path(Sys.getenv('RUNNER_TEMP'),'mzPj-service-example')
+mzPjBuildServiceExample(root,exampleRoot,home,node)
+writeLines(exampleRoot,file.path(out,'SERVICE_EXAMPLE_ROOT.txt'))

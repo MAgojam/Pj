@@ -1,0 +1,23 @@
+---
+name: serviceDemo
+title: Python via Pj
+jrs: '1.1'
+items:
+  - name: status
+    title: Status
+    type: Html
+  - name: summary
+    title: Python summary
+    type: Table
+    columns:
+      - name: n
+        title: N
+        type: integer
+      - name: mean
+        title: Mean
+        type: number
+    clearWith: [x, python]
+  - name: plot
+    title: Python / D3 histogram
+    type: Html
+    clearWith: [x, python]

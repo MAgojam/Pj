@@ -16,7 +16,7 @@ assert len(packages)==1
 artifact = packages[0]
 commit = subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()
 assert commit==os.environ['SOURCE_COMMIT']
-version='1.2.1'
+version='1.3.0'
 with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
     assert z.testzip() is None
     description=z.read('Pj/R/Pj/DESCRIPTION').decode()
