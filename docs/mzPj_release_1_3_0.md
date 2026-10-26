@@ -32,9 +32,14 @@ The documented module example compiled independently and passed native table/D3
 and missing-Pj checks. Linux also passed a real temporary host-permission denial
 test without changing the user's persistent Flatpak permissions.
 
-macOS Intel/Apple Silicon builds and the same service/example checks are required
-before publishing the four-platform release. Final status and artifact provenance
-are reported with the GitHub Release. Automated backend checks do not constitute
-new manual desktop approval; the earlier Apple Silicon GUI PASSED applies to1.2.1.
+macOS Intel and Apple Silicon builds, package integrity/native-architecture
+checks, service tests with both interpreters and the separately compiled guide
+example all passed on jamovi28.14 (GitHub Actions run40294650578). All four
+platform packages are generated from the same runtime source commit35c2fe8.
+Later documentation-only changes are recorded separately in release provenance.
+Automated backend checks do not constitute new manual desktop approval; the
+earlier Apple Silicon GUI PASSED applies to1.2.1. No new 1.3.0 desktop GUI trial
+is claimed here. The local Windows laboratory prototype had separate manual
+acceptance; it is not bundled in this release.
 
 No Metafora or upstream ClinicoPathPj sources are changed by this release.
