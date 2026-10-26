@@ -26,7 +26,7 @@
         .mzPj_readText(path), fixed=TRUE)
 }
 
-.mzPj_prepareLibraries <- function(path, pythonPath, flatpakExternal=FALSE) {
+.mzPj_prepareLibraries <- function(path, pythonPath, flatpakExternal=FALSE, timeout=0L) {
     # La cache appartiene all'interprete effettivo, anche quando gira sull'host Flatpak.
     catalog <- jsonlite::fromJSON(file.path(dirname(path), 'extdata',
         'mzPj_python_libraries.json'), simplifyVector=FALSE)
@@ -40,7 +40,7 @@
             "print('__MZPJ_CACHE__ ' + json.dumps(_pj_library_bootstrap(**_pj_boot)))\n")
         args <- if (flatpakExternal) c('--host', '--directory=/tmp', '/usr/bin/python3', '-') else '-'
         result <- suppressWarnings(system2(pythonPath, args=args, input=bootstrap,
-                                          stdout=TRUE, stderr=TRUE))
+                                          stdout=TRUE, stderr=TRUE, timeout=timeout))
         status <- attr(result, 'status')
         if (!is.null(status) && status != 0L)
             return(list(path=NULL, error=paste('Pj bundled libraries could not be prepared.',

@@ -81,7 +81,7 @@ def execute_user_code(code, ext_script_path=""):
     editor_source = '<pj-editor>'
     service_source = '<pj-service>'
     sources = {
-        editor_source: ('Python editor', code),
+        editor_source: (SCRIPT_NAMES.get('editor', 'Python editor'), code),
         service_source: (SCRIPT_NAMES.get('service', 'Service script'), '')
     }
     

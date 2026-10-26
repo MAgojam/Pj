@@ -1,0 +1,24 @@
+---
+name: serviceDemo
+title: Python via Pj
+menuGroup: My Module
+version: '1.0.0'
+jas: '1.2'
+options:
+  - name: data
+    type: Data
+  - name: x
+    title: Numeric variable
+    type: Variable
+    permitted: [numeric]
+    suggested: [continuous]
+    default: null
+  - name: python
+    title: Python interpreter
+    type: List
+    options:
+      - name: jamovi
+        title: jamovi Python
+      - name: system
+        title: System Python
+    default: jamovi

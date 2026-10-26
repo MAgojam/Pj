@@ -26,6 +26,15 @@ Python result functions and external service-script support.
 
 ## Features
 
+Version **1.3.0** adds a public Python execution service for other jamovi modules.
+A host can keep its R6 analysis, options and native results while calling
+`mzPjRunPython()` with selected data and trusted Python code. Both interpreters,
+Pj's structured result helpers, bundled pure-Python libraries and D3 helpers
+are available without opening an editor. The caller controls result rendering,
+errors and dataset outputs. See the [developer integration guide](docs/mzPj_service_api.md)
+and its complete adaptable R6/YAML example. The API retains `system2()`;
+experimental laboratory modules are not distributed with Pj.
+
 The **1.2.1 portability update** corrects discovery of jamovi's
 embedded Python on macOS. It locates the interpreter relative to the app that
 contains R, including relocated apps and framework symlinks. Intel and Apple
@@ -105,9 +114,10 @@ local file. Select the `.jmo` built for your platform. The analyses appear under
 **Python → Pj**.
 
 Platform packages are published under
-[GitHub Releases](https://github.com/MAgojam/Pj/releases). For version 1.2.0,
-select **Pj_1.2.0_win64.jmo** for Windows or **Pj_1.2.0_linux.jmo** for Linux
-when that release is available. Each includes all five Data Library documents;
+[GitHub Releases](https://github.com/MAgojam/Pj/releases). Select the matching
+version and platform: **win64**, **linux**, **macos_x86_64** (Intel), or
+**macos_arm64** (Apple Silicon). macOS names also identify the jamovi build series.
+Each includes all five Data Library documents;
 standalone `.py` examples are downloaded separately from the repository.
 
 The `.jmo` files are release assets, not versioned source files. Version 1.2.0
@@ -117,8 +127,9 @@ available in the [release history](https://github.com/MAgojam/Pj/releases).
 
 Sources and documentation are available in the
 [Pj repository](https://github.com/MAgojam/Pj). Availability on GitHub does not imply availability from the
-public jamovi module library. macOS package validation is in progress; no manual
-macOS desktop approval is claimed.
+public jamovi module library. Release notes distinguish automated checks from
+manual desktop validation. The reported Apple Silicon manual PASSED concerns
+1.2.1; it is not a new manual approval of every subsequent service API feature.
 
 ## First analysis
 

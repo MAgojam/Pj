@@ -4,3 +4,4 @@
 ^pjscript$
 ^package\.json$
 ^\.github$
+^docs$

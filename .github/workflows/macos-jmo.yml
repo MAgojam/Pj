@@ -6,7 +6,13 @@ on:
     paths:
       - '.github/workflows/macos-jmo.yml'
       - '.github/scripts/macos/**'
+      - '.github/scripts/build-service-example.R'
+      - 'tests/mzPj_service_host.R'
       - 'R/mzPj_python_service.R'
+      - 'R/mzPj_service_api.R'
+      - 'inst/**'
+      - 'tests/mzPj_service_api.R'
+      - 'docs/examples/**'
       - 'tests/mzPj_macos_python.R'
 
 permissions:

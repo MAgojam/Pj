@@ -1,6 +1,7 @@
 # Pj / Pjp maintenance map
 
-Updated: 13 October 2026. Public Python functions keep their `mzpj` camel-case
+Updated: 26 October 2026 — Agente_Pj. Scope: public service API1 and developer
+example, with the existing editor architecture retained. Public Python functions keep their `mzpj` camel-case
 names. New internal service filenames use the exact `mzPj_` prefix and
 underscores. Preserve filename case in every reference for Linux and macOS.
 Standard jamovi entry points and existing example filenames are retained.
@@ -20,8 +21,8 @@ headers. The maintainer's local build normalizes that warning to Italian after
 compilation. Keep this normalization separate from generated R help text, which
 remains in English, and do not edit the compiler itself.
 
-The root README is the GitHub entry point. Planned release assets are separately
-compiled Windows and Linux `.jmo` files, identified by platform. Publication,
+The root README is the GitHub entry point. Release assets are separately
+compiled Windows, Linux, macOS Intel and Apple Silicon `.jmo` files, identified by platform. Publication,
 commits and pushes remain separate from local preparation and validation.
 
 Keep `jamovi/js/node_modules/brace/` in the source repository. It is a bundled
@@ -42,6 +43,7 @@ Generated `.h.R` files, compiled assets, Ace and D3 are not edited as services.
 | `R/pjp.b.R` | Pjp specialization and output-column enablement |
 | `R/mzPj_python_service.R` | UTF-8 resource reading, one encoded configuration, typed dataset preparation, process status and interpreter discovery |
 | `R/mzPj_results_service.R` | Result-envelope validation, native result construction and returned dataset columns |
+| `R/mzPj_service_api.R` | Public API1 for another module: metadata, trusted Python execution and structured errors; host owns result display |
 | `inst/remote.py` | Configuration decoding, dataset loading, shared service/editor execution, source-aware errors and result transport |
 | `inst/extdata/mzPj_icon_python.png` | Transparent PNG of the approved Python-inspired icon, used by example 05 |
 | `inst/python/mzPj_environment.py` | Optional imports and Python environment report |
@@ -55,6 +57,14 @@ Generated `.h.R` files, compiled assets, Ace and D3 are not edited as services.
 | `jamovi/js/suggest.js` | Completion integration and insertion; the static catalog remains in `funcs.js` |
 
 ## Loading and portability
+
+Pj1.3.0 exposes `mzPjServiceInfo()` and `mzPjRunPython()` without creating an
+editor analysis. The public [integration guide](mzPj_service_api.md) includes
+compilable R6/YAML sources under `docs/examples/`. CI builds them as a temporary
+independent host and checks sibling Pj discovery and the missing-Pj case.
+These templates are public; the local experimental laboratories are not.
+The runner remains `system2()`. Internal helper changes must preserve both editor
+and service paths. API1 does not expose asynchronous jobs or checkpoint callbacks.
 
 R services load through the package namespace; there is no runtime `source()`.
 Internal R functions start with `.mzPj_` and stay outside the alphabetic export

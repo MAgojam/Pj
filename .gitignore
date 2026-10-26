@@ -20,3 +20,6 @@ __pycache__/
 
 # Script di compilazione riservato all'ambiente locale del manutentore.
 /compile.r
+
+# Dimostrazione diagnostica locale: non fa parte della distribuzione pubblica.
+/pjscript/52_d3_cutoff_explorer.py
