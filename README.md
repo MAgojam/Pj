@@ -116,7 +116,7 @@ local file. Select the `.jmo` built for your platform. The analyses appear under
 Platform packages are published under
 [GitHub Releases](https://github.com/MAgojam/Pj/releases). Select the matching
 version and platform: **win64**, **linux**, **macos_x86_64** (Intel), or
-**macos_arm64** (Apple Silicon). macOS names also identify the jamovi build series.
+**macos_arm64** (Apple Silicon). Release notes identify the jamovi build series used for macOS packages.
 Each includes all five Data Library documents;
 standalone `.py` examples are downloaded separately from the repository.
 

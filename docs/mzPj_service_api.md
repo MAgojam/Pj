@@ -71,9 +71,9 @@ analysis message rather than prevent your entire module from loading.
 | `python` | `'jamovi'` or `'system'`; default `'jamovi'`. |
 | `service_code` | Optional Python definitions executed before `code` in the same call/namespace. |
 | `return_columns` | Default FALSE. TRUE returns newly created columns; it never writes to your dataset automatically. |
-| `figure_width`, `figure_height` | Positive integer initial dimensions, default800×600, maximum10000 each. |
+| `figure_width`, `figure_height` | Positive integer initial dimensions, default 800 × 600, maximum 10000 each. |
 | `python_info` | Default FALSE. TRUE requests an additional interpreter-information HTML result. |
-| `timeout` | Integer1–3600 seconds, default60, **per Python subprocess**. |
+| `timeout` | Integer 1–3600 seconds, default 60, **per Python subprocess**. |
 
 The timeout includes each supplied-library bootstrap attempt but is not one total
 wall-clock deadline for the whole API call. No asynchronous job handle or checkpoint
