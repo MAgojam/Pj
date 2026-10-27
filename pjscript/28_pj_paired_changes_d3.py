@@ -1,6 +1,6 @@
 # (participant_id, group, before, after)
 # Pj Data Library example: all functions and analysis code are in this editor.
-# Leave Service script / Browse... empty. Both Python interpreters work with SciPy.
+# Leave Service... empty. Both Python interpreters work with SciPy.
 # No pandas, matplotlib, external Python file or data-loading code is needed.
 # Helper functions come first; edit the analysis and result options near the end.
 import json

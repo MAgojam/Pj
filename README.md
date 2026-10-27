@@ -24,6 +24,10 @@ The module includes two analyses:
 Pjp extends the shared Pj implementation. Both analyses use the same editor,
 Python result functions and external service-script support.
 
+**Source update:** this repository includes editor-toolbar and popup refinements
+that are not yet included in the downloadable v1.3.0 packages. The published
+release files remain unchanged.
+
 ## Features
 
 Version **1.3.0** adds a public Python execution service for other jamovi modules.
@@ -251,27 +255,36 @@ captured as jamovi image results.
 
 ## Service scripts and editor files
 
-**Browse…** selects a service `.py` file. It runs before the editor code in the
+**Service…** selects a service `.py` file. It runs before the editor code in the
 same Python namespace on every execution. Use it for imports, functions and
 other reusable definitions. Its imports use the selected interpreter, so an
 external script does not make system-only packages available to embedded Python.
 Do not rely on Python variables surviving between runs.
 
-**Load script…** reads a `.py` file into the editor without executing it.
-**Save script…** exports the current editor contents, independently of the
+The selected service file appears beside the button. Its **×** unloads the
+service file without clearing the editor. Both controls have light tooltips;
+the Service tooltip explains that its code is not shown in the editor. Pjp is
+identified by a small **plus** subscript beside Editor.
+
+
+The **Scripts** group contains **Load** and **Save**. The blue slider button
+opens **Settings**; the blue play button runs the code.
+
+**Scripts > Load** reads a `.py` file into the editor without executing it.
+**Scripts > Save** exports the current editor contents, independently of the
 service file. **Clear** empties the editor and its results while retaining the
 selected service file and configuration; the next Run executes them again.
 
-For this workflow, select your reusable helper file with Browse and load your
+For this workflow, select your reusable helper file with Service… and load your
 analysis script into the editor. Imports and functions defined by the helper
 file are available directly to the editor code.
 
 To use **two scripts together**, prepare two `.py` files on your computer:
 
 1. `services.py`: imports and tested helper functions. Select it with
-   **Service script / Browse…**; it runs behind the scenes.
+   **Service…**; it runs behind the scenes.
 2. `analysis.py`: calls those helpers and creates the results. Read it into the
-   editor with **Load script…**, then edit it there as needed.
+   editor with **Scripts > Load**, then edit it there as needed.
 3. Select the Python interpreter and click **Run**. Pj executes the service
    first and the editor second, in the same fresh namespace on every run.
 
@@ -295,13 +308,13 @@ summary = mzpjExampleSummary(data['score'])
 mzpjShowTable([{'Variable': 'score', **summary}], title='Score summary')
 ```
 
-Browse does not insert the service code into the editor; Load does not select a
-service file. Do not load the active analysis through Browse in this two-file
-workflow, and do not import the service by its filename. **Save script…** saves
+Service… does not insert the service code into the editor; Load does not select a
+service file. Do not load the active analysis through Service… in this two-file
+workflow, and do not import the service by its filename. **Scripts > Save** saves
 only the editor code; retain your own source copy of the service file separately.
 Both scripts use the same selected interpreter and its installed packages.
 
-**Data Library examples use editor code only**, with Browse left empty, so users
+**Data Library examples use editor code only**, with Service… left empty, so users
 can inspect and modify all example code directly. Separate service/editor
 examples can be shared in response to questions on the jamovi forum; they are
 not required to run the library documents.
@@ -347,7 +360,7 @@ settings, assumptions and interactions. The maintainer confirmed successful
 loading and execution of all four examples from Data Library on Windows and
 Ubuntu 26.04 LTS, including a clean GitHub clone and compilation on Ubuntu
 (13 October 2026). All four Data Library
-documents contain their complete example code in the editor, with Browse empty.
+documents contain their complete example code in the editor, with Service… empty.
 
 **Learning Lab - resampling and prediction**, added in 1.2.0, contains 96
 synthetic students and two editable analyses. Pj explores paired changes,
@@ -372,7 +385,7 @@ Ready-to-run examples are distributed as OMV documents in `data/`, with their
 code in the editors. Reviewed standalone Python examples are also available in
 [`pjscript/`](pjscript), with English comments and a
 [step-by-step catalogue](docs/mzPj_examples.md). Download or clone these files
-to use them with Load script or combine service/editor pairs using Browse and
+to use them with Scripts > Load or combine service/editor pairs using Service… and
 Load. They are repository-only examples, excluded from R source packages and
 JMO installation; adding or updating them does not require new JMO downloads.
 

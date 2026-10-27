@@ -1,7 +1,7 @@
 # (participant_id, group, pre_score, post_score, study_hours, attendance)
 # Open Pj_Learning_Lab.omv and run this example in Pj (Editor, without +).
 # The first-line directive above requests the six dataset columns automatically.
-# Leave Browse empty and load this file into the editor. Both Python interpreters work.
+# Leave Service... empty and load this file into the editor. Both Python interpreters work.
 # All observations are synthetic teaching data, not evidence about teaching efficacy.
 # Change these settings, then Run again. Plot controls do not rerun Python calculations.
 BOOTSTRAP_REPLICATES = 1000

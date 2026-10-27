@@ -51,7 +51,7 @@ Generated `.h.R` files, compiled assets, Ace and D3 are not edited as services.
 | `inst/python/mzPj_tables.py` | Native/HTML table normalization, annotations, colors, transpose, accordion and viewport rendering |
 | `jamovi/js/main.js` | Shared editor integration, options, analysis/session lifecycle |
 | `jamovi/js/mzPj_editor_files.js` | Passive Load, draft persistence, replacement confirmation and native Save |
-| `jamovi/js/mzPj_service_header.js` | Native File control immediately after the analysis title; original Browse/label/pill nodes retained; delegated × updates the single File option and cancels click activation/propagation |
+| `jamovi/js/mzPj_service_header.js` | Compact Service control and light tooltips; native File button/pill retained; delegated removal; keyboard modality scoped to the options block; listeners and observers released when the File control is disposed |
 | `jamovi/js/mzPj_editor_run.js` | Run, dataset-column requests, stale-request rejection and option-edit closure |
 | `jamovi/js/mzPj_editor_context.js` | Python string literals, string/comment context and variable completion entries |
 | `jamovi/js/suggest.js` | Completion integration and insertion; the static catalog remains in `funcs.js` |

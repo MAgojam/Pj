@@ -154,10 +154,22 @@ const events = {
                 <div id="toolbar">
                     <div id="editor-heading"><button type="button" id="clear-script" title="Clear editor and results" aria-label="Clear editor and results">Clear</button><span>Python editor</span><span id="editor-filename"></span></div>
                     <div id="editor-actions">
-                        <button type="button" id="load-script">Load script…</button>
-                        <button type="button" id="save-script">Save script…</button>
-                        <div id="config" title="Configuration" role="button" tabindex="0" aria-label="Configuration"></div>
-                        <div id="run" title="Run" role="button" tabindex="0" aria-label="Run"></div>
+                        <div id="script-actions" role="group" aria-labelledby="scripts-label">
+                            <span id="scripts-label">Scripts</span>
+                            <button type="button" id="load-script" title="Load a Python script into the editor">Load</button>
+                            <button type="button" id="save-script" title="Save the editor code as a Python script">Save</button>
+                        </div>
+                        <div id="config-container">
+                            <button type="button" id="config" title="Settings" aria-label="Settings" aria-expanded="false" aria-controls="menu">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                                    <circle cx="9" cy="6" r="2.2"/><circle cx="16" cy="12" r="2.2"/><circle cx="8" cy="18" r="2.2"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <button type="button" id="run" title="Run" aria-label="Run">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M8 5.5a1 1 0 0 1 1.5-.86l10 6a1 1 0 0 1 0 1.72l-10 6A1 1 0 0 1 8 17.5Z"/></svg>
+                        </button>
                     </div>
                 </div>
                 <input type="file" id="editor-file" accept=".py" hidden>
@@ -173,58 +185,57 @@ const events = {
 
         let $config = $contents.querySelector('#config');
         
-        $config.innerHTML = `
-            <div id="menu">
+        $config.insertAdjacentHTML('afterend', `
+            <div id="menu" inert aria-hidden="true">
                 <label id="code-label"><span>Python Code</span><span id="pj-module-version"></span></label>
-                <label id="python-label">Python Version</label>
-                <select id="python-version">
-                    <option value="bundled">jamovi Python</option>
-                    <option value="external">System Python</option>
-                </select>
-                <label id="output-label">Output</label>
-                <select id="output">
-                    <option value="noEcho">Show output only</option>
-                    <option value="echo">Show code and output</option>
-                    <option value="pyinfo">Show Python info</option>
-                </select>
+                <div id="python-setting" class="pj-setting-row">
+                    <label id="python-label" for="python-version">Python Version</label>
+                    <select id="python-version">
+                        <option value="bundled">jamovi Python</option>
+                        <option value="external">System Python</option>
+                    </select>
+                </div>
+                <div id="output-setting" class="pj-setting-row">
+                    <label id="output-label" for="output">Output</label>
+                    <select id="output">
+                        <option value="noEcho">Show output only</option>
+                        <option value="echo">Show code and output</option>
+                        <option value="pyinfo">Show Python info</option>
+                    </select>
+                </div>
                 <div id="figure-size">
                     <div id="figure-size-title">Figure size (px)</div>
                     <div id="figure-size-row">
-                        <label>Width</label>
+                        <label for="figure-width">Width</label>
                         <input id="figure-width" placeholder="Default" title="Images: leave both fields blank to fit within 800 × 600 px without enlarging. Set one dimension to preserve proportions, or both for an exact size.">
-                        <label>Height</label>
+                        <label for="figure-height">Height</label>
                         <input id="figure-height" placeholder="Default" title="Images: leave both fields blank to fit within 800 × 600 px without enlarging. Set one dimension to preserve proportions, or both for an exact size.">
                     </div>
                 </div>
-            </div>`;
+            </div>`);
 
         this.$editor = $contents.querySelector('#editor');
-        $config.querySelector('#pj-module-version').textContent = 'Pj v' + moduleVersion;
+        $contents.querySelector('#pj-module-version').textContent = 'Pj v' + moduleVersion;
         this.$run = $contents.querySelector('#run');
+        this.$config = $config;
         this.$menu = $contents.querySelector('#menu');
 
         this.$run.addEventListener('click', () => this.run(ui));
 
         initEditorFiles.call(this, ui, $contents);
-        [this.$run, $config].forEach(control => control.addEventListener('keydown', event => {
-            if (event.target === control && (event.key === 'Enter' || event.key === ' ')) {
-                event.preventDefault();
-                control.click();
-            }
-        }));
 
-        this.$output = $config.querySelector('#output');
+        this.$output = $contents.querySelector('#output');
         this.$output.addEventListener('change', (event) => {
             ui.output.setValue(this.$output.value);
         });
 
-        this.$python = $config.querySelector('#python-version');
+        this.$python = $contents.querySelector('#python-version');
         this.$python.addEventListener('change', (event) => {
             ui.python.setValue(this.$python.value);
         });
 
-        this.$figWidth = $config.querySelector('#figure-width');
-        this.$figHeight = $config.querySelector('#figure-height');
+        this.$figWidth = $contents.querySelector('#figure-width');
+        this.$figHeight = $contents.querySelector('#figure-height');
 
         // Popup trascinabile: mousedown su etichette/aree vuote (non sui
         // controlli stessi, altrimenti si romperebbe il click su
@@ -269,10 +280,7 @@ const events = {
                 this.run(ui);
         }));
 
-        $config.addEventListener('click', (event) => {
-            if (event.target === $config)
-                this.toggleMenu(ui);
-        });
+        $config.addEventListener('click', () => this.toggleMenu(ui));
 
         if (navigator.platform === 'MacIntel') {
             let $info = $contents.querySelector('#info');
@@ -363,11 +371,19 @@ const events = {
         };
 
         this.showMenu = (ui) => {
+            this.$menu.removeAttribute('inert');
+            this.$menu.setAttribute('aria-hidden', 'false');
             this.$menu.classList.add('visible');
+            this.$config.setAttribute('aria-expanded', 'true');
         };
 
         this.hideMenu = (ui) => {
+            if (this.$menu.contains(document.activeElement))
+                this.$config.focus();
+            this.$menu.setAttribute('inert', '');
+            this.$menu.setAttribute('aria-hidden', 'true');
             this.$menu.classList.remove('visible');
+            this.$config.setAttribute('aria-expanded', 'false');
 
             ui.view.model.options.beginEdit();
             ui.figWidth.setValue(this.$figWidth.value);

@@ -42,7 +42,7 @@ The standalone copies below allow the same analyses to be loaded manually.
 | [51_pjp_learning_prediction.py](../pjscript/51_pjp_learning_prediction.py) | Pjp | Select `pre_score`, `post_score`, `study_hours`; `participant_id` is optional for labels. OLS prediction, leave-one-out validation and interactive conditional scenarios. |
 
 Both use the supplied pure-Python libraries and work with either interpreter
-on Python 3.10 or newer, without NumPy, SciPy, pandas or matplotlib. Keep Browse
+on Python 3.10 or newer, without NumPy, SciPy, pandas or matplotlib. Keep Service…
 empty. Only Pjp 51 returns dataset columns: `WRITE_COLUMNS = True` creates
 `pj_lab_expected` and `pj_lab_loo_error`; changing it to `False` and running
 again removes this analysis's output columns. Do not select generated columns
@@ -67,9 +67,9 @@ on the tested paths; these checks do not establish validity for other datasets.
 3. Choose the appropriate interpreter in the editor settings. System Python
    packages must be installed in that interpreter, including on Linux; packages
    installed in Windows Python are not automatically available in Linux.
-4. Use **Load script…** to load the downloaded `.py` into the editor, or paste its
-   text. Keep **Service script / Browse…** empty for a standalone example.
-5. Click **Run**. You can edit the code and use **Save script…** to export it.
+4. Use **Scripts > Load** to load the downloaded `.py` into the editor, or paste its
+   text. Keep **Service…** empty for a standalone example.
+5. Click **Run**. You can edit the code and use **Scripts > Save** to export it.
 
 The Pj first-line directive `# (column_a, column_b)` specifies which columns to
 transfer from the open dataset. Pjp uses its variable selector. Neither approach
@@ -84,17 +84,17 @@ generate row labels if the ID is omitted.
 For **13 + 14** or **26 + 27**:
 
 1. Download both files to your own computer.
-2. Attach **13** or **26** using **Service script / Browse…**.
-3. Load **14** or **27** using **Load script…** in the editor.
+2. Attach **13** or **26** using **Service…**.
+3. Load **14** or **27** using **Scripts > Load** in the editor.
 4. Select any required variables, choose an interpreter and click **Run**.
 
 The service runs first, in the same namespace as the editor. Imports, functions
-and other objects it defines are available to the editor code. Browse does not
+and other objects it defines are available to the editor code. Service… does not
 load text into the editor, while Load does not attach a service file. Both files
 run in the **same selected Python interpreter**; loading a service cannot supply
 pandas or matplotlib if that interpreter cannot import them.
 
-The five Data Library OMVs contain complete editor code with Browse empty. They
+The five Data Library OMVs contain complete editor code with Service… empty. They
 do not depend on the standalone service files or paths on the maintainer's PC.
 
 ## Examples 01–14: data and result objects
@@ -113,8 +113,8 @@ do not depend on the standalone service files or paths on the maintainer's PC.
 | [10_descriptives_standard_library.py](../pjscript/10_descriptives_standard_library.py) | N, mean and sample SD for finite numeric values | Dataset with numeric columns. Standard library only; missing/non-finite values, booleans and text are excluded. |
 | [11_descriptives_pandas.py](../pjscript/11_descriptives_pandas.py) | pandas `describe()` in a native table | System Python with pandas; dataset with numeric columns. Uses pandas' missing-value rules. |
 | [12_table_pvalue.py](../pjscript/12_table_pvalue.py) | Native p-value formatting | Illustrative value; either interpreter. |
-| [13_service_library.py](../pjscript/13_service_library.py) | Service functions and optional library imports | Use Browse with 14. Missing optional imports are recorded; standard-library summaries still work. |
-| [14_editor_with_services.py](../pjscript/14_editor_with_services.py) | Short editor code calling service functions | Requires 13 through Browse. Numeric dataset for summaries; empty data produces an informative message. pandas/matplotlib results are optional. |
+| [13_service_library.py](../pjscript/13_service_library.py) | Service functions and optional library imports | Use Service… with 14. Missing optional imports are recorded; standard-library summaries still work. |
+| [14_editor_with_services.py](../pjscript/14_editor_with_services.py) | Short editor code calling service functions | Requires 13 through Service…. Numeric dataset for summaries; empty data produces an informative message. pandas/matplotlib results are optional. |
 
 For native Images, the editor's figure width and height control their initial
 display size; jamovi also supports manual resizing. D3 uses its own SVG settings:
@@ -159,9 +159,9 @@ syntax, precedence and limitations.
 | [23_bcg_reml_forest_d3.py](../pjscript/23_bcg_reml_forest_d3.py) | Pjp BCG risk-ratio REML meta-analysis, native tables and D3 forest plot | Open [Pj_BCG_vaccine.omv](../data/Pj_BCG_vaccine.omv). Select `author`, `tpos`, `tneg`, `cpos`, `cneg`; `year`, `D1`–`D5` and `Overall` are optional. SciPy in either interpreter. |
 | [24_pj_pandas_matplotlib.py](../pjscript/24_pj_pandas_matplotlib.py) | Pj descriptive summaries and matplotlib figures | Open [Pj_Pandas_Matplotlib.omv](../data/Pj_Pandas_Matplotlib.omv). System Python with pandas and matplotlib. First-line directive selects the columns. |
 | [25_pjp_linear_regression_d3.py](../pjscript/25_pjp_linear_regression_d3.py) | Pjp OLS tables and linked D3 diagnostics | Open [Pj_Linear_Regression.omv](../data/Pj_Linear_Regression.omv). Select `final_score`, `study_hours`, `baseline`; `participant_id` optional. NumPy and SciPy in either interpreter. |
-| [26_pj_paired_service.py](../pjscript/26_pj_paired_service.py) | Reusable paired-summary and D3 dashboard services | Attach with Browse; run with 27. SciPy and bundled D3. |
+| [26_pj_paired_service.py](../pjscript/26_pj_paired_service.py) | Reusable paired-summary and D3 dashboard services | Attach with Service…; run with 27. SciPy and bundled D3. |
 | [27_pj_paired_editor.py](../pjscript/27_pj_paired_editor.py) | Short editor analysis calling 26 | Open [Pj_Service_D3.omv](../data/Pj_Service_D3.omv). Use Pj with its first-line directive, or select `group`, `before`, `after` and optionally `participant_id` in Pjp. |
-| [28_pj_paired_changes_d3.py](../pjscript/28_pj_paired_changes_d3.py) | Self-contained paired-measurement tables and D3 explorer | Same dataset and requirements as 26 + 27, with all code in the editor and Browse empty. |
+| [28_pj_paired_changes_d3.py](../pjscript/28_pj_paired_changes_d3.py) | Self-contained paired-measurement tables and D3 explorer | Same dataset and requirements as 26 + 27, with all code in the editor and Service… empty. |
 
 In **23** and **25**, `WRITE_COLUMNS = False` is the default. To create calculated
 columns through Pjp, change it to `True` and Run. Change it back to `False` and

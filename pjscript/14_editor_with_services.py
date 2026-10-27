@@ -1,6 +1,6 @@
-# Load 13_service_library.py with Service script / Browse..., then load this file in the editor.
+# Load 13_service_library.py with Service..., then load this file in the editor.
 if 'mzpjDemoLibraryStatus' not in globals():
-    raise RuntimeError('Load 13_service_library.py using Browse... before running this example.')
+    raise RuntimeError('Load 13_service_library.py using Service... before running this example.')
 
 mzpjShowText(
     '# External services and editor\n\n'

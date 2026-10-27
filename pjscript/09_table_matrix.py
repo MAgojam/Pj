@@ -1,4 +1,4 @@
-# Run in the Pj/Pjp editor, or load as a service script with Browse... and Run.
+# Run in the Pj/Pjp editor, or load as a service script with Service... and Run.
 mzpjShowTable(
     [[1, 12.4], [2, 15.8]],
     columns=["Group", "Mean"],

@@ -1,4 +1,4 @@
-# Load this file with Service script / Browse..., then load script 27 in the editor.
+# Load this file with Service..., then load script 27 in the editor.
 # Both Python interpreters are supported. SciPy is required; pandas/matplotlib are not.
 # This file defines reusable services only; the editor chooses which results to display.
 import json

@@ -262,7 +262,7 @@ the saved analysis, add a new Pj/Pjp analysis before loading these files:
 - [30_d3_histogram.py](../pjscript/30_d3_histogram.py): select `final_score`.
   It shows a frequency histogram and a second, initially collapsed density view.
 
-Use **Load script…**, leave Browse empty, select either Python and Run. The
+Use **Scripts > Load**, leave Service… empty, select either Python and Run. The
 dataset is already open: neither script imports it or recreates observations.
 
 ## Packaging and validation

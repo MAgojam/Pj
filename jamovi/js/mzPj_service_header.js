@@ -1,4 +1,4 @@
-// Sposta i nodi originali: Browse, pillola e rimozione restano gestiti da jamovi.
+// Sposta i nodi originali: selezione file, pillola e rimozione restano gestiti da jamovi.
 module.exports = function(ui) {
     const view = ui.view && ui.view.el;
     if (!view)
@@ -11,8 +11,15 @@ module.exports = function(ui) {
     if (title && !title.querySelector('.mzpj-title-icon')) {
         const originalTitle = title.textContent.trim();
         if (/^Pj\s+Editor(?:\s*\+)?$/.test(originalTitle)) {
-            title.textContent = originalTitle.replace(/^Pj\s+/, '');
+            title.textContent = 'Editor';
             title.setAttribute('aria-label', originalTitle);
+            if (/\+$/.test(originalTitle)) {
+                const badge = document.createElement('sub');
+                badge.className = 'mzpj-editor-plus';
+                badge.textContent = 'plus';
+                badge.setAttribute('aria-hidden', 'true');
+                title.appendChild(badge);
+            }
         }
         title.classList.add('mzpj-icon-title');
         const icon = document.createElement('span');
@@ -41,16 +48,19 @@ module.exports = function(ui) {
     const button = body.querySelector('.jmv-file-selector-button');
     const label = control && control.label && control.label.nodeType === 1 ? control.label :
         Array.from(view.querySelectorAll('label')).find(label => button && label.htmlFor === button.id);
-    if (!label)
+    if (!label || !button)
         return;
     const origins = [label, body].map(node => node.closest('.silky-layout-cell')).filter(Boolean);
     const host = document.createElement('div');
+    const lifecycle = new AbortController();
+    const listen = (target, name, handler, capture = false) =>
+        target.addEventListener(name, handler, { capture, signal: lifecycle.signal });
     host.className = 'mzpj-service-header';
     host.setAttribute('role', 'group');
     host.setAttribute('aria-label', 'Service script');
     // La rimozione modifica il DOM durante il clic: annulla anche l'attivazione
     // predefinita e gli handler esterni, senza inoltrare il clic a Browse.
-    host.addEventListener('click', event => {
+    listen(host, 'click', event => {
         const target = event.target;
         const remove = target && target.closest ? target.closest('.jmv-file-selector-remove') : null;
         if (!remove || !host.contains(remove))
@@ -59,19 +69,154 @@ module.exports = function(ui) {
             return;
         event.preventDefault();
         event.stopPropagation();
+        dismissTooltip();
         if (!remove.disabled) {
             // scriptFile e' un File singolo: [] e' il valore nativo senza file.
             control.setValue([]);
-            if (button)
+            // Ripristina il focus dopo la rimozione, senza aprire il suggerimento Service.
+            restoringFocus = true;
+            try {
                 button.focus();
+            } finally {
+                restoringFocus = false;
+            }
         }
     }, true);
-    label.title = label.textContent;
+    // Conserva il nodo del controllo nativo, ma il nome visibile e' sul pulsante.
+    label.removeAttribute('title');
+    label.classList.add('mzpj-service-label');
+    button.textContent = 'Service…';
+    button.setAttribute('aria-label', 'Load a Python service script');
+    button.removeAttribute('title');
     host.appendChild(label);
     host.appendChild(body);
+    const tooltip = document.createElement('div');
+    tooltip.className = 'mzpj-service-tooltip';
+    tooltip.id = button.id + '-service-help';
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.hidden = true;
+    const tooltipTitle = document.createElement('span');
+    tooltipTitle.textContent = 'Load a Python service script.';
+    const tooltipDetail = document.createElement('span');
+    tooltipDetail.textContent = 'Runs before editor code; not shown in the editor.';
+    tooltip.append(tooltipTitle, tooltipDetail);
+    host.appendChild(tooltip);
+    const describedBy = (button.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+    button.setAttribute('aria-describedby', [...describedBy, tooltip.id].join(' '));
+    let activeButton = null;
+    let activation = null;
+    let keyboardNavigation = false;
+    let restoringFocus = false;
+    // Il tooltip non intercetta il mouse: uscire dal pulsante lo chiude senza attese.
+    const hideTooltip = () => {
+        tooltip.hidden = true;
+        activeButton = null;
+        activation = null;
+    };
+    const dismissTooltip = () => {
+        keyboardNavigation = false;
+        hideTooltip();
+    };
+    const showTooltip = (anchorButton, source) => {
+        if (!anchorButton || !anchorButton.isConnected || anchorButton.disabled)
+            return;
+        activeButton = anchorButton;
+        activation = source;
+        const removing = anchorButton !== button;
+        tooltipTitle.textContent = removing ? 'Remove service script.' : 'Load a Python service script.';
+        tooltipDetail.hidden = removing;
+        tooltip.hidden = false;
+        const anchor = anchorButton.getBoundingClientRect();
+        const rect = tooltip.getBoundingClientRect();
+        const left = Math.max(8, Math.min(anchor.left, window.innerWidth - rect.width - 8));
+        const top = anchor.bottom + 7 + rect.height <= window.innerHeight - 8 ?
+            anchor.bottom + 7 : Math.max(8, anchor.top - rect.height - 7);
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    };
+    const anchorTarget = event => {
+        const node = event.target && event.target.closest ? event.target.closest('button') : null;
+        return node && host.contains(node) &&
+            (node === button || node.classList.contains('jmv-file-selector-remove')) ? node : null;
+    };
+    listen(host, 'mouseover', event => {
+        const anchor = anchorTarget(event);
+        if (anchor && !anchor.contains(event.relatedTarget)) {
+            showTooltip(anchor, 'pointer');
+        }
+    });
+    listen(host, 'mouseout', event => {
+        const anchor = anchorTarget(event);
+        if (anchor && !anchor.contains(event.relatedTarget) && activeButton === anchor &&
+                activation === 'pointer')
+            hideTooltip();
+    });
+    listen(host, 'mousedown', event => {
+        if (anchorTarget(event))
+            dismissTooltip();
+    });
+    listen(host, 'click', event => {
+        if (anchorTarget(event))
+            dismissTooltip();
+    });
+    listen(host, 'focusin', event => {
+        const anchor = anchorTarget(event);
+        // Solo il focus ottenuto con la tastiera mostra il suggerimento persistente.
+        if (anchor && keyboardNavigation && !restoringFocus)
+            showTooltip(anchor, 'keyboard');
+    });
+    listen(host, 'focusout', event => {
+        if (anchorTarget(event) === activeButton && activation === 'keyboard')
+            hideTooltip();
+    });
+    listen(host, 'keydown', event => {
+        if (anchorTarget(event) && event.key === 'Escape') {
+            dismissTooltip();
+            event.stopPropagation();
+        }
+    });
+    // La modalita di ingresso riguarda soltanto il pannello del modulo, non il documento intero.
+    const focusScope = block || header.parentElement || view;
+    listen(focusScope, 'keydown', event => {
+        if (event.key === 'Tab')
+            keyboardNavigation = true;
+    }, true);
+    listen(focusScope, 'mousedown', dismissTooltip, true);
+    // Il selettore ricrea la pillola: elimina il titolo nativo anche sui nuovi nodi.
+    const prepareRemoveButtons = () => {
+        body.querySelectorAll('.jmv-file-selector-remove').forEach(remove => {
+            remove.setAttribute('title', '');
+            const ids = (remove.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+            if (!ids.includes(tooltip.id))
+                remove.setAttribute('aria-describedby', [...ids, tooltip.id].join(' '));
+        });
+        if (activeButton && (!activeButton.isConnected || activeButton.disabled))
+            dismissTooltip();
+    };
+    prepareRemoveButtons();
+    const fileObserver = new MutationObserver(prepareRemoveButtons);
+    fileObserver.observe(body, {
+        childList: true, subtree: true, attributes: true, attributeFilter: ['disabled']
+    });
+    listen(view, 'scroll', dismissTooltip, true);
+    listen(window, 'resize', dismissTooltip);
+    listen(window, 'blur', dismissTooltip);
     const back = header.querySelector('.silky-sp-back-button');
     header.insertBefore(host, back && back.parentElement === header ? back : null);
     header.classList.add('mzpj-editor-header');
     // Le celle rimangono nel modello del layout, ma non occupano piu’ spazio.
     origins.forEach(cell => cell.classList.add('mzpj-service-origin'));
+    // I nodi spostati nell'intestazione devono seguire il ciclo di vita del controllo File.
+    const dispose = () => {
+        hideTooltip();
+        fileObserver.disconnect();
+        lifecycle.abort();
+        host.remove();
+    };
+    if (control && typeof control.once === 'function')
+        control.once('disposing', dispose);
+    else if (control && typeof control.on === 'function')
+        control.on('disposing', dispose);
+    return dispose;
+
 };
