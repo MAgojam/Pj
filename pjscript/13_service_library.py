@@ -1,4 +1,4 @@
-# Load this file with Service script / Browse..., then load 14_editor_with_services.py in the editor.
+# Load this file with Service..., then load 14_editor_with_services.py in the editor.
 import math
 import statistics
 

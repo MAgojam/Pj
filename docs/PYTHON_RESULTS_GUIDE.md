@@ -22,7 +22,7 @@ optional scientific libraries. See the [linked explorer guide](mzPj_linked_d3.md
 [D3 plotting guide](mzPj_d3_plots.md) for signatures, options, missing-value rules
 and examples. These plotting functions require Pj 1.1.0 or newer.
 
-Choose the interpreter under **Configuration → Python Version**:
+Choose the interpreter under **Settings → Python Version**:
 
 - **jamovi Python** is included with jamovi. The functions below do not require
   installing additional Python packages. NumPy and SciPy are available in the
@@ -73,16 +73,16 @@ executed through Pj/Pjp. No import is needed. They add jamovi results and return
 
 The two file controls serve different purposes:
 
-- **Service script (.py) → Browse…**, immediately after the analysis title, attaches a Python file that runs before the
-  editor code. Its filename remains visible beside Browse. Use it for imports
+- **Service…**, immediately after the analysis title, attaches a Python file that runs before the
+  editor code. Its filename remains visible beside Service…. Use it for imports
   and reusable functions, such as `13_service_library.py`.
   The filename pill's **×** removes the service selection. The header uses the
   original jamovi File control; long filenames are visually shortened, and the
-  service label is hidden in narrow panels to leave room for Browse and the pill.
-- **Python editor → Load script…** reads a UTF-8 `.py` file into the editor.
+  separate service label is omitted to leave room for Service… and the pill.
+- **Scripts > Load** reads a UTF-8 `.py` file into the editor.
   Loading does not execute it or change the service script. If the editor already
   contains code, choose **Replace** or **Cancel** in the inline confirmation.
-- **Save script…** exports the current editor text as a UTF-8 `.py` file through
+- **Scripts > Save** exports the current editor text as a UTF-8 `.py` file through
   jamovi. The desktop application asks where to save it; browser installations
   use a download. This does not execute Python or save the service script.
 
@@ -106,8 +106,8 @@ run the scripts again. Click **Run** (or
 Ctrl/Command + Shift + Enter) to execute it together with the selected service
 script. The two Python environments retain their existing package requirements.
 
-For the paired example, Browse for **13_service_library.py**, then **Load script…**
-with **14_editor_with_services.py**, edit it, and Run. Save script exports only
+For the paired example, Service… for **13_service_library.py**, then **Scripts > Load**
+with **14_editor_with_services.py**, edit it, and Run. Save exports only
 script 14's current editor contents.
 
 File loading uses the browser file picker and saving uses jamovi's export API;
@@ -131,7 +131,7 @@ Python runs with its own permissions; under Flatpak it deliberately runs on the
 host. Scripts may access files, network services, installed packages and child
 processes according to those permissions.
 
-**Load script…** reads text into a passive editor draft without executing it.
+**Scripts > Load** reads text into a passive editor draft without executing it.
 Selecting a **Service script** changes an active analysis option and can trigger
 execution. Once enabled, an analysis can also rerun when its options or dataset
 change; execution is not limited to clicking Run. Inspect a service script before
@@ -290,7 +290,7 @@ JavaScript rendering and export must also be checked inside jamovi.
 
 ### Figure size settings
 
-Enter dimensions in pixels under **Configuration → Figure size**, then click
+Enter dimensions in pixels under **Settings → Figure size**, then click
 **Run** (or press Ctrl+Shift+Enter).
 
 - **PNG images:** leave both fields blank to fit the image within **800 × 600 px**,
@@ -970,7 +970,7 @@ names. Examples and editor completion suggestions use the same names. `print()`,
 
 ## 8. External library plus editor
 
-For the [service/editor pair](mzPj_examples.md), select `13_service_library.py` using **Browse...**,
+For the [service/editor pair](mzPj_examples.md), select `13_service_library.py` using **Service…**,
 then load `14_editor_with_services.py` into the editor. Download these standalone
 files from `pjscript/` in the repository; they are not installed by the JMO. The same workflow
 applies to your own helper and analysis files. The external script executes first; its imports, variables and

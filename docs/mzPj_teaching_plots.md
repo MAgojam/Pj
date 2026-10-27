@@ -47,7 +47,7 @@ an explicit, justified common scale before plotting them as one profile.
 Examples 31–39 use the datasets already shipped with jamovi, or need no dataset.
 No download, file path, extra Pj dataset or duplicate CSV is required. Open
 **Open > Data Library**, choose the entry below, add a new **Pjp** analysis and
-use **Load script** with **Browse empty**. Select every listed variable: columns
+use **Scripts > Load** with **Service… empty**. Select every listed variable: columns
 not selected in Pjp do not enter `data`. Names and capitalization must match.
 The Python code reads that selection; it does not import CSV files itself.
 

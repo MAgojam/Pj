@@ -1,5 +1,5 @@
 # Run in Pj or Pjp with either Python interpreter. No dataset is required.
-# Keep Service script / Browse empty. Pj 1.2.0 supplies all eight libraries.
+# Keep Service... empty. Pj 1.2.0 supplies all eight libraries.
 # This checks the extracted ZIP copies, their versions and real calculations.
 import math
 from pathlib import Path

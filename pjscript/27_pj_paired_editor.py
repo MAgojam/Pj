@@ -1,9 +1,9 @@
 # (participant_id, group, before, after)
-# Load 26_pj_paired_service.py with Service script / Browse... first.
+# Load 26_pj_paired_service.py with Service... first.
 # This short editor script calls the reusable services; edit settings and results here.
 # Both Python interpreters work when SciPy is available; no pandas or matplotlib.
 if 'mzpjDemoPairedSummary' not in globals() or 'mzpjDemoPairedDashboard' not in globals():
-    raise RuntimeError('Load 26_pj_paired_service.py with Service script / Browse..., then Run again.')
+    raise RuntimeError('Load 26_pj_paired_service.py with Service..., then Run again.')
 
 summary = mzpjDemoPairedSummary(data, group='group', before='before', after='after')
 group_rows = summary['groups']

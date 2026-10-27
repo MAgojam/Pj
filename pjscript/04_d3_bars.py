@@ -1,4 +1,4 @@
-# Run in the Pj/Pjp editor, or load as a service script with Browse... and Run.
+# Run in the Pj/Pjp editor, or load as a service script with Service... and Run.
 import uuid
 
 chart_id = 'mzpj_bars_' + uuid.uuid4().hex

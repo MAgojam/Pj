@@ -42,8 +42,8 @@ Python; it does not suggest installing packages into jamovi's embedded Python.
 1. Open [Pj_Pandas_Matplotlib.omv](../data/Pj_Pandas_Matplotlib.omv).
 2. Add a **Pj Editor** analysis and select **System Python**.
 3. Load the standalone script [24_pj_pandas_matplotlib.py](../pjscript/24_pj_pandas_matplotlib.py)
-   using **Load script…**, or paste its full contents into the editor.
-4. Leave **Browse…** empty and Run.
+   using **Scripts > Load**, or paste its full contents into the editor.
+4. Leave **Service…** empty and Run.
 5. After checking the results, save the document as `Pj_Pandas_Matplotlib.omv`
    in the module's `data/` directory, retaining the script in its editor.
 

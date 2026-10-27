@@ -21,7 +21,7 @@ Requirements: NumPy, SciPy and bundled D3.
 The finished example is registered as **Linear regression - linked D3
 diagnostics** in **Open → Data Library → Pj**. It contains 60 fictional
 participants and the editable script in a saved Pjp analysis. Enable code
-execution when jamovi asks, then Run; Browse remains empty.
+execution when jamovi asks, then Run; Service… remains empty.
 
 To recreate or update the analysis locally:
 
@@ -29,7 +29,7 @@ To recreate or update the analysis locally:
 2. Use its **Pj Editor +** analysis (or add one to recreate the example).
 3. Select `final_score`, `study_hours` and `baseline`. Optionally select
    `participant_id` only to label points; it is not part of the statistical model.
-4. Leave **Service script / Browse…** empty. Load script 25 using **Load script…**.
+4. Leave **Service…** empty. Load script 25 using **Scripts > Load**.
 5. Choose jamovi Python or System Python, then Run.
 6. Check tables and interactions, then save over `data/Pj_Linear_Regression.omv`.
    The saved analysis should retain both the script and selected variables.
@@ -114,14 +114,14 @@ Python standard library.
 The finished example is registered as **Paired measurements - interactive D3
 explorer** in **Open → Data Library → Pj**. It contains 54 fictional participants
 and all code in the saved Pj editor. Enable code execution when jamovi asks,
-then Run with either interpreter and SciPy; Browse remains empty.
+then Run with either interpreter and SciPy; Service… remains empty.
 
 To recreate or update the analysis locally:
 
 1. Open the OMV.
 2. Use its **Pj Editor** analysis (or add one), with either interpreter selected.
-3. Leave **Service script / Browse…** empty; remove any previously selected file.
-4. Use **Load script…** to load script 28 into the editor, then Run.
+3. Leave **Service…** empty; remove any previously selected file.
+4. Use **Scripts > Load** to load script 28 into the editor, then Run.
 5. Check the results and interactions, then save over `data/Pj_Service_D3.omv`.
    All helper functions and active analysis code are retained in the editor.
    Close/reopen and rerun without loading any external Python files.
@@ -131,13 +131,13 @@ To recreate or update the analysis locally:
 Script 28 includes the helper functions first and the active analysis at the
 end. Loading it copies all code into the editor, where users can read and edit
 it. The saved library document requires no service attachment, external path or
-original `.py` file. Browse remains empty.
+original `.py` file. Service… remains empty.
 
 The alternative split version, service 26 plus editor 27, is available in
 [`pjscript/`](../pjscript) for learning and forum discussions about service files.
 It is not the Data Library version and is not installed by the JMO.
 The README explains how users prepare their own helper and active-analysis files
-and combine Browse with Load. Save script exports editor code only.
+and combine Service… with Load. Save exports editor code only.
 
 Before registering the finished example, inspect the saved OMV for script 28 in
 the Pj analysis and an empty service selection, then test close/reopen and Run.

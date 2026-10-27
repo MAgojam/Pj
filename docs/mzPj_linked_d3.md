@@ -6,7 +6,7 @@ standard library and the bundled D3 assets. No pandas, matplotlib or SciPy is
 required by these plotting functions.
 
 Open the built-in jamovi Data Library entry below, add a **Pjp** analysis, select
-the listed variables and **Load script** with **Browse empty**. The scripts use
+the listed variables and **Scripts > Load** with **Service… empty**. The scripts use
 `data` from the selection; they do not load files, create observations or install
 packages. Script 42 can also run in Pj with no dataset.
 

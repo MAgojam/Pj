@@ -1,4 +1,4 @@
-# Run in the Pj/Pjp editor, or load as a service script with Browse... and Run.
+# Run in the Pj/Pjp editor, or load as a service script with Service... and Run.
 print(list(data))
 if data:
     mzpjShowTable(data, name="selected_data", title="Selected data")
