@@ -2,7 +2,8 @@
 mzPjServiceInfo <- function() {
     list(api_version=1L, module_version=as.character(utils::packageVersion('Pj')),
          execution='separate-process', experimental=FALSE,
-         result_types=c('Preformatted', 'Text', 'Html', 'Table', 'Image', 'Output'))
+         result_budget_bytes=.mzPj_resultBudget,
+         result_types=c('Preformatted', 'Text', 'Html', 'Svg', 'Table', 'Image', 'Output'))
 }
 
 .mzPj_serviceError <- function(message, kind='python', details=NULL, help_html=NULL) {
@@ -60,7 +61,7 @@ mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
     libraries <- tryCatch(.mzPj_prepareLibraries(scriptPath, executable, host, timeout=timeout),
         error=function(e).mzPj_serviceError('Could not prepare the Python process.','process',conditionMessage(e)))
     script <- .mzPj_pythonScript(scriptPath,list(
-        LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error,
+        LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error, PLOTLY_INLINE=TRUE,
         DATASET=datasetPath, OUTPATH=outputPath, CODE=code,
         SCRIPT_NAMES=list(editor='Calling module Python code',service='Calling module service code'),
         EXTSCRIPT=if (host) '' else servicePath,
@@ -99,6 +100,16 @@ mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
                          error=function(e).mzPj_serviceError('Python returned invalid JSON.','protocol',conditionMessage(e)))
     if(!is.list(response) || !is.list(response$items))
         .mzPj_serviceError('Python returned an invalid Pj result object.','protocol')
+    # Preflight con le classi native, senza modificare risultati o dati del chiamante.
+    probeOptions <- jmvcore::Options$new()
+    probe <- list(options=probeOptions, results=jmvcore::Group$new(probeOptions),
+                  saveColumns=return_columns, data=data)
+    .mzPj_checkProtocolSize(response)
+    # Le Image vengono renderizzate dal modulo chiamante, che possiede i percorsi.
+    # Il loro stato base64 e' gia incluso nel controllo aggregato del protocollo.
+    probeResponse <- response
+    probeResponse$items <- Filter(function(item) !identical(item$type,'Image'), response$items)
+    .mzPj_addResults(probe, probeResponse)
     response$service <- c(mzPjServiceInfo(),list(python=python,transport=if(host)'stdio' else 'json-file'))
     class(response) <- c('mzPjServiceResult','list')
     response

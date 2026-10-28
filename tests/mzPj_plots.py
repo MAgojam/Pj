@@ -17,7 +17,7 @@ def runner():
                   STDIO_MODE='true', FIGWIDTH='800', FIGHEIGHT='500',
                   OUTPUT_MODE='noEcho', PYTHON_MODE='embedded', SAVECOLUMNS='false')
     config['SERVICES'] = [dict(filename=name, source=(ROOT / 'inst/python' / name).read_text(encoding='utf-8'))
-                          for name in ('mzPj_environment.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py')]
+                          for name in ('mzPj_environment.py', 'mzPj_data.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py')]
     source = (ROOT / 'inst/remote.py').read_text(encoding='utf-8')
     source = source.replace('{{MZPJ_CONFIG}}', base64.b64encode(json.dumps(config).encode()).decode(), 1)
     namespace = {'__name__': 'mzPj_plot_test'}
@@ -244,6 +244,20 @@ mzpjShowDistribution()
         with contextlib.redirect_stderr(errors): self.ns['execute_user_code'](code)
         self.assertEqual(errors.getvalue(), '')
         self.assertEqual(len(self.ns['results']['items']), 5)
+
+    def test_native_svg_is_optional_and_self_contained(self):
+        self.scatter({'x': [1, 2], 'y': [2, 3]}, 'x', 'y', result_type='svg')
+        item = self.ns['results']['items'][-1]
+        self.assertEqual(item['type'], 'Svg')
+        p = payload(self.ns)
+        self.assertEqual(p['resultType'], 'svg')
+        self.assertFalse(p['accordion'])
+        self.assertIn('.mzpj-d3-export ', p['exportStyle'])
+        self.assertNotIn('.mzpj-d3 ', p['exportStyle'])
+        self.scatter({'x': [1], 'y': [2]}, 'x', 'y')
+        self.assertEqual(self.ns['results']['items'][-1]['type'], 'Html')
+        with self.assertRaises(ValueError):
+            self.histogram({'v': [1, 2]}, 'v', result_type='image')
 
 
 if __name__ == '__main__':

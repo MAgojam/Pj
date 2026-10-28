@@ -93,6 +93,8 @@ PjOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 toggle,
                 default=FALSE,
                 hidden=TRUE)
+            private$..createdColumns <- jmvcore::OptionOutput$new(
+                "createdColumns")
             private$..scriptFile <- jmvcore::OptionFile$new(
                 "scriptFile",
                 scriptFile,
@@ -116,6 +118,7 @@ PjOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..figWidth)
             self$.addOption(private$..figHeight)
             self$.addOption(private$..toggle)
+            self$.addOption(private$..createdColumns)
             self$.addOption(private$..scriptFile)
             self$.addOption(private$..python)
         }),
@@ -129,6 +132,7 @@ PjOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         figWidth = function() private$..figWidth$value,
         figHeight = function() private$..figHeight$value,
         toggle = function() private$..toggle$value,
+        createdColumns = function() private$..createdColumns$value,
         scriptFile = function() private$..scriptFile$value,
         python = function() private$..python$value),
     private = list(
@@ -141,6 +145,7 @@ PjOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..figWidth = NA,
         ..figHeight = NA,
         ..toggle = NA,
+        ..createdColumns = NA,
         ..scriptFile = NA,
         ..python = NA)
 )
@@ -148,14 +153,19 @@ PjOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 PjResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "PjResults",
     inherit = jmvcore::Group,
-    active = list(),
+    active = list(
+        createdColumns = function() private$.items[["createdColumns"]]),
     private = list(),
     public=list(
         initialize=function(options) {
             super$initialize(
                 options=options,
                 name="",
-                title="Python")}))
+                title="Python")
+            self$add(jmvcore::Output$new(
+                options=options,
+                name="createdColumns",
+                initInRun=TRUE))}))
 
 PjBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "PjBase",
@@ -175,7 +185,7 @@ PjBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 pause = NULL,
                 completeWhenFilled = FALSE,
                 requiresMissings = FALSE,
-                weightsSupport = 'auto')
+                weightsSupport = 'none')
         }))
 
 #' Pj Editor
@@ -195,6 +205,7 @@ PjBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param python .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$createdColumns} \tab \tab \tab \tab \tab an output \cr
 #' }
 #'
 #' @export

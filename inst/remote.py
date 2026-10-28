@@ -18,6 +18,8 @@ _config = json.loads(base64.b64decode('{{MZPJ_CONFIG}}').decode('utf-8'))
 _pj_resources = _config.get('RESOURCES', {})
 _pj_plot_js = _config.get('PLOT_JS', '')
 _pj_plot_css = _config.get('PLOT_CSS', '')
+_pj_chart_js = _config.get('CHART_JS', '')
+_pj_plotly_gzip = _config.get('PLOTLY_GZIP', '')
 _pj_library_catalog = _config.get('LIBRARY_CATALOG', {})
 _pj_library_path = _config.get('LIBRARY_PATH')
 _pj_library_error = _config.get('LIBRARY_ERROR', '')
@@ -105,6 +107,16 @@ def execute_user_code(code, ext_script_path=""):
     local_vars['mzpjShowCorrelation'] = _pj_show_correlation
     local_vars['mzpjShowPaired'] = _pj_show_paired
     local_vars['mzpjShowTestDistribution'] = _pj_show_test_distribution
+    local_vars['mzpjShowChart'] = _pj_show_chart
+    local_vars['mzpjShowPlotly'] = _pj_show_plotly
+    local_vars['mzpjRecode'] = _pj_recode
+    local_vars['mzpjRowStatistic'] = _pj_row_statistic
+    local_vars['mzpjStandardize'] = _pj_standardize
+    local_vars['mzpjRank'] = _pj_rank
+    local_vars['mzpjEffectSize'] = _pj_effect_size
+    local_vars['mzpjEffectInterval'] = _pj_effect_interval
+    local_vars['mzpjSamplingVariance'] = _pj_sampling_variance
+    local_vars['mzpjMetaWeights'] = _pj_meta_weights
     local_vars['mzpjFigureSize'] = {
         'width': _pj_figure_dimension(FIGWIDTH, 600),
         'height': _pj_figure_dimension(FIGHEIGHT, 500)

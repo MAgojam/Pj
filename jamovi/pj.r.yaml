@@ -3,6 +3,9 @@ name:  Pj
 title: Python
 jrs:   '1.1'
 
-items: []
+items:
+  - name: createdColumns
+    type: Output
+    initInRun: true
 
 ...

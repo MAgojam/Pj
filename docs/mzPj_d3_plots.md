@@ -3,6 +3,12 @@
 Available in **Pj 1.1.0 or newer**. Earlier 1.0.1 packages do not include
 these plotting helpers.
 
+**Since Pj 1.4.0:** all ten helpers additionally accept `result_type='svg'`.
+This exposes their SVG through jamovi's native figure contract, while keeping
+Results interactions. The default `result_type='html'` preserves the previous
+behaviour. See [native D3 figures and export](mzPj_d3_export.md) and example58.
+This addition is absent from earlier 1.3.x packages.
+
 The ten `mzpjShow...` plotting functions create interactive HTML results
 from Python data or explicit teaching parameters. They work with jamovi Python and System Python
 without pandas, matplotlib, NumPy or SciPy. D3, the Pj renderer bundle and its CSS
@@ -40,7 +46,7 @@ mzpjShowScatter(
     dataset, x, y, group=None, labels=None,
     name=None, title=None, x_label=None, y_label=None,
     color='#3e6da9', width=None, height=None,
-    accordion=True, expanded=True
+    accordion=True, expanded=True, result_type='html'
 )
 ```
 
@@ -80,7 +86,7 @@ mzpjShowHistogram(
     dataset, variable, bins=10, density=False,
     name=None, title=None, x_label=None, y_label=None,
     color='#3e6da9', width=None, height=None,
-    accordion=True, expanded=True
+    accordion=True, expanded=True, result_type='html'
 )
 ```
 

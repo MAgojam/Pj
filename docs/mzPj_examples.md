@@ -1,5 +1,48 @@
 # Standalone Python examples
 
+**Iris visual preparation, example 65:** open Anderson's Iris Data from the
+built-in Data Library. Pjp selects its four numeric variables plus Species;
+Pj chooses them by name in the script. Five Output columns demonstrate one row
+statistic, global and within-species z, within-species ranks and recoding.
+Use `PREFIX='pj_'` / `'pjp_'` for two analyses in the same dataset. Tables and
+a D3 plot support visual comparison. No new OMV or JMO compilation is needed.
+See the [data preparation guide](mzPj_data_preparation.md).
+
+**Data preparation, examples62–63:** Pj 1.4.0 enables dataset Outputs
+in Pj as well as Pjp. Example62 demonstrates recoding, reversed-item scoring,
+standardization and ranks with supplied teaching values. Example63 uses
+Anderson's Iris Data: select the four named numeric columns in Pjp, or choose
+them through the script's list in Pj. Choose one row statistic and return one
+column. See the [argument and missing-value guide](mzPj_data_preparation.md).
+
+**Three-library comparison, example 61:** no dataset is needed. Use either editor
+and either Python. `EXPORT = False` shows interactive Chart.js, D3 and Plotly
+charts of the same supplied values. Set `EXPORT = True` and run again before
+exporting PDF/DOCX/ODT: Chart.js and Plotly create one static image each; D3 uses
+a native vector Svg result. Wait for image preparation to finish before exporting.
+This requires the updated preview. The standalone script remains outside the JMO.
+
+**Output-size protection preview, example60:** see the
+[size guide](mzPj_output_size.md). Deliberately exceed the aggregate budget,
+then switch `EXCEED_LIMIT` to `False` to test recovery. Install the protection
+preview first. Example59 is the initial System Python Plotly laboratory;
+bundled Plotly support is available in the updated Plotly preview for both
+interpreters. Example59 starts with `STATIC = False` for interaction; change it
+to `True` and run again for a static native export figure. It requires the
+updated preview. See the
+[Plotly guide](mzPj_plotly.md).
+
+**D3 native export preview, example58:** see the [export guide](mzPj_d3_export.md).
+It requires the updated source/preview build, runs without a dataset, and
+compares native Svg figure export with the existing HTML mode.
+
+**Chart.js preview, examples 53–57:** see the [Chart.js guide](mzPj_chartjs.md).
+These require a source/preview build containing `mzpjShowChart`; they are not
+supported by the published v1.3.0 JMO files. Example 54 uses selected variables
+in Pjp; 53 and 55 run without a dataset in either editor and either Python.
+Example 56 demonstrates the optional static figure for Office export.
+Example 57 demonstrates the optional floating legend and explanatory notes.
+
 The reviewed Python files are available in [`pjscript/`](../pjscript). Their
 comments, instructions and result text are in English. They complement the five
 ready-to-run OMV documents in **Open → Data Library → Pj**.
@@ -244,3 +287,16 @@ for this repository-only publication.
 
 Run only scripts whose contents and source you trust. These examples do not
 install Python packages. Pj executes user code; it does not sandbox it.
+
+## Pj 1.4.0: data and study-level meta-analysis
+
+Scripts 62–64 target Pj 1.4.0, not published 1.3.x packages.
+Script 63 uses the built-in Iris dataset and returns one chosen row statistic.
+Script 64 uses the local synthetic Pj_Meta_Lab.omv fixture: choose one of six
+MODEL values and, in Pjp, select study plus the input columns in that mapping.
+It shows native tables and a D3 interval plot; WRITE_COLUMNS=True returns
+three aligned Output columns. No pooled model is fitted. The local fixture is
+not an additional installed Data Library example. See the
+[English function handbook](mzPj_python_functions.md),
+[Italian handbook](mzPj_python_functions_it.md), and
+[meta-analysis guide](mzPj_meta_analysis.md).

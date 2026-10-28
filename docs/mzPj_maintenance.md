@@ -1,6 +1,6 @@
 # Pj / Pjp maintenance map
 
-Updated: 26 October 2026 — Agente_Pj. Scope: public service API1 and developer
+Updated: 28 October 2026. Scope: public service API1, development data/meta helpers and developer
 example, with the existing editor architecture retained. Public Python functions keep their `mzpj` camel-case
 names. New internal service filenames use the exact `mzPj_` prefix and
 underscores. Preserve filename case in every reference for Linux and macOS.
@@ -12,7 +12,9 @@ Technical comments in project-owned implementation sources are in Italian.
 The editable Python scripts stored in public OMV examples use English comments
 and docstrings; their embedded JavaScript follows the same convention. Local
 internal R dataset generators retain Italian comments. Identifiers, interface strings,
-errors, result labels and user documentation are in English. Generated R help
+errors and result labels are in English. User documentation defaults to English;
+the user function handbook also has an equivalent Italian edition for teaching.
+Generated R help
 comments are user documentation and remain in English; third-party copyright
 and license notices retain their original wording.
 
@@ -39,6 +41,8 @@ Generated `.h.R` files, compiled assets, Ace and D3 are not edited as services.
 
 | File | Responsibility |
 |---|---|
+| `inst/python/mzPj_data.py` | Recoding, one row statistic per call, standardization and ranks; no implicit input mutation |
+| `inst/python/mzPj_meta.py` | Study-level effects/variances, Wald intervals, uncertainty conversion and supplied-tau2 weights; no pooled model |
 | `R/pj.b.R` | Analysis lifecycle, service selection, transport, diagnostics, image rendering and saved-result restoration |
 | `R/pjp.b.R` | Pjp specialization and output-column enablement |
 | `R/mzPj_python_service.R` | UTF-8 resource reading, one encoded configuration, typed dataset preparation, process status and interpreter discovery |
@@ -75,7 +79,8 @@ one replacement token. User code, filenames and options are data inside that
 object; they are never searched again for template tokens.
 
 Python helper sources travel in that same envelope and execute in one trusted
-module namespace, in the order environment → results → tables. This is
+module namespace, in the order libraries → environment → data → meta → results
+→ tables → plots → chart → plotly. This is
 intentional: it preserves shared counters, `results`, optional libraries and
 function globals. Do not replace it with ordinary filesystem imports: System
 Python launched on a Flatpak host cannot assume access to the installed R
@@ -149,7 +154,7 @@ zoom. The user confirmed successful zoom and optional dataset-column creation.
 The final OMV keeps `WRITE_COLUMNS = False` by default.
 
 `minApp` is 28.3.0, as requested by the maintainer. The local build
-configuration targets `Y:/A_Lavoro/jamovi-port` (28.11.0.0 at this update).
+configuration targets the portable jamovi installation (28.11.0.0 at this update).
 At initial publication, `pjscript/` was ignored by Git and public documentation used
 Data Library instructions without links to excluded script files. YAML, archive,
 script content, public links and build-script syntax checks passed. Windows
@@ -161,7 +166,7 @@ passed inspection. D3, the approved PNG and Python services are present. Loading
 this example from Data Library in the live application was subsequently confirmed
 by the maintainer, together with successful execution: **PASSED on Windows**.
 After removing the old installed Pj copy and recompiling, the active installation
-at `C:/Users/MAgo/AppData/Roaming/jamovi/modules/Pj` was verified against the new
+at the user-module directory was verified against the new
 JMO, including its datasets metadata and byte-identical BCG OMV.
 
 Regression checks cover both installed Windows interpreters, file and inline
@@ -479,3 +484,4 @@ On 25 October2026 the maintainer reported a manual Apple Silicon Mac trial
 PASSED. Individual examples and interpreter modes were not specified, so this
 does not claim a complete manual test matrix. Intel manual desktop validation
 remains pending; its automatic package and backend checks passed.
+

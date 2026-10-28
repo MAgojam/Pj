@@ -90,6 +90,11 @@ options:
       default: false
       hidden: true
 
+    - name: createdColumns
+      type: Output
+      default: true
+      hidden: true
+
     - name: scriptFile
       type: File
       title: Service script

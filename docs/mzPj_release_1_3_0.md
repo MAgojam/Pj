@@ -1,6 +1,6 @@
 # Pj 1.3.0 — Python service for other jamovi modules
 
-Revision: **26 October 2026 — Agente_Pj**.
+Revision: **26 October 2026**.
 
 ## Added
 

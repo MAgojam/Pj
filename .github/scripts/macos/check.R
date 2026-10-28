@@ -18,9 +18,13 @@ stopifnot(length(embedded)==1L,nzchar(embedded),file.exists(embedded),file.exist
 for (python in c(embedded,external)) {
     stopifnot(system2(python,c('--version'))==0L)
     stopifnot(system2(python,shQuote(file.path(root,'tests/mzPj_libraries.py')))==0L)
+    for(test in c('mzPj_data.py','mzPj_meta.py','mzPj_plots.py','mzPj_chart.py','mzPj_plotly.py'))
+        stopifnot(system2(python,shQuote(file.path(root,'tests',test)))==0L)
 }
 source(file.path(root,'tests/mzPj_output_sync.R'))
 source(file.path(root,'tests/mzPj_service_api.R'))
+source(file.path(root,'tests/mzPj_result_budget.R'))
+source(file.path(root,'tests/mzPj_preparation.R'))
 exampleRoot <- readLines(file.path(out,'SERVICE_EXAMPLE_ROOT.txt'),warn=FALSE)[1]
 for(scenario in c('available','missing')) {
     hostArgs <- c('--vanilla',file.path(root,'tests','mzPj_service_host.R'),root,exampleRoot,libs,scenario)

@@ -1,5 +1,10 @@
 # Python libraries supplied by Pj
 
+Pj 1.4.0 additionally bundles Plotly 7.1.0, Narwhals 2.26.0 and
+Packaging 26.3. See the [Plotly guide](mzPj_plotly.md) for activation, dependency
+source handling and the `mzpjShowPlotly()` result helper. Earlier 1.3.x JMO
+files contain the original eight-library bundle.
+
 Version 1.2.0 supplies eight source-only libraries with the module. No pip,
 network access or changes to jamovi's Python installation are required when
 running a script. Both jamovi Python and System Python can use these copies.
@@ -138,7 +143,8 @@ It does not run a test on the open dataset.
 ## Provenance and licenses
 
 `inst/extdata/mzPj_python_libraries.json` records distribution versions, original
-wheel filenames and SHA-256 checksums, dependencies, license paths and the
+wheel filenames and SHA-256 checksums for the original eight packages,
+installed-distribution provenance for the Plotly additions, dependencies, license paths and the
 resulting archive checksum. Unmodified upstream Python sources and license
 notices are preserved inside the archive. Upstream tests, installation records
 and command-line entry points are omitted. MarkupSafe's native accelerator is

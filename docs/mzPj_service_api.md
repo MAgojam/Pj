@@ -1,6 +1,6 @@
 # Use Python in another jamovi module through Pj
 
-Revision: **26 October 2026 — Agente_Pj**. Public service API **version 1**, introduced
+Public service API **version 1**, introduced
 in **Pj 1.3.0**. Earlier public Pj releases do not provide this API. Local service
 preview packages used during development are not the public compatibility target.
 
@@ -9,10 +9,32 @@ keeps its R6 analysis, options, selected data and native results; Pj supplies
 interpreter discovery, its Python helpers/resources and a structured response.
 No Pj editor analysis is created. Each call starts a separate Python process:
 there is no persistent session, reticulate or direct sharing of R/Python objects.
+
+Pj 1.4.0 also supplies Plotly through `mzpjUseLibrary('plotly')`
+and `mzpjShowPlotly()`. The latter returns portable, compressed offline HTML
+for the service API; existing Html `setContent()` mapping remains usable.
+See the [Plotly guide](mzPj_plotly.md) for size and browser requirements.
+Its optional `static=True` returns a `Svg` item: hosts must map that type
+to native `jmvcore::Svg` for document export rather than treating it as Html.
 The current implementation uses `system2()`; changing the runner is not required
 for a host to use this API.
 
 ## 1. Installation and optional dependency
+
+Pj 1.4.0 also exposes `mzpjRowStatistic`, `mzpjRecode`,
+`mzpjStandardize` and `mzpjRank` through this same service. They return values
+without modifying inputs. See [data preparation](mzPj_data_preparation.md).
+`return_columns` remains opt-in; the host still owns Output synchronization.
+
+Pj 1.4.0 additionally exposes `mzpjEffectSize`, `mzpjEffectInterval`,
+`mzpjSamplingVariance` and `mzpjMetaWeights` through the same runner, without
+changing API version 1 or its call arguments. See the
+[meta-analysis helper guide](mzPj_meta_analysis.md) and the
+[function handbook](mzPj_python_functions.md). The calling module must pass the
+selected study summaries or existing effects/variances and interpret their
+scale; Pj does not detect the host's model or fit a pooled model implicitly.
+An optional host feature using these helpers needs Pj 1.4.0 or newer;
+Pj 1.3.x supplies the original service API, not these helpers.
 
 The user must install **Pj 1.3.0 or newer** for their platform beside your module.
 Do not bundle another copy of Pj. An ordinary R `Imports: Pj` is not a replacement
@@ -39,6 +61,19 @@ stopifnot(info$api_version == 1L)
 
 `mzPjServiceInfo()` returns `api_version`, `module_version`, `execution`,
 `experimental` (FALSE for this public API) and supported `result_types`.
+
+Pj 1.4.0 exposes `mzpjShowChart` through this same
+runner, including the optional floating legend and `static=True`. The default
+interactive call returns Html; static mode returns Svg, which a host must map
+to `jmvcore::Svg` and `setContent()`. Check `result_types` and handle each type
+explicitly; installing a preview does not add that mapping to an existing host.
+These additions do not change `mzPjRunPython` arguments or require an editor.
+They are not present in the released 1.3.0 packages.
+
+The D3 helpers in Pj 1.4.0 also accept `result_type='svg'`.
+This returns a native vector figure while retaining Results interactions;
+the host must supply the Svg result mapping described above. The default
+`result_type='html'` remains compatible with existing host mappings.
 Use the API version for the response contract and the module version for a
 minimum feature requirement. Future compatible additions may add fields: do not
 require an exact list of metadata names. A future incompatible contract will
@@ -136,6 +171,7 @@ on the absolute position of an item, particularly when `python_info=TRUE`.
 | `Preformatted` | `name`, `content`: console text; display as plain text. |
 | `Text` | `name`, `content`: Markdown; use the host's declared Text result. |
 | `Html` | `name`, `title`, `content`: trusted markup, possibly JavaScript; set a declared host Html result. |
+| `Svg` (since 1.4.0) | `name`, `title`, `content`: native client-rendered figure; map to a host `jmvcore::Svg` result and call `setContent()`. Used by `mzpjShowChart(..., static=True)`. Not present in the published 1.3.0 release. |
 | `Table` | `name`, `title`, `columns`, `rows`, `notes`, `footnotes`, `symbols`, `transpose`: construct/update your declared native table. |
 | `Image` | `name`, `title`, `width`, `height`, `state`: Base64 PNG and initial display dimensions. The host must implement its image state/renderer. |
 | `Output` | Returned column descriptions/values; map explicitly to the host's own declared Output, respecting row alignment and ownership. |
@@ -194,7 +230,7 @@ tryCatch(service$run(code='raise ValueError("Demonstration")'),
 
 Do not paste arbitrary error text into HTML: escape it or use a plain-text result.
 Pj's optional `help_html` is module-generated diagnostic markup for a recognized
-Flatpak setup problem. A Python exception does not return partially successful
+Flatpak setup problem or an output-size limit. A Python exception does not return partially successful
 items. On failure, clear/hide obsolete computed results as appropriate.
 
 Avoid collapsing valid results while Python is running: configure visibility in
@@ -205,6 +241,11 @@ do not override the global Html prototype. Native Html may still rebuild changed
 content; this example does not promise incremental D3 updates or zero redraws.
 
 ## 8. Trust, portability and limits
+
+Pj 1.4.0 adds aggregate output-size protection. See
+[Output size protection](mzPj_output_size.md) for budgets, the `result_size`
+condition, recovery and the calling module's responsibility for its own full
+analysis response. Published 1.3.0 packages do not contain this protection.
 
 Python code runs with the permissions of the selected process; this is not a
 sandbox. Rendering returned HTML runs its JavaScript. Use module-authored trusted

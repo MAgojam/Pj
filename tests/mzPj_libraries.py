@@ -50,6 +50,8 @@ with tempfile.TemporaryDirectory(prefix='mzPj-library-test-') as temporary:
     for item in catalog['libraries']:
         assert Path(modules[item['module']].__file__).is_relative_to(ready['path'])
         assert metadata.version(item['distribution']) == item['version']
+    import _plotly_utils
+    assert Path(_plotly_utils.__file__).is_relative_to(ready['path'])
     sp = modules['sympy']
     x = sp.Symbol('x')
     assert sp.integrate(x ** 2, (x, 0, 1)) == sp.Rational(1, 3)

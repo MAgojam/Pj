@@ -347,7 +347,9 @@ const events = {
         this.getColumnNames = () => {
             return this.requestData('columns', {  })
                 .then((data) => {
-                    return data.columns.map(col => col.name);
+                    // Come il supplier nativo, esclude gli Output della stessa analisi.
+                    const owner = this.dataSourceId();
+                    return data.columns.filter(col => owner == null || col.outputAnalysisId !== owner).map(col => col.name);
                 }).then((names) => {
                     // Esclude le colonne filtro iniziali di jamovi.
                     let index = 0;
