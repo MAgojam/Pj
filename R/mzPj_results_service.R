@@ -2,12 +2,13 @@
 .mzPj_addResults <- function(self, results) {
     if (!is.list(results) || !is.list(results$items))
         stop('Python returned an invalid Pj result object.', call.=FALSE)
+    .mzPj_checkProtocolSize(results)
     seen <- character()
     for (item in results$items) {
         if (!is.list(item) || !is.character(item$name) || length(item$name) != 1L ||
             !grepl('^[A-Za-z][A-Za-z0-9_]*$', item$name) || item$name %in% seen ||
             !is.character(item$type) || length(item$type) != 1L ||
-            !item$type %in% c('Preformatted', 'Text', 'Html', 'Table', 'Image', 'Output'))
+            !item$type %in% c('Preformatted', 'Text', 'Html', 'Svg', 'Table', 'Image', 'Output'))
             stop('Python returned an invalid or duplicate result name/type.', call.=FALSE)
         seen <- c(seen, item$name)
     }
@@ -31,13 +32,20 @@
             elem$setContent(item$content)
             self$results$add(elem)  
 
-        } else if (item$type == 'Html') {
-            elem <- jmvcore::Html$new(
+        } else if (item$type %in% c('Html', 'Svg')) {
+            constructor <- if (item$type == 'Svg') jmvcore::Svg else jmvcore::Html
+            elem <- constructor$new(
                 self$options,
                 name=item$name,
                 title=if (!is.null(item$title)) item$title else "HTML Python"
             )
             elem$setContent(item$content)
+            if (!is.null(item$scripts)) {
+                scripts <- unlist(item$scripts, use.names=FALSE)
+                if (!identical(scripts, 'extdata/plotly.min.js'))
+                    stop('Python returned an unsupported script resource.',call.=FALSE)
+                elem$setScripts(scripts)
+            }
             self$results$add(elem)
 
         } else if (item$type == 'Table') {
@@ -178,4 +186,9 @@
             })
         }
     }
+    # Le tabelle native possono espandersi rispetto al JSON; controlliamo il protobuf.
+    tryCatch(.mzPj_checkNativeSize(self$results), mzPjResultSizeError=function(e) {
+        self$results$clear()
+        stop(e)
+    })
 }

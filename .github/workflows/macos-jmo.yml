@@ -12,6 +12,10 @@ on:
       - 'R/mzPj_service_api.R'
       - 'inst/**'
       - 'tests/mzPj_service_api.R'
+      - 'tests/mzPj_preparation.R'
+      - 'tests/mzPj_meta.py'
+      - 'tests/mzPj_data.py'
+      - 'tests/fixtures/**'
       - 'docs/examples/**'
       - 'tests/mzPj_macos_python.R'
 
@@ -78,6 +82,11 @@ jobs:
           file "$RH/bin/exec/R" >> "$GITHUB_WORKSPACE/results/environment.txt"
           lipo "$RH/bin/exec/R" -verify_arch "$EXPECTED_ARCH"
           sed -n '1,38p' "$RH/bin/R" >> "$GITHUB_WORKSPACE/results/environment.txt"
+      - name: Prepare isolated System Python for numerical tests
+        run: |
+          python3 -m venv --copies "$RUNNER_TEMP/pj-system-python"
+          "$RUNNER_TEMP/pj-system-python/bin/python3" -m pip install numpy scipy
+          echo "$RUNNER_TEMP/pj-system-python/bin" >> "$GITHUB_PATH"
       - name: Compile with the embedded jamovi R
         run: |
           set -euo pipefail

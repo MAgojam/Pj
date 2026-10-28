@@ -4,7 +4,7 @@ PjClass <- R6::R6Class(
     "PjClass",
     inherit = PjBase,
     active=list(
-        saveColumns=function() FALSE
+        saveColumns=function() TRUE
     ),
     private = list(
 
@@ -285,7 +285,13 @@ PjClass <- R6::R6Class(
                         simplifyVector=FALSE
                     )
 
-                    .mzPj_addResults(self, results)
+                    tryCatch(.mzPj_addResults(self, results), mzPjResultSizeError=function(e) {
+                        self$results$clear()
+                        info <- jmvcore::Html$new(self$options, name='outputSizeInfo',
+                            title='Python output size limit')
+                        info$setContent(paste0('<p><strong>', conditionMessage(e), '</strong></p>', e$help_html))
+                        self$results$add(info)
+                    })
                 }
             }
         },
@@ -316,6 +322,22 @@ PjClass <- R6::R6Class(
 
     ),
     public=list(
+        # Ultima barriera: include opzioni, codice, stato e metadati della risposta.
+        serialize=function(final=FALSE, createErrorOnFailure=TRUE, includeState=TRUE) {
+            serial <- super$serialize(final=final, createErrorOnFailure=createErrorOnFailure,
+                                      includeState=includeState)
+            if (!is.null(serial) && length(serial) > .mzPj_responseBudget) {
+                error <- tryCatch(.mzPj_resultSizeError(length(serial), 'complete analysis response'),
+                    mzPjResultSizeError=identity)
+                # Stesso fallback compatto usato da jmvcore per errori di serializzazione.
+                fallback <- jmvcore:::createErrorAnalysis(
+                    paste(conditionMessage(error), error$details), character(), private$.package,
+                    private$.name, private$.datasetId, self$analysisId, private$.revision)
+                serial <- fallback$serialize(final=final, createErrorOnFailure=FALSE,
+                                             includeState=includeState)
+            }
+            serial
+        },
         asSource=function() {
             if (!self$options$output == 'echo')
                 return(self$options$code)

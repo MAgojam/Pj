@@ -1,5 +1,10 @@
 # Pj — Python inside jamovi
 
+Current version: **1.4.0**. See the [release notes](docs/mzPj_release_1_4_0.md).
+
+Python function handbook: [English](docs/mzPj_python_functions.md) ·
+[Italiano](docs/mzPj_python_functions_it.md). The handbooks document Pj 1.4.0 and identify features absent from earlier 1.3.x packages.
+
 <img src="inst/extdata/mzPj_icon_python.png" alt="Pj icon" width="96">
 
 Pj is designed to complement **Rj**, which provides an editor for R code in
@@ -18,17 +23,40 @@ The module includes two analyses:
 
 | Analysis | Purpose |
 |---|---|
-| **Pj Editor** | Write Python code and access dataset columns through the editor. |
+| **Pj Editor** | Write Python code and access dataset columns through the editor; version 1.4.0 also returns new dataset columns. |
 | **Pj Editor +** | Select variables explicitly and optionally return newly created columns to the dataset. |
 
 Pjp extends the shared Pj implementation. Both analyses use the same editor,
 Python result functions and external service-script support.
 
-**Source update:** this repository includes editor-toolbar and popup refinements
-that are not yet included in the downloadable v1.3.0 packages. The published
-release files remain unchanged.
+**Version 1.4.0** includes the refined toolbar/popup, Chart.js and Plotly,
+native figure export, output-size protection, data preparation and study-level
+meta-analysis helpers. Both editors support dataset Outputs. The public
+Python service API remains version 1 and uses the same system2 runner.
+
+**Chart.js:** Pj provides `mzpjShowChart` for offline
+Canvas charts with either Python interpreter. See the
+[Chart.js guide](docs/mzPj_chartjs.md) and scripts 53–57, including an optional
+native static figure for Office export (`static=True`) and a floating legend.
+Available in Pj 1.4.0 or newer.
 
 ## Features
+
+Pj 1.4.0 bundles the Python distribution and required
+dependencies, with `mzpjShowPlotly()` using offline native HTML script resources
+in the editor and a portable service API fallback. See the
+[Plotly guide](docs/mzPj_plotly.md). Available in Pj 1.4.0 or newer.
+Optional `static=True` supplies one static native figure for document export;
+default `static=False` stays interactive without image-capture overhead.
+Example59 exposes this choice as its `STATIC` flag.
+
+Pj 1.4.0 also guards aggregate output size before transmission
+to jamovi, with an explanatory message and service API condition. See
+[Output size protection](docs/mzPj_output_size.md). This protection requires Pj 1.4.0 or newer.
+
+Pj 1.4.0 also supports `result_type='svg'` on the ten D3 helpers for
+native figure/document export, retaining Results interactions. See the
+[D3 export guide](docs/mzPj_d3_export.md) and example58. Earlier 1.3.x packages do not include this addition.
 
 Version **1.3.0** adds a public Python execution service for other jamovi modules.
 A host can keep its R6 analysis, options and native results while calling
@@ -163,7 +191,10 @@ if you select it for labels. Unselected columns are unavailable to the script.
 Selecting an ID does not automatically give it a statistical role; the script
 decides which numeric columns enter its calculations.
 
-New columns created through Pjp's `data` become Outputs owned by that analysis.
+Since Pj 1.4.0, new columns created through either editor's
+`data` become Outputs owned by that analysis. Earlier 1.3.x supports this
+in Pjp only. See [data preparation](docs/mzPj_data_preparation.md) for row
+statistics, recoding, standardization and ranks, without new dependencies.
 Each successful run replaces its Output set; rerunning without creating those
 columns removes its previous Outputs. Original input columns and Outputs from
 other analyses remain intact. Clear and failed runs do not request this removal.

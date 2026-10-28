@@ -16,7 +16,7 @@ for (current in list(columns, list(), columns)) {
     stopifnot(pb$has('outputs'), length(pb$outputs$outputs)==length(current))
     stopifnot(identical(self$data, dataset))
 }
-# Pj non restituisce colonne: l'envelope non deve introdurre un Output.
+# Un chiamante senza Output abilitato non deve introdurre colonne.
 self$saveColumns <- FALSE
 self$results$clear()
 addResults(self, list(items=list(list(type='Output', name='createdColumns', columns=list()))))

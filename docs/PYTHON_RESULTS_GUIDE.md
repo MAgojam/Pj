@@ -1,6 +1,12 @@
 # Python results in Pj and Pjp
 
-Working guide — updated 23 October 2026.
+Working guide — updated 28 October 2026.
+
+For the complete function catalogue, signatures, defaults and argument meanings,
+start with the [Python function handbook](mzPj_python_functions.md), also available
+[in Italian](mzPj_python_functions_it.md). Data and study-level meta-analysis
+helpers are documented there and in the linked detailed guides. These additions
+require Pj 1.4.0 or newer; earlier 1.3.x packages do not include them.
 
 This guide documents the Python functions supplied by Pj/Pjp. Examples use
 English result labels and the public `mzpj` camelCase names.
@@ -15,6 +21,10 @@ their requirements and service/editor combinations. These files are excluded
 from JMO installation and must be downloaded separately.
 
 ## 1. Python environments and dataset
+
+Pj 1.4.0 additionally provides `mzpjShowChart` for Chart.js plots.
+See the [Chart.js guide](mzPj_chartjs.md) for supported types, options and
+examples 53–57. This feature is absent from earlier 1.3.x packages.
 
 Pj 1.1.0 supplies ten general D3 functions, including
 `mzpjShowCorrelation`, `mzpjShowPaired` and `mzpjShowTestDistribution`, without
@@ -51,7 +61,11 @@ look like numbers. Empty strings remain empty strings; missing and non-finite
 values become `None`. Dates and times transfer as text. These rules apply to
 both interpreters and do not require pandas.
 
-In Pjp, new columns added to `data` are returned as analysis-owned Output columns.
+In the development preview for 1.4.0, both Pj and Pjp return new columns added
+to `data` as analysis-owned Output columns (published 1.3.0 supports Pjp only).
+Pj excludes its own Outputs from automatic input selection. See
+[data preparation](mzPj_data_preparation.md) for row statistics, recoding,
+standardization and ranks.
 Every successful run synchronizes that set: if the script no longer creates
 these columns, an empty Output removes the previous columns owned by this
 analysis. Original dataset columns and Outputs from other analyses are retained.
@@ -1028,6 +1042,17 @@ close/reopen and returned-column scenarios should be recorded individually when
 tested. macOS desktop compilation/use and a complete OS/interpreter matrix remain
 unverified.
 ## Libraries supplied by Pj 1.2.0
+
+The development preview adds [Plotly](mzPj_plotly.md) and the
+`mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None,
+static=False, export_width=960)` helper
+for either Python, including the public service API. Default `static=False`
+is interactive and performs no image capture. Use `static=True` to draw one
+static native figure for document export, without persistent interaction.
+
+For the development preview's aggregate output budgets and recovery messages,
+see [Output size protection](mzPj_output_size.md). The limit applies to the
+combined results, not separately to each figure or table.
 
 Use `mzpjUseLibrary(name, source='bundled')` to activate a supplied library and
 return its module. Required bundled dependencies are activated together.

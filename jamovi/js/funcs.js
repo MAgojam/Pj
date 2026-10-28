@@ -2,6 +2,14 @@
 
 module.exports = [
     // Funzioni dei risultati Pj/Pjp, condivise dai due interpreti Python.
+    {"name": "mzpjRecode", "value": "mzpjRecode", "meta": "Pj data", "type": "func"},
+    {"name": "mzpjRowStatistic", "value": "mzpjRowStatistic", "meta": "Pj data", "type": "func"},
+    {"name": "mzpjEffectSize", "value": "mzpjEffectSize", "meta": "Pj meta", "type": "func"},
+    {"name": "mzpjEffectInterval", "value": "mzpjEffectInterval", "meta": "Pj meta", "type": "func"},
+    {"name": "mzpjSamplingVariance", "value": "mzpjSamplingVariance", "meta": "Pj meta", "type": "func"},
+    {"name": "mzpjMetaWeights", "value": "mzpjMetaWeights", "meta": "Pj meta", "type": "func"},
+    {"name": "mzpjStandardize", "value": "mzpjStandardize", "meta": "Pj data", "type": "func"},
+    {"name": "mzpjRank", "value": "mzpjRank", "meta": "Pj data", "type": "func"},
     {"name": "mzpjShowText", "value": "mzpjShowText", "meta": "Pj results", "type": "func"},
     {"name": "mzpjShowHtml", "value": "mzpjShowHtml", "meta": "Pj results", "type": "func"},
     {"name": "mzpjShowImage", "value": "mzpjShowImage", "meta": "Pj results", "type": "func"},

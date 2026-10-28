@@ -42,7 +42,8 @@ def _pj_library_bootstrap(catalog, archive=None):
     data = base64.b64decode(archive, validate=True)
     if hashlib.sha256(data).hexdigest() != digest:
         raise RuntimeError('Pj library bundle checksum verification failed.')
-    allowed = {item['module'] for item in catalog['libraries']}
+    allowed = {module for item in catalog['libraries']
+               for module in [item['module'], *item.get('additional_modules', [])]}
     with tempfile.TemporaryDirectory(prefix='mzPj-stage-', dir=cache) as temporary:
         stage = _pj_lib_pathlib.Path(temporary) / 'libraries'
         stage.mkdir()
@@ -108,10 +109,12 @@ def mzpjUseLibrary(name, source='bundled'):
     if module not in catalog:
         raise ValueError('Unknown Pj bundled library: ' + name + '. See mzpjListLibraries().')
     selected = set()
+    reused = set()
 
     def visit(current):
         if current not in selected:
             selected.add(current)
+            selected.update(catalog[current].get('additional_modules', []))
             for dependency in catalog[current]['dependencies']:
                 visit(dependency)
     visit(module)
@@ -124,10 +127,16 @@ def mzpjUseLibrary(name, source='bundled'):
         origin = getattr(existing, '__file__', '') or ''
         bundled = bool(_pj_library_path and _pj_lib_pathlib.Path(origin).is_relative_to(_pj_library_path))
         if bundled != (source == 'bundled'):
+            # Plotly accetta packaging senza vincoli: riusa quello gia' caricato
+            # da matplotlib, senza sostituirlo o cambiare il suo finder.
+            if (source == 'bundled' and current != module and
+                    current in catalog[module].get('reuse_loaded_dependencies', [])):
+                reused.add(current)
+                continue
             raise RuntimeError(current + ' was already imported from another source. '
                                'Choose its source before importing it, then run the script again.')
     if source == 'bundled':
-        _pj_library_active.update(selected)
+        _pj_library_active.update(selected - reused)
         if _pj_library_finder not in sys.meta_path:
             sys.meta_path.insert(0, _pj_library_finder)
     else:

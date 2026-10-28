@@ -38,7 +38,7 @@ Signature:
 ```python
 mzpjShowCorrelation(dataset, columns, labels=None, missing='pairwise',
                     method='pearson', name=None, title=None, color='#3e6da9',
-                    width=None, height=None, accordion=True, expanded=True)
+                    width=None, height=None, accordion=True, expanded=True, result_type='html')
 ```
 
 - `columns`: 2–12 distinct numeric columns, all selected in Pjp. `labels` is an
@@ -83,7 +83,7 @@ Signature:
 mzpjShowPaired(dataset, first, second, group=None, labels=None,
                name=None, title=None, first_label=None, second_label=None,
                y_label=None, color='#3e6da9', width=None, height=None,
-               accordion=True, expanded=True)
+               accordion=True, expanded=True, result_type='html')
 ```
 
 `first` and `second` must be different numeric columns measured on comparable
@@ -127,7 +127,7 @@ Signature:
 mzpjShowTestDistribution(distribution='t', df=10, df2=20, statistic=2,
                          tail='right', alpha=.05, name=None, title=None,
                          color='#3e6da9', width=None, height=None,
-                         accordion=True, expanded=True)
+                         accordion=True, expanded=True, result_type='html')
 ```
 
 | Argument | Accepted values |

@@ -25,7 +25,7 @@ setwd(root)
 status <- system2(node, c(compiler, '--build', shQuote(root), '--home', shQuote(home)))
 stopifnot(status==0L)
 version <- read.dcf(file.path(root,'DESCRIPTION'),fields='Version')[1,1]
-stopifnot(version=='1.3.0')
+stopifnot(version=='1.4.0')
 package <- file.path(root,paste0('Pj_',version,'.jmo'))
 stopifnot(file.exists(package))
 dest <- file.path(out,paste0('Pj_',version,'_macos_',Sys.getenv('EXPECTED_ARCH'),'_jamovi28.14.jmo'))
