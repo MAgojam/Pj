@@ -3,9 +3,9 @@
 Available in **Pj 1.4.0 or newer**; absent from earlier 1.3.x packages.
 Available in Pj, Pjp and the public Python service. NumPy and SciPy must be
 available in the selected interpreter; pandas and matplotlib are not required.
-On macOS jamovi 28.14 the tested embedded interpreter lacks NumPy/SciPy;
-choose System Python with these packages. Windows/Ubuntu embedded numerical
-availability must not be assumed for another platform or jamovi distribution.
+On macOS, Pj resolves the embedded application's Resources/lib/pythonX.Y
+import directory before loading its supplied numerical packages. System Python
+uses its own packages; app resources are never injected into that interpreter.
 
 These functions calculate study-level quantities. They do **not** fit a pooled
 model, estimate heterogeneity, select a continuity correction automatically,

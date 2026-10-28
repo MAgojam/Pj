@@ -12,9 +12,9 @@ documentato oppure assenza di un valore opzionale, non zero. I dieci helper D3
 generali non richiedono librerie scientifiche Python opzionali; quelli numerici
 per dati/metanalisi richiedono NumPy/SciPy nell’interprete selezionato. Pj include
 alcune librerie pure Python, non pandas o matplotlib. Controllare Settings →
-Show Python info per l’interprete effettivo. Su macOS jamovi 28.14 usare
-System Python con NumPy/SciPy per gli helper numerici: la distribuzione
-embedded verificata non include queste librerie.
+Show Python info per l’interprete effettivo. Su macOS Pj individua la cartella
+Resources/lib/pythonX.Y dell’app embedded per importare le librerie già incluse.
+Il Python System mantiene le proprie librerie e percorsi.
 
 ## Dati, file e colonne prodotte
 

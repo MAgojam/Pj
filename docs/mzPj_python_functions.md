@@ -12,8 +12,8 @@ or an absent optional value; it does not mean zero. The ten general D3 helpers
 need no optional Python scientific package. Numeric preparation/meta helpers
 need NumPy/SciPy in the selected interpreter. Pj bundles selected pure-Python
 libraries, not pandas or matplotlib. Check Settings → Show Python info.
-On macOS jamovi 28.14 use System Python with NumPy/SciPy for numerical
-helpers: the tested embedded distribution does not include those packages.
+On macOS Pj resolves the embedded app's Resources/lib/pythonX.Y import
+directory for its supplied packages. System Python uses its own libraries.
 
 ## Data, files and outputs
 

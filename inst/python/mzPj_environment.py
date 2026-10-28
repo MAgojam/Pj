@@ -1,5 +1,24 @@
 # Informazioni e librerie opzionali dell’interprete.
 
+def _pj_mac_library_path(executable, version, platform, mode):
+    # Il launcher MacOS/python non aggiunge sempre Resources/lib agli import.
+    # Si considera solo l'app dell'eseguibile embedded, mai il Python System.
+    from pathlib import Path
+    if platform != 'darwin' or mode not in ('bundled', 'embedded', 'jamovi'):
+        return None
+    binary = Path(executable).resolve()
+    contents = binary.parent.parent
+    if binary.parent.name != 'MacOS' or contents.name != 'Contents' or contents.parent.suffix != '.app':
+        return None
+    library = contents/'Resources'/'lib'/('python' + '.'.join(map(str, version[:2])))
+    return str(library) if library.is_dir() else None
+
+import sys as _pj_environment_sys
+_pj_embedded_lib = _pj_mac_library_path(_pj_environment_sys.executable,
+    _pj_environment_sys.version_info, _pj_environment_sys.platform, globals().get('PYTHON_MODE'))
+if _pj_embedded_lib and _pj_embedded_lib not in _pj_environment_sys.path:
+    _pj_environment_sys.path.insert(0, _pj_embedded_lib)
+
 # numpy/scipy protetti da try/except: con Python di sistema (opzione
 # 'External') potrebbero mancare o fallire per un problema di caricamento
 # DLL (vedi caso matplotlib) - senza questa protezione, un fallimento qui,

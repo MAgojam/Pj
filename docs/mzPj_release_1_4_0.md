@@ -48,7 +48,7 @@ PDF/Word success must not be interpreted as LaTeX certification.
 Minimum jamovi remains 28.3.0. Select the JMO for Windows, Linux, macOS Intel
 or Apple Silicon. NumPy/SciPy numerical helpers require those libraries in the
 selected interpreter; pandas/matplotlib remain optional System Python packages.
-The macOS jamovi 28.14 embedded Python does not provide NumPy/SciPy in the
-tested distribution: use System Python with them for numerical preparation
-and meta-analysis helpers. General D3/Chart.js plots and bundled pure-Python
-libraries do not require installing these scientific packages into jamovi.
+On macOS the embedded launcher needs the app's Resources/lib/pythonX.Y
+import directory. Pj resolves it from the actual embedded executable before
+loading the NumPy/SciPy packages already supplied in the app. This does not
+install packages or change System Python import paths.

@@ -1,5 +1,6 @@
 # Run in Pj or Pjp with either Python interpreter. No dataset is required.
-# Keep Service... empty. Pj 1.2.0 supplies all eight libraries.
+# Keep Service... empty. This checks the original eight libraries from Pj 1.2.0.
+# Plotly and its dependencies have separate examples and isolated bundle tests.
 # This checks the extracted ZIP copies, their versions and real calculations.
 import math
 from pathlib import Path
@@ -39,6 +40,8 @@ distribution_names = {'more_itertools': 'more-itertools'}
 rows, failures, roots = [], [], set()
 for item in mzpjListLibraries():
     name = item['Library']
+    if name not in ('sympy','mpmath','jinja2','markupsafe','tabulate','uncertainties','simpy','more_itertools'):
+        continue
     try:
         module = mzpjUseLibrary(name, source='bundled')
         origin = Path(module.__file__).resolve()
@@ -62,7 +65,7 @@ for item in mzpjListLibraries():
                      'Calculation': False, 'Status': 'FAILED'})
 
 if len(rows) != 8:
-    failures.append('Expected eight libraries in the Pj bundle.')
+    failures.append('Expected eight original libraries in the Pj bundle.')
 mzpjShowTable(rows, name='bundle_diagnostics', title='Pj bundled-library diagnostics',
               notes='Checks the private extracted bundle, not independently installed packages.')
 if failures:
