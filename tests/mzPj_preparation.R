@@ -5,7 +5,8 @@ script <- paste(readLines(file.path(root,'pjscript/64_meta_analysis_helpers.py')
 selections <- list(dichotomous=c('t_events','t_nonevents','c_events','c_nonevents'),
  meandifferences=c('mean_t','sd_t','n_t','mean_c','sd_c','n_c'),correlation=c('correlation','sample_n'),
  proportion=c('events','total'),reliability=c('alpha','items','sample_n'),generic=c('generic_effect','generic_se'))
-for(mode in c('jamovi','system')) {
+if(!exists('preparationModes')) preparationModes <- c('jamovi','system')
+for(mode in preparationModes) {
  for(model in names(selections)) for(prefix in c('Pj','Pjp')) {
   cat('Starting',prefix,mode,model,'\n')
   code <- sub("MODEL = 'dichotomous'",paste0("MODEL = '",model,"'"),script,fixed=TRUE)
@@ -47,7 +48,7 @@ for(mode in c('jamovi','system')) {
 # Iris del pacchetto datasets R coincide con i valori della Data Library.
 input <- datasets::iris
 script <- paste(readLines(file.path(root,'pjscript/65_iris_data_preparation_visual.py'),encoding='UTF-8'),collapse='\n')
-for(mode in c('jamovi','system')) for(prefix in c('Pj','Pjp')) {
+for(mode in preparationModes) for(prefix in c('Pj','Pjp')) {
  cls <- getFromNamespace(paste0(prefix,'Class'),'Pj'); opts <- getFromNamespace(paste0(prefix,'Options'),'Pj')
  a <- cls$new(options=opts$new(code=script,vars=names(input),python=if(mode=='jamovi')'bundled' else 'external'),
               data=input,datasetId='iris',analysisId=8L)

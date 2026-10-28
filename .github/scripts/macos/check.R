@@ -15,11 +15,26 @@ external <- getFromNamespace('.mzPj_findSystemPython','Pj')()
 cat('Embedded Python:',embedded,'\nSystem Python:',external,'\n')
 writeLines(c(paste('Embedded:',embedded),paste('System:',external)),file.path(out,'python-paths.txt'))
 stopifnot(length(embedded)==1L,nzchar(embedded),file.exists(embedded),file.exists(external))
-for (python in c(embedded,external)) {
+preparationModes <- character()
+for (index in seq_along(c(embedded,external))) {
+    python <- c(embedded,external)[index]
+    mode <- c('jamovi','system')[index]
     stopifnot(system2(python,c('--version'))==0L)
     stopifnot(system2(python,shQuote(file.path(root,'tests/mzPj_libraries.py')))==0L)
-    for(test in c('mzPj_data.py','mzPj_meta.py','mzPj_plots.py','mzPj_chart.py','mzPj_plotly.py'))
+    numerical <- identical(trimws(system2(python,c('-c',shQuote("import importlib.util; print(int(importlib.util.find_spec('numpy') is not None and importlib.util.find_spec('scipy') is not None))")),stdout=TRUE)),'1')
+    cat(mode,'NumPy/SciPy available:',numerical,'\n')
+    if(numerical) preparationModes <- c(preparationModes,mode)
+    tests <- c(if(numerical)c('mzPj_data.py','mzPj_meta.py'), 'mzPj_plots.py','mzPj_chart.py','mzPj_plotly.py')
+    for(test in tests)
         stopifnot(system2(python,shQuote(file.path(root,'tests',test)))==0L)
+}
+stopifnot('system' %in% preparationModes)
+if(!'jamovi' %in% preparationModes) {
+    for(code in c("mzpjRowStatistic({'x':[1]},['x'])", "mzpjMetaWeights([0.1])")) {
+        failure <- tryCatch(Pj::mzPjRunPython(code,python='jamovi'),error=identity)
+        stopifnot(inherits(failure,'mzPjServiceError'),grepl('NumPy',failure$message,fixed=TRUE))
+    }
+    cat('Embedded numerical dependency diagnostics PASSED; System Python supplies numerical tests.\n')
 }
 source(file.path(root,'tests/mzPj_output_sync.R'))
 source(file.path(root,'tests/mzPj_service_api.R'))

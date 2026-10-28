@@ -11,6 +11,8 @@ def _pj_meta_vectors(arguments):
 def _pj_meta_number(value, label, *, minimum=None, integer=False, strict=False):
     import math
     from numbers import Real
+    if np is None:
+        raise ImportError('This meta-analysis helper requires NumPy in the selected Python.')
     if not isinstance(value, Real) or isinstance(value, (bool, np.bool_)) or not math.isfinite(value):
         raise ValueError(f'{label} must be a finite number.')
     if minimum is not None and (value <= minimum if strict else value < minimum):

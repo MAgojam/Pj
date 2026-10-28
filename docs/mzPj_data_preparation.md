@@ -3,6 +3,8 @@
 These helpers require Pj 1.4.0 or newer. They are absent from earlier 1.3.x packages. Both editors and the public Python service expose them;
 no additional package is installed. Numeric helpers use NumPy; ranks and MAD
 also use SciPy. These must exist in the selected interpreter.
+For macOS jamovi 28.14, use System Python with NumPy/SciPy: the tested
+embedded distribution does not supply these scientific packages.
 
 ## One calculation, one column
 
