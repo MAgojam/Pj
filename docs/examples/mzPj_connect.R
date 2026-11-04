@@ -16,5 +16,13 @@ mzPjConnect <- function() {
     info <- getExportedValue('Pj','mzPjServiceInfo')()
     if(utils::compareVersion(info$module_version,'1.3.0')<0L || !identical(info$api_version,1L))
         stop('This example requires Pj 1.3.0 or newer with service API version 1.',call.=FALSE)
-    list(info=info,run=getExportedValue('Pj','mzPjRunPython'))
+    run <- getExportedValue('Pj','mzPjRunPython')
+    # 'checkpoint' esiste solo nelle versioni di Pj che lo supportano: con una Pj piu' vecchia
+    # viene ignorato invece di dare "unused argument".
+    canCancel <- 'checkpoint' %in% names(formals(run)) &&
+        !identical(info$capabilities$checkpoint,FALSE)
+    list(info=info,can_cancel=canCancel,
+         run=function(...,checkpoint=NULL) {
+             if(canCancel)run(...,checkpoint=checkpoint) else run(...)
+         })
 }

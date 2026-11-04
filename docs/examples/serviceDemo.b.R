@@ -29,7 +29,8 @@ serviceDemoClass <- R6::R6Class('serviceDemoClass',inherit=serviceDemoBase,
                         'if not values: raise ValueError("No finite numeric observations.")',
                         'mzpjShowTable([{"N": len(values), "Mean": math.fsum(values) / len(values)}], columns=["N", "Mean"], name="summary")',
                         'mzpjShowHistogram({"x": values}, variable="x", bins=10, name="plot", title="Observed values")',sep='\n'),
-                    data=data.frame(x=values),python=self$options$python,timeout=60L)
+                    data=data.frame(x=values),python=self$options$python,timeout=60L,
+                    checkpoint=function() private$.checkpoint(flush=FALSE))
                 item <- function(name,type) {
                     found <- Filter(function(x)identical(x$name,name)&&identical(x$type,type),response$items)
                     if(length(found)!=1L)stop('Unexpected Python result.',call.=FALSE)
@@ -47,6 +48,8 @@ serviceDemoClass <- R6::R6Class('serviceDemoClass',inherit=serviceDemoBase,
                 self$results$plot$setVisible(TRUE)
                 self$results$status$setContent('<p>Calculated by Python through Pj.</p>')
             },error=function(error) {
+                # La condizione di riavvio di jamovi deve risalire: non e' un errore da mostrare.
+                if(identical(error$code,'restart'))stop(error)
                 self$results$summary$deleteRows()
                 self$results$summary$setVisible(FALSE)
                 self$results$plot$setVisible(FALSE)

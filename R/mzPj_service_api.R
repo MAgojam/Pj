@@ -2,6 +2,8 @@
 mzPjServiceInfo <- function() {
     list(api_version=1L, module_version=as.character(utils::packageVersion('Pj')),
          execution='separate-process', experimental=FALSE,
+         capabilities=list(checkpoint=TRUE, flatpak_host_checkpoint=TRUE,
+                           timeout_scope='call'),
          result_budget_bytes=.mzPj_resultBudget,
          result_types=c('Preformatted', 'Text', 'Html', 'Svg', 'Table', 'Image', 'Output'))
 }
@@ -16,7 +18,7 @@ mzPjServiceInfo <- function() {
 mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
                           service_code='', return_columns=FALSE,
                           figure_width=800L, figure_height=600L,
-                          python_info=FALSE, timeout=60L) {
+                          python_info=FALSE, timeout=60L, checkpoint=NULL) {
     python <- match.arg(python)
     scalarText <- function(x) is.character(x) && length(x)==1L && !is.na(x)
     flag <- function(x) is.logical(x) && length(x)==1L && !is.na(x)
@@ -32,7 +34,11 @@ mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
         stop('Figure dimensions must be integers between 1 and 10000.', call.=FALSE)
     if (!is.numeric(timeout) || length(timeout)!=1L || !is.finite(timeout) ||
         timeout<1 || timeout>3600 || timeout!=trunc(timeout))
-        stop('timeout must be an integer between 1 and 3600 seconds per Python process.', call.=FALSE)
+        stop('timeout must be an integer between 1 and 3600 seconds in total for all Python processes.', call.=FALSE)
+    if (!is.null(checkpoint) && !is.function(checkpoint))
+        stop('checkpoint must be NULL or a function.', call.=FALSE)
+    # Una sola scadenza per tutti i processi Python di questa chiamata.
+    deadline <- .mzPj_processDeadline(timeout)
     mode <- if (python=='jamovi') 'bundled' else 'external'
     host <- python=='system' && Sys.info()[['sysname']]=='Linux' && file.exists('/.flatpak-info')
     executable <- tryCatch(if (python=='jamovi') .mzPj_findPython() else .mzPj_findSystemPython(),
@@ -58,8 +64,14 @@ mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
         servicePath <- temporary()
         writeBin(charToRaw(enc2utf8(service_code)),servicePath)
     } else servicePath <- ''
-    libraries <- tryCatch(.mzPj_prepareLibraries(scriptPath, executable, host, timeout=timeout),
-        error=function(e).mzPj_serviceError('Could not prepare the Python process.','process',conditionMessage(e)))
+    libraries <- tryCatch(.mzPj_prepareLibraries(scriptPath, executable, host,
+            deadline=deadline, checkpoint=checkpoint),
+        error=function(e) {
+            # La condizione di riavvio di jamovi (code 'restart') deve risalire al chiamante.
+            if (identical(e$code, 'restart')) stop(e)
+            if (inherits(e, 'mzPjServiceError')) stop(e)
+            .mzPj_serviceError('Could not prepare the Python process.','process',conditionMessage(e))
+        })
     script <- .mzPj_pythonScript(scriptPath,list(
         LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error, PLOTLY_INLINE=TRUE,
         DATASET=datasetPath, OUTPATH=outputPath, CODE=code,
@@ -72,8 +84,13 @@ mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
         FIGHEIGHT=as.character(figure_height), OUTPUT_MODE=if(python_info)'pyinfo' else 'noEcho',
         PYTHON_MODE=mode, SAVECOLUMNS=tolower(as.character(return_columns))))
     args <- if(host)c('--host','--directory=/tmp','/usr/bin/python3','-') else '-'
-    raw <- tryCatch(suppressWarnings(system2(executable,args=args,input=script,stdout=TRUE,stderr=TRUE,timeout=timeout)),
-        error=function(e).mzPj_serviceError('Could not start the Python process.','process',conditionMessage(e)))
+    raw <- tryCatch(suppressWarnings(.mzPj_runProcess(executable,args,script,viaFile=!host,
+            timeout=.mzPj_remainingSeconds(deadline),checkpoint=checkpoint)),
+        error=function(e) {
+            if (identical(e$code, 'restart')) stop(e)
+            if (inherits(e, 'mzPjServiceError')) stop(e)
+            .mzPj_serviceError('Could not start the Python process.','process',conditionMessage(e))
+        })
     setup <- .mzPj_flatpakHostError(raw,host)
     if (!is.null(setup)) .mzPj_serviceError(setup$headline,'flatpak',paste(raw,collapse='\n'),setup$html)
     errors <- raw[startsWith(raw,'__PJ_ERROR__ ')]
@@ -110,7 +127,8 @@ mzPjRunPython <- function(code, data=data.frame(), python=c('jamovi', 'system'),
     probeResponse <- response
     probeResponse$items <- Filter(function(item) !identical(item$type,'Image'), response$items)
     .mzPj_addResults(probe, probeResponse)
-    response$service <- c(mzPjServiceInfo(),list(python=python,transport=if(host)'stdio' else 'json-file'))
+    response$service <- c(mzPjServiceInfo(),list(python=python,transport=if(host)'stdio' else 'json-file',
+        runner='processx',checkpoint_enabled=!is.null(checkpoint)))
     class(response) <- c('mzPjServiceResult','list')
     response
 }

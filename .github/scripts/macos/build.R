@@ -25,10 +25,10 @@ setwd(root)
 status <- system2(node, c(compiler, '--build', shQuote(root), '--home', shQuote(home)))
 stopifnot(status==0L)
 version <- read.dcf(file.path(root,'DESCRIPTION'),fields='Version')[1,1]
-stopifnot(version=='1.4.0')
+stopifnot(grepl('^[0-9]+\\.[0-9]+\\.[0-9]+$',version))
 package <- file.path(root,paste0('Pj_',version,'.jmo'))
 stopifnot(file.exists(package))
-dest <- file.path(out,paste0('Pj_',version,'_macos_',Sys.getenv('EXPECTED_ARCH'),'_jamovi28.14.jmo'))
+dest <- file.path(out,paste0('Pj_',version,'_macos_',Sys.getenv('EXPECTED_ARCH'),'_jamovi28.17.jmo'))
 stopifnot(file.copy(package,dest,overwrite=FALSE))
 writeLines(c(paste('R:',R.version.string),paste('Platform:',R.version$platform),
              paste('R.home:',R.home()),paste('jmvtools:',packageVersion('jmvtools'))),

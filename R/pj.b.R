@@ -131,7 +131,8 @@ PjClass <- R6::R6Class(
                 private$.findSystemPython()
             else
                 private$.findPython()
-            libraries <- .mzPj_prepareLibraries(scriptPath, pythonPath, flatpakExternal)
+            libraries <- .mzPj_prepareLibraries(scriptPath, pythonPath, flatpakExternal,
+                checkpoint=function() private$.checkpoint(flush=FALSE))
             script <- .mzPj_pythonScript(scriptPath, list(
                 LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error,
                 DATASET=datasetPathFixed, OUTPATH=outputPathFixed, CODE=code,
@@ -158,12 +159,14 @@ PjClass <- R6::R6Class(
 
 
 
-            result <- system2(
+            # Il checkpoint puo' riavviare anche System Python sull'host Flatpak;
+            # processx gestisce il launcher e il guardiano host completa il cleanup.
+            result <- .mzPj_runProcess(
                 command=pythonPath,
                 args=pythonArgs,
-                stdout=TRUE,
-                stderr=TRUE,
-                input=script)
+                script=script,
+                viaFile=!flatpakExternal,
+                checkpoint=function() private$.checkpoint(flush=FALSE))
 
             # Pjp eredita lo stesso percorso; il controllo vale solo per Linux Flatpak esterno.
             flatpakError <- .mzPj_flatpakHostError(result, flatpakExternal)

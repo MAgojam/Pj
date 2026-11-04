@@ -16,8 +16,10 @@ for the service API; existing Html `setContent()` mapping remains usable.
 See the [Plotly guide](mzPj_plotly.md) for size and browser requirements.
 Its optional `static=True` returns a `Svg` item: hosts must map that type
 to native `jmvcore::Svg` for document export rather than treating it as Html.
-The current implementation uses `system2()`; changing the runner is not required
-for a host to use this API.
+Since Pj 1.5.0, Python runs in a separate process started with `processx`,
+a package shipped with jamovi. This includes System Python reached from
+Linux jamovi Flatpak through `flatpak-spawn --host --watch-bus`.
+The runner change does not alter API version 1.
 
 ## 1. Installation and optional dependency
 
@@ -61,6 +63,13 @@ stopifnot(info$api_version == 1L)
 
 `mzPjServiceInfo()` returns `api_version`, `module_version`, `execution`,
 `experimental` (FALSE for this public API) and supported `result_types`.
+Since 1.5.0 it also returns `capabilities`: `checkpoint=TRUE`,
+`flatpak_host_checkpoint=TRUE`, and `timeout_scope='call'`. These are additive
+metadata fields; callers using API version 1 must tolerate additional fields.
+The connector's `can_cancel` also checks the runner's function arguments, so
+it remains usable with Pj 1.3/1.4. Its compatibility wrapper omits `checkpoint`
+on those older versions; it does not make older runners cancellable. Require
+Pj >= 1.5.0 explicitly when cancellation or a shared timeout is essential.
 
 Pj 1.4.0 exposes `mzpjShowChart` through this same
 runner, including the optional floating legend and `static=True`. The default
@@ -108,12 +117,50 @@ analysis message rather than prevent your entire module from loading.
 | `return_columns` | Default FALSE. TRUE returns newly created columns; it never writes to your dataset automatically. |
 | `figure_width`, `figure_height` | Positive integer initial dimensions, default 800 × 600, maximum 10000 each. |
 | `python_info` | Default FALSE. TRUE requests an additional interpreter-information HTML result. |
-| `timeout` | Integer 1–3600 seconds, default 60, **per Python subprocess**. |
+| `timeout` | Integer 1–3600 seconds, default 60, **one total limit for all Python processes of the call** (per process before Pj 1.5.0). |
+| `checkpoint` | Optional function, default `NULL`, since Pj 1.5.0. Called about every 200 ms while Python runs, including System Python on the Flatpak host. If it signals jamovi's restart condition, Python and its child processes are terminated and the condition reaches the caller unchanged. Typical use: `function() private$.checkpoint(flush=FALSE)`. |
 
-The timeout includes each supplied-library bootstrap attempt but is not one total
-wall-clock deadline for the whole API call. No asynchronous job handle or checkpoint
-callback is exposed by API1. A host remains responsible for its analysis lifecycle.
-Do not assume that a separate process makes the R call non-blocking.
+Pass `checkpoint` from the calling analysis's `.run()`, not a checkpoint from
+another analysis. A host `tryCatch` must rethrow conditions with
+`identical(error$code, 'restart')` before displaying ordinary errors; see the
+complete R6 example. The callback is cooperative, not a worker thread: it
+should return promptly and should not modify the dataset or draw results.
+
+Library probing, optional archive preparation and the main Python process
+share one elapsed-time deadline. An expired budget prevents a later Python
+phase from starting. A bootstrap timeout is also `mzPjServiceError` with
+`kind='timeout'`. This is an execution budget, not a hard real-time guarantee:
+process startup/cleanup and polling take time. On Flatpak, cleanup confirmation
+can add a short bounded wait after cancellation or timeout.
+
+Each response's `service` metadata additionally identifies `runner` (`processx`)
+and `checkpoint_enabled`. The latter is true only when this call
+actually supplied a callback. `transport` continues to
+mean `json-file` or `stdio`, independently of the R process-launching library.
+API version, item types and host-owned Output synchronization are unchanged.
+
+All Python descendants started by a processx call belong to that call and are
+cleaned up before it returns, including after successful parent exit. Do not
+start background servers/jobs expecting them to survive the service call.
+Cleanup uses processx/ps for direct execution. For System Python outside the
+Flatpak sandbox, an internal standard-library Python guard also monitors the
+host process and cleans descendants carrying the call's inherited environment
+token. The runner waits for a cleanup acknowledgement and removes its internal
+control messages from the returned output. Stopping only the sandbox launcher
+would not establish host cleanup. Test unusual detached-process behavior on
+target platforms, particularly macOS. Python and script inputs remain trusted
+code, not a sandbox. No new Python package is required by the host guard.
+
+The timeout is one total deadline for the supplied-library bootstrap and the run.
+The call is still blocking and no
+asynchronous job handle is exposed. Without `checkpoint`, the host waits until Python
+ends or the deadline expires. With `checkpoint`, jamovi can cancel the analysis when
+the user changes an option while Python is running. A host remains responsible for
+its analysis lifecycle.
+
+The connector in `examples/mzPj_connect.R` returns `run` as a wrapper that accepts
+`checkpoint` and ignores it when the installed Pj is older than 1.5.0
+(`service$can_cancel` is then `FALSE`), so a host can pass it unconditionally.
 
 `service_code` is useful for helpers shared by the main code within one call:
 
@@ -219,6 +266,11 @@ Python and execution failures raise `mzPjServiceError`, an R error condition wit
 `message`, `kind`, optional `details` and optional `help_html`. Kinds currently
 include `python`, `interpreter`, `process`, `timeout`, `protocol`, `flatpak`.
 Invalid API arguments raise ordinary R argument errors before execution.
+
+The restart condition raised by `checkpoint` (an error whose `code` is `'restart'`) is
+not converted into `mzPjServiceError`. A host that catches errors with
+`tryCatch(error=...)` must rethrow it with `if(identical(error$code,'restart'))stop(error)`;
+it is not a failure to show to the user.
 
 ```r
 tryCatch(service$run(code='raise ValueError("Demonstration")'),

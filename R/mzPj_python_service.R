@@ -32,7 +32,10 @@
         .mzPj_readText(path), fixed=TRUE)
 }
 
-.mzPj_prepareLibraries <- function(path, pythonPath, flatpakExternal=FALSE, timeout=0L) {
+# 'timeout' e' il limite TOTALE per tutti i processi Python di questa funzione (0 = nessuno).
+# 'checkpoint' (opzionale) e' passato a .mzPj_runProcess() per poter annullare l'esecuzione.
+.mzPj_prepareLibraries <- function(path, pythonPath, flatpakExternal=FALSE, timeout=0L, checkpoint=NULL, deadline=NULL) {
+    if (is.null(deadline)) deadline <- .mzPj_processDeadline(timeout)
     # La cache appartiene all'interprete effettivo, anche quando gira sull'host Flatpak.
     catalog <- jsonlite::fromJSON(file.path(dirname(path), 'extdata',
         'mzPj_python_libraries.json'), simplifyVector=FALSE)
@@ -45,9 +48,13 @@
             "_pj_boot = json.loads(base64.b64decode('", payload, "'))\n",
             "print('__MZPJ_CACHE__ ' + json.dumps(_pj_library_bootstrap(**_pj_boot)))\n")
         args <- if (flatpakExternal) c('--host', '--directory=/tmp', '/usr/bin/python3', '-') else '-'
-        result <- suppressWarnings(system2(pythonPath, args=args, input=bootstrap,
-                                          stdout=TRUE, stderr=TRUE, timeout=timeout))
+        remaining <- .mzPj_remainingSeconds(deadline)
+        result <- suppressWarnings(.mzPj_runProcess(pythonPath, args, bootstrap,
+            viaFile=!flatpakExternal, timeout=remaining,
+            checkpoint=checkpoint))
         status <- attr(result, 'status')
+        if (identical(status, 124L))
+            .mzPj_serviceError('Python stopped with exit status 124', 'timeout')
         if (!is.null(status) && status != 0L)
             return(list(path=NULL, error=paste('Pj bundled libraries could not be prepared.',
                 paste(tail(result, 3L), collapse='\n'))))
@@ -296,7 +303,7 @@
 
     } else if (os == 'Linux' && file.exists('/.flatpak-info')) {
         # Jamovi eseguito in un sandbox Flatpak:
-        # flatpak-spawn deve essere il comando eseguito da system2().
+        # flatpak-spawn e' il comando eseguito dal runner processx.
         pythonPath <- '/usr/bin/flatpak-spawn'
 
     } else {
