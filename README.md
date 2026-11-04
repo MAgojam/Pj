@@ -1,6 +1,6 @@
 # Pj — Python inside jamovi
 
-Current version: **1.4.0**. See the [release notes](docs/mzPj_release_1_4_0.md).
+Version **1.5.0**. See the [release notes](docs/mzPj_release_1_5_0.md).
 
 Python function handbook: [English](docs/mzPj_python_functions.md) ·
 [Italiano](docs/mzPj_python_functions_it.md). The handbooks document Pj 1.4.0 and identify features absent from earlier 1.3.x packages.
@@ -32,7 +32,9 @@ Python result functions and external service-script support.
 **Version 1.4.0** includes the refined toolbar/popup, Chart.js and Plotly,
 native figure export, output-size protection, data preparation and study-level
 meta-analysis helpers. Both editors support dataset Outputs. The public
-Python service API remains version 1 and uses the same system2 runner.
+Python service API remains version 1. Version 1.5.0 adds processx execution,
+cooperative cancellation and a shared service timeout, including System Python
+reached through the Linux Flatpak host launcher.
 
 **Chart.js:** Pj provides `mzpjShowChart` for offline
 Canvas charts with either Python interpreter. See the
@@ -64,7 +66,8 @@ A host can keep its R6 analysis, options and native results while calling
 Pj's structured result helpers, bundled pure-Python libraries and D3 helpers
 are available without opening an editor. The caller controls result rendering,
 errors and dataset outputs. See the [developer integration guide](docs/mzPj_service_api.md)
-and its complete adaptable R6/YAML example. The API retains `system2()`;
+and its complete adaptable R6/YAML example. Since 1.5.0 the API uses `processx`
+for both interpreters, including the Linux Flatpak host route;
 experimental laboratory modules are not distributed with Pj.
 
 The **1.2.1 portability update** corrects discovery of jamovi's

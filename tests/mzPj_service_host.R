@@ -51,4 +51,19 @@ for(mode in c('jamovi','system')) {
     stopifnot(grepl('No finite numeric observations',failure$results$status$content,fixed=TRUE),
               !failure$results$plot$visible,nrow(failure$results$summary$asDF)==0L)
     cat(mode,'compiled developer example, sibling discovery, native table/D3 and error clearing PASSED\n')
+    {
+        cancelled <- PjServiceExample:::serviceDemoClass$new(
+            options=PjServiceExample:::serviceDemoOptions$new(x='value',python=mode),
+            data=data.frame(value=1:3))
+        callbacks <- 0L
+        cancelled$.setCheckpoint(function(results) {
+            callbacks <<- callbacks+1L
+            if(callbacks>=2L)'restart' else NULL
+        })
+        stopifnot(identical(cancelled$run(noThrow=TRUE),FALSE),callbacks>=2L)
+        cancelled$.setCheckpoint(NULL)
+        cancelled$run()
+        stopifnot(grepl('Calculated by Python',cancelled$results$status$content,fixed=TRUE))
+        cat(mode,'separate R6 host checkpoint/restart and recovery PASSED\n')
+    }
 }

@@ -9,6 +9,13 @@ on:
       - '.github/scripts/build-service-example.R'
       - 'tests/mzPj_service_host.R'
       - 'R/mzPj_python_service.R'
+      - 'R/mzPj_process.R'
+      - 'DESCRIPTION'
+      - 'jamovi/0000.yaml'
+      - 'tests/mzPj_process_runner.R'
+      - 'tests/mzPj_service_process.R'
+      - 'tests/mzPj_flatpak_process.R'
+      - 'tests/mzPj_flatpak_cache.R'
       - 'R/mzPj_service_api.R'
       - 'inst/**'
       - 'tests/mzPj_service_api.R'
@@ -24,7 +31,7 @@ permissions:
 
 jobs:
   build:
-    name: macOS ${{ matrix.arch }} - jamovi 28.14
+    name: macOS ${{ matrix.arch }} - jamovi 28.17
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -33,15 +40,15 @@ jobs:
           - runner: macos-15
             arch: arm64
             download_arch: arm64
-            sha256: fd42054f4801416d2b78e622cceb1c076d149cd1009a3147bfe327c363b48c12
+            sha256: 9ae094ddcb6baed83ed6f540b7a55be916ee347fb49da7cb731d0872b50154c3
           - runner: macos-15-intel
             arch: x86_64
             download_arch: x64
-            sha256: d17ccdc9e3c2151f8c237875b859963685e98627f5d293def8fd95694c12781d
+            sha256: ab1c826d63914fa02129eae7bf68f3399d19b4cde29f3b80a52465e2d1bb5949
     runs-on: ${{ matrix.runner }}
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      JAMOVI_VERSION: 28.14.0.0
+      JAMOVI_VERSION: 28.17.0.0
       EXPECTED_ARCH: ${{ matrix.arch }}
       DMG_SHA256: ${{ matrix.sha256 }}
       SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -104,7 +111,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Pj-macos-${{ matrix.arch }}-jamovi28.14
+          name: Pj-macos-${{ matrix.arch }}-jamovi28.17
           path: results/
           if-no-files-found: error
           retention-days: 14

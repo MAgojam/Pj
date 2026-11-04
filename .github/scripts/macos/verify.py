@@ -16,7 +16,8 @@ assert len(packages)==1
 artifact = packages[0]
 commit = subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()
 assert commit==os.environ['SOURCE_COMMIT']
-version='1.4.0'
+version=re.search(r'^Version:\s*(\S+)',(root/'DESCRIPTION').read_text(),re.M).group(1)
+assert re.search(r'^version:\s*(\S+)',(root/'jamovi/0000.yaml').read_text(),re.M).group(1)==version
 with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
     assert z.testzip() is None
     description=z.read('Pj/R/Pj/DESCRIPTION').decode()
@@ -42,7 +43,7 @@ with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
             subprocess.run(['lipo',str(path),'-verify_arch',arch],check=True)
             native.append({'path':name,'file':subprocess.check_output(['file',str(path)],text=True).strip()})
 digest=hashlib.sha256(artifact.read_bytes()).hexdigest()
-report={'module':'Pj','version':version,'sourceCommit':commit,'jamovi':'28.14.0.0',
+report={'module':'Pj','version':version,'sourceCommit':commit,'jamovi':'28.17.0.0',
         'architecture':arch,'file':artifact.name,'sha256':digest,'bytes':artifact.stat().st_size,
         'nativeLibraries':native,'packageChecks':'PASSED','desktopGui':'Not tested'}
 (out/'BUILD.json').write_text(json.dumps(report,indent=2)+'\n')

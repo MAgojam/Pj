@@ -1,7 +1,7 @@
 Package: Pj
 Type: Package
 Title: Editor to run Python code inside jamovi
-Version: 1.4.0
+Version: 1.5.0
 Author: Maurizio Agosti
 Maintainer: Maurizio Agosti <magosti@gmail.com>
 Description: Provides an editor allowing you to enter Python code, and analyse your
@@ -10,4 +10,4 @@ Description: Provides an editor allowing you to enter Python code, and analyse y
 License: GPL >= 2
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 1.8.0), R6, jsonlite, png, base64enc, grid
+Imports: jmvcore (>= 1.8.0), R6, jsonlite, png, base64enc, grid, processx

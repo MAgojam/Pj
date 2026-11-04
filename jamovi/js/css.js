@@ -13,6 +13,7 @@ const css = `
     border-radius: 8px ;
     overflow: hidden ;
     flex-grow: 1 ;
+    min-height: 0 ;
     transition: border-color 0.2s ease, box-shadow 0.2s ease ;
 }
 
@@ -83,11 +84,18 @@ const css = `
 #config-container { position: relative ; flex-shrink: 0 ; }
 
 #info {
-    display: flex ;
-    position: absolute ;
-    bottom: 4px ;
-    right: 16px ;
-    color: #333333 ;
+    /* Riga nel flusso: le scrollbar di Ace restano interamente nell'editor. */
+    display: block ;
+    position: static ;
+    flex: 0 0 auto ;
+    align-self: flex-end ;
+    max-width: 100% ;
+    margin: 4px 2px 0 ;
+    color: #64748b ;
+    font-size: 10px ;
+    line-height: 1.3 ;
+    text-align: right ;
+    pointer-events: none ;
 }
 
 /* Comandi compatti condivisi: il gruppo non altera l'allineamento dei pulsanti. */

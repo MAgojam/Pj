@@ -7,6 +7,8 @@
 .Rproj.user
 
 .Rhistory
+.RData
+/docs/PROMEMORIA_Pj_processx.md
 __pycache__/
 *.pyc
 /Rj.Rproj

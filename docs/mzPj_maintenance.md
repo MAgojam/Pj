@@ -1,12 +1,17 @@
 # Pj / Pjp maintenance map
 
-Updated: 28 October 2026. Scope: public service API1, development data/meta helpers and developer
+Updated: 4 November 2026. Scope: processx execution, compatible public service API1, data/meta helpers and developer
 example, with the existing editor architecture retained. Public Python functions keep their `mzpj` camel-case
 names. New internal service filenames use the exact `mzPj_` prefix and
 underscores. Preserve filename case in every reference for Linux and macOS.
 Standard jamovi entry points and existing example filenames are retained.
 
 ## Language and publication conventions
+
+The Run keyboard hint occupies a small normal-flow footer below Ace, outside
+the scrolling editor viewport. Do not position it absolutely over the editor:
+native horizontal scrollbars can cover it on Linux and other platforms.
+Pj/Pjp share this layout; the existing platform-specific shortcut text remains.
 
 Technical comments in project-owned implementation sources are in Italian.
 The editable Python scripts stored in public OMV examples use English comments
@@ -67,8 +72,12 @@ editor analysis. The public [integration guide](mzPj_service_api.md) includes
 compilable R6/YAML sources under `docs/examples/`. CI builds them as a temporary
 independent host and checks sibling Pj discovery and the missing-Pj case.
 These templates are public; the local experimental laboratories are not.
-The runner remains `system2()`. Internal helper changes must preserve both editor
-and service paths. API1 does not expose asynchronous jobs or checkpoint callbacks.
+Since Pj 1.5.0 the runner is `processx` for both interpreters. The Linux Flatpak
+host route additionally uses `inst/python/mzPj_flatpak_host.py`, standard-library
+host monitoring and inherited per-call tokens to clean up host descendants.
+Internal helper changes must preserve both editor
+and service paths. API1 remains synchronous and has no persistent jobs; since
+1.5.0 its optional checkpoint callback supports cooperative restart.
 
 R services load through the package namespace; there is no runtime `source()`.
 Internal R functions start with `.mzPj_` and stay outside the alphabetic export
