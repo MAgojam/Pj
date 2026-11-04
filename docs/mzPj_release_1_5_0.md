@@ -1,6 +1,7 @@
 # Pj 1.5.0 — cancellable Python execution
 
-Development candidate; publication and platform validation are tracked separately.
+This release improves Python process management while preserving public service
+API version 1. Package and platform validation are recorded in the release.
 
 ## Why replace `system2()` with `processx`?
 

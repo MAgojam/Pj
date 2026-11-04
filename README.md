@@ -1,7 +1,6 @@
 # Pj — Python inside jamovi
 
-Development candidate: **1.5.0**. Latest published version: **1.4.0**.
-See the [candidate release notes](docs/mzPj_release_1_5_0.md).
+Version **1.5.0**. See the [release notes](docs/mzPj_release_1_5_0.md).
 
 Python function handbook: [English](docs/mzPj_python_functions.md) ·
 [Italiano](docs/mzPj_python_functions_it.md). The handbooks document Pj 1.4.0 and identify features absent from earlier 1.3.x packages.
