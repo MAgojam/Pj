@@ -23,6 +23,101 @@ _html_counter = [0]
 _text_counter = [0]
 _table_counter = [0]
 
+
+def _pj_graphic_mode(result_type, static=False):
+    """Resolve the explicit native type while preserving legacy static calls."""
+    if not isinstance(static, bool):
+        raise TypeError('static must be True or False.')
+    if result_type is None:
+        return 'svg' if static else 'html'
+    if result_type not in ('html', 'svg', 'image'):
+        raise ValueError('result_type must be html, svg or image.')
+    if static and result_type == 'html':
+        raise ValueError('static=True conflicts with result_type="html".')
+    if result_type == 'image' and not globals().get('_pj_image_capture_enabled', False):
+        raise RuntimeError('JavaScript Image capture requires the updated Pj/Pjp editor. '
+                           'This service host has not enabled its capture bridge. '
+                           'PNG bytes can always be passed directly to mzpjShowImage().')
+    return result_type
+
+
+def _pj_emit_graphic(content, name, title, result_type, scripts=None):
+    """Native SVG now; native Image after an acknowledged browser PNG capture."""
+    if result_type == 'svg':
+        item = dict(type='Svg', name=name, title=title, content=content)
+        if scripts:
+            item['scripts'] = scripts
+        results['items'].append(item)
+        return
+    _pj_graphic_mode(result_type)
+    if result_type != 'image':
+        raise ValueError('Internal graphic dispatcher expects svg or image.')
+    import uuid
+    token = uuid.uuid4().hex
+    root_id = 'mzpj_image_' + token
+    request = json.dumps(dict(root=root_id, name=name, token=token), ensure_ascii=True)
+    # Rendering occurs offscreen, in this analysis's Results iframe. Only the
+    # PNG is sent through the native option channel; Python is not rerun.
+    bridge = r'''<script>(async function(){
+const request=__REQUEST__,root=document.getElementById(request.root);
+if(!root)return;
+const status=root.querySelector('[data-image-status]');
+function fail(error){if(root.isConnected)status.textContent='Image preparation failed: '+String(error&&error.message||error)+'. Run again after correcting the figure.';}
+try{
+ if(typeof window.setOption!=='function')throw Error('the native Image capture bridge is unavailable');
+ const deadline=Date.now()+30000;
+ const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+ let source;
+ while(root.isConnected&&Date.now()<deadline){
+  source=root.querySelector('svg.jmv-results-svg-content');
+  const error=root.querySelector('.mzpj-cj-error:not([hidden])');
+  const plotlyError=root.querySelector('.mzpj-plotly-status');
+  if(error)throw Error(error.textContent);
+  if(plotlyError&&plotlyError.textContent.startsWith('Plotly could not'))throw Error(plotlyError.textContent);
+  if(source&&Array.from(source.querySelectorAll('image')).every(i=>(i.getAttribute('href')||'').startsWith('data:image/'))){await frame();await frame();break;}
+  await frame();
+ }
+ if(!root.isConnected)return;
+ if(!source||Date.now()>=deadline)throw Error('the graphic did not finish rendering');
+ const width=Number(source.getAttribute('width')),height=Number(source.getAttribute('height'));
+ if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)throw Error('invalid figure dimensions');
+ const scale=Math.min(2,4000/width,4000/height,Math.sqrt(4000000/(width*height)));
+ const copy=source.cloneNode(true);copy.setAttribute('xmlns','http://www.w3.org/2000/svg');
+ const style=getComputedStyle(source);copy.style.fontFamily=style.fontFamily;copy.style.fontSize=style.fontSize;
+ const bitmap=new Image();
+ await new Promise((resolve,reject)=>{bitmap.onload=resolve;bitmap.onerror=()=>reject(Error('the graphic could not be rasterized'));bitmap.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(copy));});
+ if(!root.isConnected)return;
+ const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
+ const context=canvas.getContext('2d');if(!context)throw Error('a 2D canvas is unavailable');
+ context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(bitmap,0,0,canvas.width,canvas.height);
+ const content=canvas.toDataURL('image/png').split(',')[1];
+ if(content.length>1000000)throw Error('the PNG is too large; reduce the figure dimensions');
+ const displayScale=Math.min(1,2000/width,2000/height);
+ const entry={name:request.name,token:request.token,content,width:Math.max(1,Math.round(width*displayScale)),height:Math.max(1,Math.round(height*displayScale))};
+ let queue=window.mzPjNativeImageQueue;
+ if(!queue){
+  queue=window.mzPjNativeImageQueue={entries:new Map(),timer:null};
+  queue.prune=()=>{for(const [id]of queue.entries)if(!document.getElementById(id))queue.entries.delete(id);};
+  queue.observer=new MutationObserver(queue.prune);queue.observer.observe(document.documentElement,{childList:true,subtree:true});
+ }
+ queue.prune();queue.entries.set(request.root,entry);clearTimeout(queue.timer);
+ const accepted=queue.entries.size<=20&&JSON.stringify({version:1,images:Array.from(queue.entries.values())}).length<=1500000;
+ if(!accepted){queue.entries.delete(request.root);fail(Error('too many or oversized pending PNG captures; reduce the number or size of figures'));}
+ queue.timer=setTimeout(()=>{queue.prune();const payload=JSON.stringify({version:1,images:Array.from(queue.entries.values())});
+  if(queue.entries.size)window.setOption('graphicCapture',payload);
+ },50);
+ if(accepted)status.textContent='Preparing native Image result…';
+}catch(error){fail(error);}
+})();</script>'''.replace('__REQUEST__', request)
+    wrapper = ('<div id="' + root_id + '"><p data-image-status role="status">Preparing native Image…</p>'
+               '<div class="ignore-html" style="position:absolute;left:-100000px;top:0;pointer-events:none">'
+               + content + '</div></div>' + bridge)
+    item = dict(type='Html', name=name, title=title, content=wrapper,
+                image_request=dict(version=1, token=token))
+    if scripts:
+        item['scripts'] = scripts
+    results['items'].append(item)
+
 def _pj_figure_dimension(value, default):
     """Ogni campo vuoto o non valido usa soltanto il proprio valore predefinito."""
     try:

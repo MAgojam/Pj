@@ -1,6 +1,14 @@
 /* jamovi/js/funcs.js - Versione Pj (Python Jamovi) | Parole Chiave, Built-in e funzioni numpy/scipy.stats/math */
 
 module.exports = [
+    {"name":"dataext","value":"dataext","meta":"external dataset (dict)","type":"var"},
+    {"name":"mzpjCombineColumns","value":"mzpjCombineColumns","meta":"Pj datasets","type":"func"},
+    {"name": "mzpjSortRows", "value": "mzpjSortRows", "meta": "Pj datasets", "type": "func"},
+    {"name": "mzpjOrderColumns", "value": "mzpjOrderColumns", "meta": "Pj datasets", "type": "func"},
+    {"name": "mzpjWideToLong", "value": "mzpjWideToLong", "meta": "Pj datasets", "type": "func"},
+    {"name": "mzpjLongToWide", "value": "mzpjLongToWide", "meta": "Pj datasets", "type": "func"},
+    {"name": "mzpjMerge", "value": "mzpjMerge", "meta": "Pj datasets", "type": "func"},
+
     // Funzioni dei risultati Pj/Pjp, condivise dai due interpreti Python.
     {"name": "mzpjRecode", "value": "mzpjRecode", "meta": "Pj data", "type": "func"},
     {"name": "mzpjRowStatistic", "value": "mzpjRowStatistic", "meta": "Pj data", "type": "func"},
@@ -10,6 +18,8 @@ module.exports = [
     {"name": "mzpjMetaWeights", "value": "mzpjMetaWeights", "meta": "Pj meta", "type": "func"},
     {"name": "mzpjStandardize", "value": "mzpjStandardize", "meta": "Pj data", "type": "func"},
     {"name": "mzpjRank", "value": "mzpjRank", "meta": "Pj data", "type": "func"},
+    {"name": "mzpjReadOmv", "value": "mzpjReadOmv", "meta": "Pj OMV files", "type": "func"},
+    {"name": "mzpjWriteOmv", "value": "mzpjWriteOmv", "meta": "Pj OMV files", "type": "func"},
     {"name": "mzpjShowText", "value": "mzpjShowText", "meta": "Pj results", "type": "func"},
     {"name": "mzpjShowHtml", "value": "mzpjShowHtml", "meta": "Pj results", "type": "func"},
     {"name": "mzpjShowImage", "value": "mzpjShowImage", "meta": "Pj results", "type": "func"},

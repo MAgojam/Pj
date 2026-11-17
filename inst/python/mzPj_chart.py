@@ -28,10 +28,12 @@ def _pj_chart_json(value, path='configuration'):
 
 def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
                    options=None, width=None, height=None, accordion=True, expanded=True,
-                   static=False, floating_legend=None):
-    """Configura un grafico Chart.js autonomo, con dati numerici gia calcolati."""
+                   static=False, floating_legend=None, result_type=None):
+    """Chart.js: result_type selects html, svg or image; legacy static calls remain valid."""
     import html
     import uuid
+    mode = _pj_graphic_mode(result_type, static)
+    static = mode != 'html'
     from numbers import Integral, Real
     types = ('bar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'radar', 'polarArea')
     if chart_type not in types:
@@ -124,7 +126,7 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
     root_id = 'mzpj_chartjs_' + uuid.uuid4().hex
     heading = html.escape(str(title) if title is not None else 'Chart.js plot')
     if static:
-        _pj_chart_static(payload, name, heading, root_id, dimensions)
+        _pj_chart_static(payload, name, heading, root_id, dimensions, mode)
         return
     style = '''<style>
 .mzpj-chartjs{font-family:Arial,sans-serif;color:#34445b;margin:12px 0;max-width:100%}
@@ -249,7 +251,7 @@ render();
     _pj_add_html(style + content + library + renderer, name=name, title='')
 
 
-def _pj_chart_static(payload, name, heading, root_id, dimensions):
+def _pj_chart_static(payload, name, heading, root_id, dimensions, result_type='svg'):
     # Svg e il contratto nativo per fotografie client: il contenuto PNG resta raster.
     encoded = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     for char, replacement in (('&', '\\u0026'), ('<', '\\u003c'), ('>', '\\u003e'),
@@ -288,5 +290,4 @@ finally{const c=chart||window.mzPjChart461.getChart(canvas);if(c)c.destroy();hol
     renderer = (renderer.replace('__ROOT__', root_id).replace('__WIDTH__', str(width))
                 .replace('__HEIGHT__', str(height)).replace('__PAYLOAD__', encoded))
     result_name = _pj_result_name(name, 'chart', _html_counter)
-    results['items'].append(dict(type='Svg', name=result_name, title=heading,
-                                 content=content + library + renderer))
+    _pj_emit_graphic(content + library + renderer, result_name, heading, result_type)

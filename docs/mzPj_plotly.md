@@ -1,5 +1,16 @@
 # Plotly in Pj 1.4.0
 
+See [graphic result types](mzPj_graphic_result_types.md): `result_type='html'|'svg'|'image'` is now supported in Pj/Pjp. Native Image uses the editor capture bridge; Svg still wraps a PNG snapshot.
+
+> **Compatibility advisory — 5 November 2026.** On jamovi 28.17.0.0,
+> native Svg results can prevent saving the `.omv` document
+> (`DataSetModel.instance_path` error), reproduced on Windows and Linux.
+> This affects D3 `result_type='svg'`, Chart.js/Plotly `static=True`, and service
+> hosts creating native Svg results. See the [compatibility advisory](mzPj_jamovi_svg_compatibility.md)
+> and [upstream issue #1907](https://github.com/jamovi/jamovi/issues/1907).
+> The separate LaTeX export report is [#1902](https://github.com/jamovi/jamovi/issues/1902).
+> This advisory updates documentation only; no public API or rendering defaults change.
+
 Pj 1.4.0 supplies Plotly 7.1.0, Narwhals 2.26.0 and Packaging 26.3 in the
 pure-Python ZIP. Plotly.js 4.1.1 is a separate offline module resource.
 These additions require Pj 1.4.0 or newer.

@@ -18,6 +18,8 @@ on:
       - 'tests/mzPj_flatpak_cache.R'
       - 'R/mzPj_service_api.R'
       - 'inst/**'
+      - '.github/scripts/prepare-native-jmo.py'
+      - 'tests/mzPj_native_libraries.py'
       - 'tests/mzPj_service_api.R'
       - 'tests/mzPj_preparation.R'
       - 'tests/mzPj_meta.py'
@@ -65,6 +67,10 @@ jobs:
           ref: ${{ env.SOURCE_COMMIT }}
           path: module
           persist-credentials: false
+      - name: Require the precompiled macOS native backend
+        run: |
+          set -euo pipefail
+          python3 ci/.github/scripts/prepare-native-jmo.py module "macosx_$EXPECTED_ARCH"
       - name: Download and verify jamovi
         env:
           DOWNLOAD_ARCH: ${{ matrix.download_arch }}
@@ -94,6 +100,10 @@ jobs:
           python3 -m venv --copies "$RUNNER_TEMP/pj-system-python"
           "$RUNNER_TEMP/pj-system-python/bin/python3" -m pip install numpy scipy
           echo "$RUNNER_TEMP/pj-system-python/bin" >> "$GITHUB_PATH"
+      - name: Test the precompiled native Rust loader
+        run: |
+          set -euo pipefail
+          python3 -B module/tests/mzPj_native_libraries.py 2>&1 | tee results/native-loader.log
       - name: Compile with the embedded jamovi R
         run: |
           set -euo pipefail

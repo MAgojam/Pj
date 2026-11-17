@@ -95,6 +95,37 @@ options:
       default: true
       hidden: true
 
+    - name: previewDataext
+      type: Bool
+      default: false
+      hidden: true
+
+    # Comando esplicito e transitorio, distinto dallo stato visibile della preview.
+    - name: previewDataextRequest
+      type: Bool
+      default: false
+      hidden: true
+
+    - name: dataextInfo
+      type: Group
+      hidden: true
+      passive: true
+      elements:
+        - name: json
+          type: String
+          default: '{}'
+
+    - name: omvFile
+      type: File
+      title: OMV input
+      extensions:
+        - omv
+
+    - name: saveOmvFile
+      type: Action
+      hidden: true
+      action: openExternal
+
     - name: scriptFile
       type: File
       title: Service script
@@ -111,5 +142,10 @@ options:
         - name: external
           title: System Python
       default: bundled
+
+    - name: graphicCapture
+      type: String
+      default: ''
+      hidden: true
 
 ...

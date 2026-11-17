@@ -1,5 +1,18 @@
 # Python libraries supplied by Pj
 
+## Current library manual
+
+Read the [English manual](mzPj_libraries_manual.md) or
+[Italian manual](mzPj_libraries_manual_it.md), also available in DOCX/PDF under
+`docs/manuals`. They cover all eleven pure-Python libraries and the26 native
+statistical APIs with worked examples. Pj1.6.0 declares minApp jamovi28.17.0.
+
+Native pj_stats_rust1.1.0 adds repeated-measures models, documented in the
+[RM guide](mzPj_repeated_measures.md). Windows x64 and Linux x64 are built/tested;
+macOS Intel/Apple Silicon are configured in GitHub Actions and await their jobs.
+The native package selects a platform/architecture subdirectory. It is separate
+from the source-only Python archive; no binary is relabelled for another OS.
+
 Pj 1.4.0 additionally bundles Plotly 7.1.0, Narwhals 2.26.0 and
 Packaging 26.3. See the [Plotly guide](mzPj_plotly.md) for activation, dependency
 source handling and the `mzpjShowPlotly()` result helper. Earlier 1.3.x JMO
@@ -34,16 +47,19 @@ Pj executes the service script first, then editor code in the same namespace.
 
 ## Included versions
 
-| Import name | Version | Main purpose | Required bundled dependency |
-|---|---|---|---|
-| sympy | 1.14.0 | Symbolic mathematics | mpmath |
-| mpmath | 1.3.0 | Arbitrary-precision numerical mathematics | None |
-| jinja2 | 3.1.6 | Template-based HTML reports | markupsafe |
-| markupsafe | 3.0.3 | Escaping text inserted into HTML/XML | None |
-| tabulate | 0.10.0 | Text, Markdown and HTML tables | None |
-| uncertainties | 3.2.3 | First-order propagation of measurement uncertainty | None for the core |
-| simpy | 4.1.1 | Discrete-event process simulation | None |
-| more_itertools | 10.8.0 | Grouping, windows and combinatorial iterators | None |
+| Import name | Version | Required bundled dependency |
+|---|---|---|
+| sympy | 1.14.0 | mpmath |
+| mpmath | 1.3.0 | None |
+| jinja2 | 3.1.6 | markupsafe |
+| markupsafe | 3.0.3 | None |
+| tabulate | 0.10.0 | None |
+| uncertainties | 3.2.3 | None |
+| simpy | 4.1.1 | None |
+| more_itertools | 10.8.0 | None |
+| plotly | 7.1.0 | narwhals, packaging |
+| narwhals | 2.26.0 | None |
+| packaging | 26.3 | None |
 
 These are pinned, tested versions, not a promise to track every upstream release.
 Optional features can require additional libraries or external programs. In
@@ -60,7 +76,7 @@ mzpjShowTable(mzpjListLibraries(), name='libraries', title='Pj libraries')
 Each record contains `Library`, `Version`, `Dependencies`, `Available` and
 `Active`. Version describes the supplied copy. `Available` reports whether
 the private cache was prepared; `Active` means the supplied module has been
-imported in this execution. Listing does not import the eight libraries.
+imported in this execution. Listing does not import the eleven libraries.
 The Show Python info report also displays a separate bundled-library section.
 
 ## Choose an independently installed version
@@ -83,7 +99,7 @@ libraries explicitly activated through the helper and their required dependencie
 
 ## Cache, operating systems and performance
 
-The approximately 4.9 MB archive and JSON catalog live in `inst/extdata` and are
+The approximately 13.6 MB archive and JSON catalog live in `inst/extdata` and are
 included in the JMO. On first use Pj verifies the archive's SHA-256 and extracts
 it to a private user cache. The cache is identified by archive digest and Python
 major/minor version. Later runs probe the cache without transferring the archive
@@ -148,7 +164,7 @@ installed-distribution provenance for the Plotly additions, dependencies, licens
 resulting archive checksum. Unmodified upstream Python sources and license
 notices are preserved inside the archive. Upstream tests, installation records
 and command-line entry points are omitted. MarkupSafe's native accelerator is
-omitted; its upstream pure-Python fallback is used. No Windows binary is shipped.
+omitted; its upstream pure-Python fallback is used. No native binary is shipped in that pure-Python archive; native Rust binaries are separate.
 Third-party comments are preserved as upstream source, not translated.
 
 Upstream projects: [SymPy](https://www.sympy.org/), [mpmath](https://mpmath.org/),

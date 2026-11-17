@@ -1,5 +1,16 @@
 # Native D3 figures and document export
 
+See [graphic result types](mzPj_graphic_result_types.md): D3 accepts `result_type='html'|'svg'|'image'`. Svg preserves vectors; Image captures the figure content through the Pj/Pjp editor bridge.
+
+> **Compatibility advisory — 5 November 2026.** On jamovi 28.17.0.0,
+> native Svg results can prevent saving the `.omv` document
+> (`DataSetModel.instance_path` error), reproduced on Windows and Linux.
+> This affects D3 `result_type='svg'`, Chart.js/Plotly `static=True`, and service
+> hosts creating native Svg results. See the [compatibility advisory](mzPj_jamovi_svg_compatibility.md)
+> and [upstream issue #1907](https://github.com/jamovi/jamovi/issues/1907).
+> The separate LaTeX export report is [#1902](https://github.com/jamovi/jamovi/issues/1902).
+> This advisory updates documentation only; no public API or rendering defaults change.
+
 Native D3 Svg results are available in Pj 1.4.0 or newer.
 All ten D3 plotting helpers accept an optional final argument:
 
@@ -25,8 +36,11 @@ contain their linked views in that single SVG. Native mode marks it with
 `jmv-results-svg-content`, embeds scoped styles and preserves dimensions/viewBox.
 An accordion icon is not selected as the exported image.
 
-Native mode uses the result's heading and an open layout, without an accordion.
-The accordion arguments retain validation but do not collapse a native figure.
+Native mode preserves `accordion` and `expanded` in Results. The accordion heading
+and controls remain outside the marked SVG. Its toggle uses CSS rather than a
+second SVG, so older jamovi versions selecting the first SVG still select the plot.
+The main plot also carries both `jmv-results-svg-content` and
+`jmv-results-svg-selection` markers for figure export and native Results handling.
 A footer inside the SVG includes supplied notes, current-view context and
 coloured group keys. It adds height below the requested drawing area and updates
 when parameters/selections change. Thus the exported figure does not rely on

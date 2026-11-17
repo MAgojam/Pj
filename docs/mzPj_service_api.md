@@ -1,5 +1,53 @@
 # Use Python in another jamovi module through Pj
 
+## Try the API directly from Rj
+
+Three R examples in [rjusepj](../rjusepj/README.md) separate library/calculation
+checks from native Tables and Python-generated Chart.js, D3 and Plotly graphics.
+See the [Italian guide](mzPj_rj_api_it.md). Use jamovi R in distributed Rj/Rj+;
+examples 01/02 use default Embedded, while 03 explicitly requests System Python
+with pandas/Matplotlib already available. NumPy is also present in jamovi Embedded. The updated Pj 1.6.0 candidate
+includes a shared Rj-specific adapter using its existing Results root. Rj is
+unchanged. Other modules retain their own .b.R/.r.yaml mapping.
+Browser-generated Image capture for D3/Chart.js/Plotly is specific to Pj/Pjp;
+service callers can supply ready PNG bytes through mzpjShowImage instead.
+
+## External data and dataset transformations
+
+The 1.6.0 candidate exposes sorting, column order/combination, wide/long and
+validated merge helpers. See the [dataext guide](mzPj_dataext.md).
+API1 scripts receive an initially empty `dataext`. If populated, an optional
+`omv_export` response contains `filename`, base64 `content`, dimensions and a
+compact `preview` (first ten rows). No Prepare or Save call is required. The
+compressed archive is limited to 32 MiB. Check capabilities `dataext`,
+`dataset_reshape`, `omv_dataset_io`, `omv_export` before using these features.
+The calling module owns saving, any file dialog and state between API calls.
+Do not put the archive record into native Results/state. It is validated
+separately and excluded from the engine Results size measurement. No editor or
+save dialog is opened by an API call. Explicit `mzpjWriteOmv(path, ...)`, Output,
+all existing result types, cancellation and timeout contracts remain available.
+API1 stays version 1.
+
+## OMV helpers in the 1.6.0 candidate
+
+Python code passed to `mzPjRunPython()` can call `mzpjReadOmv()` and
+`mzpjWriteOmv()` directly, without a Service script. See the
+[OMV guide](mzPj_omv.md) for signatures, dataset-only scope, metadata and paths.
+These helpers are not part of published 1.5.0 packages: check the module version
+before relying on them. API1, checkpoints, timeouts and result mapping remain
+unchanged. Files are accessed by the selected interpreter; the calling module
+must choose accessible paths and handle errors. Writing an OMV neither changes
+the current jamovi dataset nor creates results in the caller.
+
+> **Compatibility advisory — 5 November 2026.** On jamovi 28.17.0.0,
+> native Svg results can prevent saving the `.omv` document
+> (`DataSetModel.instance_path` error), reproduced on Windows and Linux.
+> This affects D3 `result_type='svg'`, Chart.js/Plotly `static=True`, and service
+> hosts creating native Svg results. See the [compatibility advisory](mzPj_jamovi_svg_compatibility.md)
+> and [upstream issue #1907](https://github.com/jamovi/jamovi/issues/1907).
+> The separate LaTeX export report is [#1902](https://github.com/jamovi/jamovi/issues/1902).
+> This advisory updates documentation only; no public API or rendering defaults change.
+
 Public service API **version 1**, introduced
 in **Pj 1.3.0**. Earlier public Pj releases do not provide this API. Local service
 preview packages used during development are not the public compatibility target.
@@ -105,6 +153,40 @@ response$service
 You may also call `Pj::mzPjRunPython()` after discovery. Avoid calling that at
 package-load time: a missing optional Pj installation should produce a useful
 analysis message rather than prevent your entire module from loading.
+
+## Python selection belongs to each API call
+
+`Pj::mzPjRunPython(code=...)` defaults to `python='jamovi'` (Embedded).
+To request System Python, pass `python='system'` explicitly. The API does not
+read or change the Python selector of an open Pj/Pjp editor analysis. A System
+call does not change the default of later calls. A missing selected interpreter
+is reported as an interpreter error; the caller should not silently switch it.
+
+```r
+embedded <- Pj::mzPjRunPython(code = "print('Embedded Python')")
+system <- Pj::mzPjRunPython(code = "print('System Python')", python = 'system')
+# In a calling module with its own python option:
+response <- service$run(code = pythonCode, data = self$data,
+                        python = self$options$python)
+```
+
+A caller that always uses Embedded needs no interpreter selector. A caller
+that offers both must declare its own List option with values `jamovi` and
+`system`, default `jamovi`, and pass that value to the API. Include the option
+in rendering/cache keys. MetaPj already does this in its presentation and
+extension calls; its UI has a Python interpreter ComboBox.
+
+The editor's internal options use **`bundled` / `external`**; these are not the
+API argument names. The API accepts **`jamovi` / `system`**. Rj's **jamovi R /
+System R** selection is a separate R-host choice. The Rj examples keep
+jamovi R: 01/02 use the default Embedded interpreter, and 03 explicitly selects
+System Python. Bundled/system Python
+library source selection (`mzpjUseLibrary`) is also separate from the choice
+of interpreter.
+
+Windows verification: default Embedded -> explicit System -> default Embedded
+again, with matching executable paths on the first/last calls, PASSED
+(`Pj_builds/rj_api_20261117/PYTHON_SELECTION.log`, 17 November 2026).
 
 ## 3. Parameters and execution
 

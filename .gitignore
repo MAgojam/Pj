@@ -25,3 +25,7 @@ __pycache__/
 
 # Dimostrazione diagnostica locale: non fa parte della distribuzione pubblica.
 /pjscript/52_d3_cutoff_explorer.py
+
+# Keep the unfinished Rust development project local; distribute only inst/python binaries.
+/pj_stats_rust/
+/build-native-foreign/

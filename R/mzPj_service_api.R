@@ -3,6 +3,7 @@ mzPjServiceInfo <- function() {
     list(api_version=1L, module_version=as.character(utils::packageVersion('Pj')),
          execution='separate-process', experimental=FALSE,
          capabilities=list(checkpoint=TRUE, flatpak_host_checkpoint=TRUE,
+                           omv_dataset_io=TRUE, dataset_reshape=TRUE, omv_export=TRUE, dataext=TRUE,
                            timeout_scope='call'),
          result_budget_bytes=.mzPj_resultBudget,
          result_types=c('Preformatted', 'Text', 'Html', 'Svg', 'Table', 'Image', 'Output'))

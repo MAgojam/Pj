@@ -1,10 +1,13 @@
-# Due percorsi separati: Html interattivo e Svg statico acquisito una sola volta.
+# Plotly: interactive Html, static Svg, or a native PNG Image.
 def _pj_show_plotly(figure, *, name=None, title=None, height=800, config=None,
-                    static=False, export_width=960):
+                    static=False, export_width=960, result_type=None):
+    """Show a Plotly Figure using result_type=html, svg or image (editor capture)."""
     import json
     import uuid
     import html
     import re
+    mode = _pj_graphic_mode(result_type, static)
+    static = mode != 'html'
     if not isinstance(static, bool):
         raise TypeError('static must be True or False.')
     if isinstance(export_width, bool) or not isinstance(export_width, int) or not 400 <= export_width <= 2400:
@@ -34,13 +37,13 @@ def _pj_show_plotly(figure, *, name=None, title=None, height=800, config=None,
         # La superficie temporanea scompare dopo toImage: nessun listener persistente.
         content = (f'<div id="{root_id}" style="width:{export_width}px;max-width:100%">'
                    '<p class="mzpj-plotly-status ignore-html" role="status" '
-                   'style="font:12px Arial;color:#657b9b">Preparing static Plotly image…</p>'
+                   'style="font:12px Arial;color:#657b9b">Preparing static Plotly imageâ€¦</p>'
                    f'<svg xmlns="http://www.w3.org/2000/svg" class="jmv-results-svg-content" '
                    f'width="{export_width}" height="{height}" viewBox="0 0 {export_width} {height}" '
                    'style="max-width:100%;height:auto">'
                    f'<title>{heading}</title><image width="{export_width}" height="{height}" /></svg></div>')
     else:
-        content = f'<div id="{root_id}" style="width:100%;min-height:{height}px">Loading Plotly…</div>'
+        content = f'<div id="{root_id}" style="width:100%;height:{height}px">Loading Plotlyâ€¦</div>'
     renderer = r'''<script>(async function(){
 const root=document.getElementById(__ROOT__),figure=__FIGURE__,config=__CONFIG__,asset=__ASSET__;
 if(!root)return;
@@ -96,7 +99,11 @@ finally{if(temporary){if(P)P.purge(plot);plot.remove();}}
                          WIDTH=str(export_width), HEIGHT=str(height))
     content += re.sub(r'__(ROOT|FIGURE|CONFIG|ASSET|STATIC|WIDTH|HEIGHT)__',
                       lambda match: substitutions[match.group(1)], renderer)
-    item = dict(type='Svg' if static else 'Html', name=name, title=title or '', content=content)
-    if not _pj_plotly_gzip:
-        item['scripts'] = ['extdata/plotly.min.js']
-    results['items'].append(item)
+    scripts = ['extdata/plotly.min.js'] if not _pj_plotly_gzip else None
+    if static:
+        _pj_emit_graphic(content, name, title or '', mode, scripts=scripts)
+    else:
+        item = dict(type='Html', name=name, title=title or '', content=content)
+        if scripts:
+            item['scripts'] = scripts
+        results['items'].append(item)

@@ -50,8 +50,7 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
         raise TypeError('Plot options accordion and expanded must be True or False.')
     if not accordion and not expanded:
         raise ValueError('expanded=False requires accordion=True.')
-    if result_type not in ('html', 'svg'):
-        raise ValueError('D3 result_type must be html or svg.')
+    _pj_graphic_mode(result_type)
     if not isinstance(color, str) or re.fullmatch(r'#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})', color) is None:
         raise ValueError('Plot color must be a hexadecimal CSS color, such as #3e6da9.')
     from numbers import Integral
@@ -68,8 +67,8 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
         raise RuntimeError('The Pj D3 plot resources are unavailable. Reinstall the updated Pj module.')
     payload.update(width=dimensions[0], height=dimensions[1], accordion=accordion,
                    expanded=expanded, color=color)
-    if result_type == 'svg':
-        payload.update(resultType='svg', accordion=False, expanded=True,
+    if result_type in ('svg', 'image'):
+        payload.update(resultType='svg',
                        exportStyle=_pj_plot_css.replace('.mzpj-d3 ', '.mzpj-d3-export ')
                        .replace('.mzpj-d3{', '.mzpj-d3-export{') + '.mzpj-d3-export{margin:0}')
     encoded = json.dumps(payload, ensure_ascii=False, allow_nan=False)
@@ -82,11 +81,10 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
                '<script>' + D3_INLINE + '</script><script>' + _pj_plot_js + '</script>'
                '<script>(function(){const p=' + encoded + ';window.mzPjD3[p.kind]('
                'document.getElementById("' + root_id + '"),p);})();</script>')
-    if result_type == 'svg':
+    if result_type in ('svg', 'image'):
         import html
         result_name = _pj_result_name(name, 'svg', _html_counter)
-        results['items'].append(dict(type='Svg', name=result_name,
-            title=html.escape(payload['title']), content=content))
+        _pj_emit_graphic(content, result_name, html.escape(payload['title']), result_type)
     else:
         _pj_add_html(content, name=name, title='')
 

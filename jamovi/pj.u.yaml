@@ -10,3 +10,7 @@ children:
   - type: File
     name: scriptFile
     label: 'Service script (.py)'
+
+  - type: File
+    name: omvFile
+    label: 'OMV input'

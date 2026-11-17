@@ -1,5 +1,16 @@
 # Chart.js plots from Python
 
+See [graphic result types](mzPj_graphic_result_types.md): `result_type='html'|'svg'|'image'` selects the native container in Pj/Pjp. Legacy `static=True` still returns Svg containing PNG.
+
+> **Compatibility advisory — 5 November 2026.** On jamovi 28.17.0.0,
+> native Svg results can prevent saving the `.omv` document
+> (`DataSetModel.instance_path` error), reproduced on Windows and Linux.
+> This affects D3 `result_type='svg'`, Chart.js/Plotly `static=True`, and service
+> hosts creating native Svg results. See the [compatibility advisory](mzPj_jamovi_svg_compatibility.md)
+> and [upstream issue #1907](https://github.com/jamovi/jamovi/issues/1907).
+> The separate LaTeX export report is [#1902](https://github.com/jamovi/jamovi/issues/1902).
+> This advisory updates documentation only; no public API or rendering defaults change.
+
 Available in Pj 1.4.0 or newer. Examples require a build
 that provides `mzpjShowChart`.
 

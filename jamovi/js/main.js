@@ -8,6 +8,8 @@ require('brace/ext/language_tools');
 require('./css');
 const Suggest = require('./suggest');
 const initEditorFiles = require('./mzPj_editor_files');
+const initOmvFiles = require('./mzPj_omv_files');
+const initPythonSelector = require('./mzPj_python_selector');
 const runEditor = require('./mzPj_editor_run');
 const placeServiceHeader = require('./mzPj_service_header');
 const SuggestIcons = require('./suggesticons');
@@ -189,12 +191,23 @@ const events = {
             <div id="menu" inert aria-hidden="true">
                 <label id="code-label"><span>Python Code</span><span id="pj-module-version"></span></label>
                 <div id="python-setting" class="pj-setting-row">
-                    <label id="python-label" for="python-version">Python Version</label>
-                    <select id="python-version">
-                        <option value="bundled">jamovi Python</option>
-                        <option value="external">System Python</option>
-                    </select>
+                    <span id="python-label">Python interpreter:</span>
+                    <div id="python-interpreter" role="radiogroup" aria-labelledby="python-label">
+                        <label class="mzpj-python-choice"><input type="radio" name="python-interpreter" value="bundled"><span>Embedded</span>
+                            <span class="mzpj-python-tip" role="tooltip">Python included with jamovi.</span></label>
+                        <label class="mzpj-python-choice"><input type="radio" name="python-interpreter" value="external"><span>System</span>
+                            <span class="mzpj-python-tip" role="tooltip">Python installed on your computer.</span></label>
+                    </div>
                 </div>
+                <section id="omv-files" aria-label="OMV dataset files">
+                    <div class="mzpj-omv-header"><div class="mzpj-omv-title">External OMV files</div>
+                        <div class="mzpj-omv-buttons"><div class="mzpj-omv-input"></div>
+                        <button type="button" id="save-omv" disabled>Save…</button></div></div>
+                    <div class="mzpj-omv-reference"><code>dataext:</code> <span id="dataext-name">Empty</span></div>
+                    <div id="dataext-dimensions" aria-live="polite"></div>
+                    <label class="mzpj-omv-preview"><input type="checkbox" id="preview-dataext">Show preview in Results</label>
+                    <p>Separate from the current jamovi dataset.</p>
+                </section>
                 <div id="output-setting" class="pj-setting-row">
                     <label id="output-label" for="output">Output</label>
                     <select id="output">
@@ -219,6 +232,7 @@ const events = {
         this.$run = $contents.querySelector('#run');
         this.$config = $config;
         this.$menu = $contents.querySelector('#menu');
+        initOmvFiles(ui, this.$menu);
 
         this.$run.addEventListener('click', () => this.run(ui));
 
@@ -229,10 +243,7 @@ const events = {
             ui.output.setValue(this.$output.value);
         });
 
-        this.$python = $contents.querySelector('#python-version');
-        this.$python.addEventListener('change', (event) => {
-            ui.python.setValue(this.$python.value);
-        });
+        this.$python = initPythonSelector(ui, $contents.querySelector('#python-interpreter'));
 
         this.$figWidth = $contents.querySelector('#figure-width');
         this.$figHeight = $contents.querySelector('#figure-height');
@@ -244,8 +255,7 @@ const events = {
         let dragState = null;
 
         this.$menu.addEventListener('mousedown', (event) => {
-            let tag = event.target.tagName;
-            if (tag === 'SELECT' || tag === 'INPUT' || tag === 'OPTION' || tag === 'BUTTON')
+            if (event.target.closest('select, input, option, button, label, .jmv-file-selector'))
                 return;
 
             let rect = this.$menu.getBoundingClientRect();
@@ -376,6 +386,14 @@ const events = {
             this.$menu.removeAttribute('inert');
             this.$menu.setAttribute('aria-hidden', 'false');
             this.$menu.classList.add('visible');
+            // Mantiene accessibile il pannello anche con OMV e finestre basse.
+            const bounds = this.$menu.getBoundingClientRect();
+            if (bounds.bottom > window.innerHeight - 12 || bounds.top < 12) {
+                this.$menu.style.position = 'fixed';
+                this.$menu.style.top = Math.max(12, window.innerHeight - bounds.height - 12) + 'px';
+                this.$menu.style.left = Math.max(12, Math.min(bounds.left, window.innerWidth - bounds.width - 12)) + 'px';
+                this.$menu.style.right = 'auto';
+            }
             this.$config.setAttribute('aria-expanded', 'true');
         };
 
@@ -422,6 +440,7 @@ const events = {
         initAccordionHeader(ui);
 
         placeServiceHeader(ui);
+        initOmvFiles(ui, this.$menu);
     },
 
     onDataChanged(ui, event) {
@@ -491,6 +510,7 @@ const events = {
         initAccordionHeader(ui);
         applyAccordionState(ui);
         placeServiceHeader(ui);
+        initOmvFiles(ui, this.$menu);
     },
 };
 

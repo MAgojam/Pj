@@ -20,6 +20,9 @@
 }
 
 .mzPj_checkProtocolSize <- function(results) {
+    # Il file preparato resta sul canale Python/R, non entra nel protobuf Results.
+    if (!is.null(results$omv_export)) .mzPj_validateOmvExport(results$omv_export)
+    results$omv_export <- NULL
     encoded <- as.character(jsonlite::toJSON(results, auto_unbox=TRUE,
         null='null', na='null', digits=NA))
     bytes <- nchar(enc2utf8(encoded), type='bytes')
@@ -28,7 +31,10 @@
 }
 
 .mzPj_checkNativeSize <- function(group) {
-    bytes <- length(jmvcore:::RProtoBuf_serialize(group$asProtoBuf(), NULL))
+    # AnalysisStatus.ANALYSIS_COMPLETE = 3 nel protocollo jamovi. Image richiede
+    # uno stato scalare anche durante questa misura preventiva; NULL causa
+    # un errore nei risultati Image ancora in attesa di rendering.
+    bytes <- length(jmvcore:::RProtoBuf_serialize(group$asProtoBuf(status=3L), NULL))
     if (bytes > .mzPj_resultBudget) .mzPj_resultSizeError(bytes, 'native results')
     invisible(bytes)
 }

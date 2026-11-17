@@ -1,0 +1,26 @@
+# Regression: a ready PNG keeps its ratio when Rj replays on another device shape.
+library(Pj);library(Rj);jmvcore:::initProtoBuf()
+work<-Sys.getenv('MZPJ_RJ_ASPECT_OUTPUT',unset=tempfile('Pj-Rj-aspect-'))
+dir.create(work,recursive=TRUE,showWarnings=FALSE)
+fixture<-file.path(work,'rectangle.png')
+grDevices::png(fixture,width=200,height=100)
+grid::grid.newpage();grid::grid.rect(gp=grid::gpar(fill='red',col=NA));grDevices::dev.off()
+encoded<-base64enc::base64encode(readBin(fixture,'raw',n=file.info(fixture)$size))
+python<-paste0("import base64; mzpjShowImage(base64.b64decode('",encoded,"'),name='rectangle')")
+code<-paste0("(function(){sys.source(system.file('rj','mzPj_rj_support.R',package='Pj'),envir=environment());",
+ "host<-mzPjRjHost(get('root',inherits=TRUE),data);host$show(host$run(",deparse(python),"))})()")
+cls<-getFromNamespace('RjClass','Rj');opts<-getFromNamespace('RjOptions','Rj')
+a<-cls$new(options=opts$new(code=code,vars=names(iris),R='bundled',figWidth='400',figHeight='300'),data=iris)
+a$.setResourcesPathSource(function(name,suffix)list(rootPath=work,relPath=paste0(name,'.',suffix)))
+a$.setStatePathSource(function()file.path(work,'state'))
+a$init();a$run()
+images<-Filter(function(x)inherits(x,'Image'),lapply(a$results$itemNames,function(name)a$results$get(name)))
+stopifnot(length(images)==1L)
+for(size in list(c(900,480),c(300,600))) {
+ file<-file.path(work,paste0('replay_',size[1],'x',size[2],'.png'))
+ grDevices::png(file,width=size[1],height=size[2]);stopifnot(isTRUE(images[[1]]$.render()));grDevices::dev.off()
+ pixels<-png::readPNG(file);red<-which(pixels[,,1]>0.9 & pixels[,,2]<0.1 & pixels[,,3]<0.1,arr.ind=TRUE)
+ ratio<-(diff(range(red[,2]))+1)/(diff(range(red[,1]))+1)
+ stopifnot(abs(ratio-2)<0.03)
+ cat('PNG ratio',ratio,'on replay',paste(size,collapse='x'),'PASSED\n')
+}
