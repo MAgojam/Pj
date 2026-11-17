@@ -10,8 +10,11 @@ dir.create(tools, recursive=TRUE, showWarnings=FALSE)
 options(repos=c(jamovi='https://repo.jamovi.org', CRAN='https://cloud.r-project.org'), timeout=600)
 cat('R home:', R.home(), '\nR:', R.version.string, '\nPlatform:', R.version$platform, '\n')
 if (!requireNamespace('node', quietly=TRUE)) install.packages('node', lib=tools, type='source', INSTALL_opts='--no-help')
-install.packages('jmvtools', lib=tools, dependencies=FALSE, type='source', INSTALL_opts='--no-help')
-stopifnot(as.character(packageVersion('jmvtools'))=='28.4')
+# Pin the build-tool version for this jamovi 28.17 release instead of installing
+# the latest package then rejecting it against the old 28.4 assertion.
+install.packages('https://repo.jamovi.org/src/contrib/jmvtools_28.17.tar.gz',
+                 lib=tools, repos=NULL, dependencies=FALSE, type='source', INSTALL_opts='--no-help')
+stopifnot(as.character(packageVersion('jmvtools'))=='28.17')
 library(jmvtools)
 home <- file.path(app,'MacOS')
 node <- Sys.which('node')
