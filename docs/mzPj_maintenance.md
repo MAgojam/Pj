@@ -1,5 +1,23 @@
 # Pj / Pjp maintenance map
 
+## Native backends for all four platforms — 17 November 2026
+
+Apple Intel and Apple Silicon binaries were built on their native GitHub
+Actions runners and passed the private source's 17 native and 7 repeated-measures
+test groups against independent R references. Actions run 44100031390:
+https://github.com/MAgojam/Pj/actions/runs/44100031390 . Mach-O architecture and
+SHA256 were verified after download. Only compiled binaries are added to Pj.
+Windows/Linux binaries are unchanged; the unfinished Rust source remains excluded.
+The authorised encrypted transport asset/secret are deleted after the native
+build. JMO compilation and embedded/System integration tests run separately;
+this does not claim macOS desktop visual acceptance.
+
+Linux was already built and GUI-tested on Ubuntu before this release preparation.
+The release JMO has now also been rebuilt from signed source and passed API and
+native numerical references in Embedded/System Python on Ubuntu 26.04/Flatpak.
+Do not repeat the incorrect statement that no Linux JMO had been prepared.
+
+
 ## macOS Rust CI: temporary encrypted transfer authorised — 17 November 2026
 
 The maintainer explicitly authorised a temporary encrypted copy of the local

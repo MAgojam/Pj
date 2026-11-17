@@ -12,7 +12,9 @@
       "description": "Native Rust statistics: validated descriptives, correlations, t-tests, ANOVA/ANCOVA/MANOVA/MANCOVA, seeded bootstrap, multiple testing, contingency tables and row summaries. Repeated-measures GLM with one within-subject factor, groups, subject covariates, GG/HF and joint multivariate tests.",
       "supported_platforms": [
         "win_amd64",
-        "linux_x86_64"
+        "linux_x86_64",
+        "macosx_x86_64",
+        "macosx_arm64"
       ],
       "exported_functions": [
         "descrittive_complete",

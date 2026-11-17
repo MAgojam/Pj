@@ -13,10 +13,11 @@ Try the public Python API from Rj with three examples: [libraries and calculatio
 [English instructions](rjusepj/README.md) · [Guida italiana](docs/mzPj_rj_api_it.md).
 No Pj editor analysis is opened; the current dataset remains unchanged.
 
-Native Rust binaries and their loader are included for Windows x64 and Linux
-x64. The unfinished root `pj_stats_rust/` development project remains local
-and is excluded from Git and JMO packages. Apple Intel/Apple Silicon native
-builds are pending; the four-platform release is not yet complete.
+Native Rust binaries and their loader are included for Windows x64, Linux x64,
+macOS Intel and macOS Apple Silicon. The unfinished root `pj_stats_rust/`
+development project is excluded from Git and JMO packages. Native Apple builds
+passed their numerical reference tests through the authorised temporary CI
+transfer. Platform JMO checks are recorded separately from desktop GUI tests.
 
 Complete library manuals, with guided examples and repeated-measures models:
 [Italian PDF](docs/manuals/Pj_1.6.0_Libraries_IT.pdf),
