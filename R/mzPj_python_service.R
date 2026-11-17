@@ -4,8 +4,13 @@
 }
 
 .mzPj_pythonScript <- function(path, config) {
+    config$MODULE_PYTHON_PATH <- normalizePath(file.path(dirname(path), 'python'), winslash='/', mustWork=FALSE)
     config$LIBRARY_CATALOG <- jsonlite::fromJSON(file.path(dirname(path),
         'extdata', 'mzPj_python_libraries.json'), simplifyVector=FALSE)
+    nativeCatalogPath <- file.path(dirname(path), 'extdata', 'mzPj_native_libraries.json')
+    if (file.exists(nativeCatalogPath)) {
+        config$NATIVE_CATALOG <- jsonlite::fromJSON(nativeCatalogPath, simplifyVector=FALSE)
+    }
     resourceNames <- 'mzPj_icon_python.png'
     config$RESOURCES <- setNames(lapply(resourceNames, function(filename) {
         iconPath <- file.path(dirname(path), 'extdata', filename)
@@ -21,7 +26,7 @@
         gsub('[\r\n]', '', jsonlite::base64_enc(memCompress(readBin(
             file.path(dirname(path),'extdata','plotly.min.js'), 'raw',
             n=file.info(file.path(dirname(path),'extdata','plotly.min.js'))$size), 'gzip'))) else ''
-    services <- c('mzPj_libraries.py', 'mzPj_environment.py', 'mzPj_data.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py')
+    services <- c('mzPj_libraries.py', 'mzPj_environment.py', 'mzPj_data.py', 'mzPj_omv.py', 'mzPj_reshape.py', 'mzPj_dataext.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py')
     config$SERVICES <- lapply(services, function(filename) {
         list(filename=filename, source=.mzPj_readText(file.path(
             dirname(path), 'python', filename)))

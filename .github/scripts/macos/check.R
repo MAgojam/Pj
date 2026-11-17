@@ -36,6 +36,8 @@ for (index in seq_along(c(embedded,external))) {
     python <- c(embedded,external)[index]
     mode <- c('jamovi','system')[index]
     stopifnot(system2(python,c('--version'))==0L)
+    for(nativeTest in 'tests/mzPj_native_libraries.py')
+        stopifnot(pythonCall(python,shQuote(file.path(root,nativeTest)))==0L)
     stopifnot(pythonCall(python,shQuote(file.path(root,'tests/mzPj_libraries.py')))==0L)
     tests <- c('mzPj_environment.py','mzPj_data.py','mzPj_meta.py','mzPj_plots.py','mzPj_chart.py','mzPj_plotly.py')
     for(test in tests)

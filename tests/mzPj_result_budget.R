@@ -25,6 +25,13 @@ fake <- list(options=o,results=jmvcore::Group$new(o),saveColumns=FALSE)
 add(fake,table)
 nativeCheck <- getFromNamespace('.mzPj_checkNativeSize','Pj')
 stopifnot(nativeCheck(fake$results) > check(table))
+# Image con stato e rendering differito: lo stato NULL della vecchia chiamata
+# falliva prima ancora di serializzare il protobuf o misurarne le dimensioni.
+images <- jmvcore::Group$new(o,name='root')
+image <- jmvcore::Image$new(o,name='pending',renderFun='.render',width=800,height=600)
+image$setState(list(test=TRUE))
+images$add(image)
+stopifnot(nativeCheck(images)>0L)
 # Un protobuf grande verifica la barriera nativa senza creare centinaia di migliaia di celle.
 native <- jmvcore::Html$new(o,name='large')
 native$setContent(strrep('x',as.integer(budget+1024)))

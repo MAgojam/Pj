@@ -26,7 +26,7 @@ with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
     assert 'apple-darwin' in runtime
     assert ('aarch64' if arch=='arm64' else 'x86_64') in runtime
     meta=z.read('Pj/jamovi.yaml').decode()
-    assert '28.3' in meta and version in meta
+    assert re.search(r'minApp:\s*[\"\']?28\.17\.0',meta) and version in meta
     datasets=re.findall(r'^\s+path:\s*(\S+\.omv)\s*$',meta,re.M)
     assert len(datasets)==5
     for name in datasets:
@@ -34,7 +34,14 @@ with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
     for source in (root/'inst').rglob('*'):
         if source.is_file():
             assert z.read('Pj/R/Pj/'+source.relative_to(root/'inst').as_posix())==source.read_bytes()
-    assert not any('/pjscript/' in name or '/.github/' in name or name.endswith('compile.r') for name in z.namelist())
+    assert not any('/pjscript/' in name or '/rjusepj/' in name or '/.github/' in name
+                   or '/build-native-foreign/' in name or name.endswith(('compile.r','Cargo.toml','Cargo.lock'))
+                   for name in z.namelist())
+    assert not any(name.startswith('Pj/pj_stats_rust/') or '/src/lib.rs' in name for name in z.namelist())
+    tag='macosx_'+arch
+    catalog=json.loads(z.read('Pj/R/Pj/extdata/mzPj_native_libraries.json'))
+    assert catalog['libraries'][0]['supported_platforms']==[tag]
+    assert 'Pj/R/Pj/python/pj_stats_rust/'+tag+'/pj_stats_rust.abi3.so' in z.namelist()
     native=[]
     for name in z.namelist():
         if name.endswith(('.so','.dylib')):

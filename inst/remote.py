@@ -21,8 +21,14 @@ _pj_plot_css = _config.get('PLOT_CSS', '')
 _pj_chart_js = _config.get('CHART_JS', '')
 _pj_plotly_gzip = _config.get('PLOTLY_GZIP', '')
 _pj_library_catalog = _config.get('LIBRARY_CATALOG', {})
+_pj_native_catalog = _config.get('NATIVE_CATALOG', {})
 _pj_library_path = _config.get('LIBRARY_PATH')
 _pj_library_error = _config.get('LIBRARY_ERROR', '')
+_pj_module_python_path = _config.get('MODULE_PYTHON_PATH')
+_pj_omv_input = _config.get('OMV_INPUT')
+_pj_dataext_input = _config.get('DATAEXT_INPUT')
+_pj_dataext_enabled = bool(_config.get('DATAEXT_ENABLED', False))
+_pj_image_capture_enabled = bool(_config.get('IMAGE_CAPTURE_ENABLED', False))
 for _key in ('DATASET', 'OUTPATH', 'CODE', 'SCRIPT_NAMES', 'EXTSCRIPT',
              'DATASET_INLINE', 'EXTSCRIPT_INLINE', 'D3_INLINE', 'STDIO_MODE',
              'FIGWIDTH', 'FIGHEIGHT', 'OUTPUT_MODE', 'PYTHON_MODE', 'SAVECOLUMNS'):
@@ -88,6 +94,7 @@ def execute_user_code(code, ext_script_path=""):
     }
     
     local_vars['data'] = data
+    local_vars['dataext'] = _PjExternalData()
     local_vars['np'] = np
     local_vars['math'] = math
     local_vars['stats'] = stats
@@ -146,11 +153,37 @@ def execute_user_code(code, ext_script_path=""):
         return path
 
     local_vars['mzpjResourcePath'] = resource_path
+    # File scelto da jamovi: copia di sessione, materializzata nell'host solo
+    # quando lo script la legge. La directory dura per l'intera esecuzione.
+    def read_managed_omv(selected, cache_name, labels=True, max_bytes=256 * 1024**2):
+        nonlocal resource_directory
+        if not selected:
+            raise ValueError('Read... loads dataext directly. Pass an explicit path to mzpjReadOmv().')
+        selected_path = selected.get('path')
+        if not selected_path:
+            if not resource_directory:
+                resource_directory = resource_stack.enter_context(tempfile.TemporaryDirectory(prefix='mzpj-'))
+            selected_path = os.path.join(resource_directory, cache_name)
+            if not os.path.exists(selected_path):
+                with open(selected_path, 'wb') as stream:
+                    stream.write(base64.b64decode(selected['content'], validate=True))
+        document = mzpjReadOmv(selected_path, labels=labels, max_bytes=max_bytes)
+        document['source_name'] = selected.get('filename', '')
+        return document
+
+    def read_omv(path=None, labels=True, *, max_bytes=256 * 1024**2):
+        if path is not None:
+            return mzpjReadOmv(path, labels=labels, max_bytes=max_bytes)
+        return read_managed_omv(_pj_omv_input, 'selected-input.omv', labels, max_bytes)
+    local_vars['mzpjReadOmv'] = read_omv
     
     f = StringIO()
     # La directory temporanea viene creata su richiesta e rimossa anche in caso di errore.
     with redirect_stdout(f), ExitStack() as resource_stack:
         try:
+            if _pj_dataext_input:
+                local_vars['dataext'] = _pj_external_data(
+                    read_managed_omv(_pj_dataext_input, 'dataext-input.omv'))
             # Script esterno opzionale (opzione File 'scriptFile'): eseguito
             # PRIMA del codice utente, nello stesso namespace, cosi' le funzioni/
             # classi/variabili che definisce sono direttamente utilizzabili senza
@@ -179,6 +212,8 @@ def execute_user_code(code, ext_script_path=""):
                     _pj_report_error(e, sources, service_source)
                     return f.getvalue()
             exec(compile(code, editor_source, 'exec'), local_vars)
+            if _pj_dataext_enabled or local_vars.get('dataext'):
+                _pj_capture_dataext(local_vars.get('dataext'))
         except (Exception, SystemExit) as e:
             _pj_report_error(e, sources, editor_source)
 

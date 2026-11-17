@@ -158,7 +158,8 @@ const css = `
     transform: translateX(110%) ;
     transition:
         transform 0.28s ease-out,
-        opacity 0.20s ease-out ;
+          opacity 0.28s ease-out,
+          visibility 0s linear 0.28s ;
 
     display: grid ;
     position: absolute ;
@@ -166,6 +167,8 @@ const css = `
     right: 0px ;
     width: 280px ;
     max-width: calc(100vw - 24px) ;
+    max-height: calc(100vh - 24px) ;
+    overflow-y: auto ;
     grid-template-columns: max-content minmax(0, 1fr) ;
     box-sizing: border-box ;
     color: #333333 ;
@@ -184,10 +187,33 @@ const css = `
 
 #menu.visible {
     visibility: visible ;
+      transition-delay: 0s ;
     opacity: 1 ;
     pointer-events: auto ;
     transform: translateX(0) ;
 }
+
+/* File OMV separati dagli script; il contenuto va a capo senza allargare il popup. */
+#omv-files { grid-column: 1 / -1; grid-row: 5; border-top: 1px solid #dbe5f1; padding-top: 10px; min-width: 0; cursor: default; }
+.mzpj-omv-title { color: #3e6da9; font-weight: 600; font-size: 12px; margin: 0; }
+.mzpj-omv-header { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.mzpj-omv-buttons { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.mzpj-omv-input { display: flex; align-items: center; min-width: 0; margin: 0; }
+.mzpj-omv-input > span { padding-top: 5px; font-size: 12px; color: #555; }
+#omv-files .jmv-file-selector { min-width: 0; flex: 1; flex-wrap: wrap; }
+#omv-files .jmv-file-selector-list { display: none; }
+#omv-files .jmv-file-selector-item { max-width: 100%; }
+#omv-files button { border: 1px solid #b6cce8; background: #f6f9fd; color: #3e6da9; border-radius: 4px; padding: 5px 8px; font-family: inherit; font-size: 12px; cursor: pointer; }
+#omv-files button:hover { background: #eaf1fa; }
+#omv-files button:focus-visible { outline: 2px solid #3e6da9; outline-offset: 2px; }
+#omv-files button:disabled { opacity:.45; cursor:default; }
+.mzpj-omv-reference { display:flex; align-items:baseline; gap:7px; margin-top:12px; font-size:12px; min-width:0; }
+#dataext-name { overflow-wrap:anywhere; color:#475569; line-height:1.5; }
+#dataext-dimensions { font-size:10px; color:#77859a; margin:4px 0 10px 48px; }
+.mzpj-omv-preview { display:flex; align-items:center; gap:6px; font-size:11px; color:#555; cursor:pointer; }
+.mzpj-omv-preview input { margin:0; accent-color:#3e6da9; }
+#omv-files p { font-size: 10px; line-height: 1.5; color: #64748b; margin: 8px 0 0; }
+#omv-files code { font-size: 10px; }
 
 #menu > label, .pj-setting-row > label {
     grid-column: 1 ;
@@ -212,7 +238,7 @@ const css = `
 #output-setting { grid-row: 1 ; }
 #python-setting { grid-row: 4 ; }
 
-#output, #python-version {
+#output {
     flex: 0 1 160px ;
     min-width: 0 ;
     width: 160px ;
@@ -230,10 +256,22 @@ const css = `
     transition: border-color 0.2s ease, box-shadow 0.2s ease ;
 }
 
-/* La scelta Python resta compatta e allineata al campo Height soprastante. */
-#python-version { width: 123px ; flex-basis: 123px ; }
+/* Radio nativi: scelta esplicita, nessuna dipendenza da widget esterni. */
+#python-setting { gap: 9px ; }
+#python-label { flex: 0 0 auto ; font-size: 12px ; }
+#python-interpreter { display: flex ; align-items: center ; gap: 10px ; min-width: 0 ; }
+.mzpj-python-choice { position: relative ; display: inline-flex ; align-items: center ; gap: 4px ;
+    white-space: nowrap ; font-size: 12px ; cursor: pointer ; }
+.mzpj-python-choice input { margin: 0 ; width: 13px ; height: 13px ; accent-color: #3e6da9 ; cursor: pointer ; }
+.mzpj-python-choice input:focus-visible { outline: 2px solid #3e6da9 ; outline-offset: 3px ; }
+.mzpj-python-tip { display: none ; position: absolute ; top: calc(100% + 8px) ; right: 0 ;
+    width: max-content ; max-width: 195px ; white-space: normal ; z-index: 5 ; padding: 7px 9px ;
+    border: 1px solid #c9d8eb ; border-radius: 6px ; background: #fff ; color: #526581 ;
+    font-size: 11px ; line-height: 1.4 ; box-shadow: 0 3px 10px rgba(35,65,100,.12) ; pointer-events: none ; }
+.mzpj-python-choice:hover .mzpj-python-tip,
+.mzpj-python-choice:has(input:focus-visible) .mzpj-python-tip { display: block ; }
 
-#output:focus, #python-version:focus {
+#output:focus {
     outline: none ;
     border-color: #3e6da9 ;
     box-shadow: 0 0 0 2px rgba(62, 109, 169, 0.20) ;

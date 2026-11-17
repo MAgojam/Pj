@@ -8,7 +8,21 @@ PjClass <- R6::R6Class(
     ),
     private = list(
 
+        .dataextUiOnly=FALSE,
+        .dataextRead=FALSE,
+        .graphicCaptureOnly=FALSE,
+
+        .postInit=function() .mzPj_dataextInfo(self),
+
         .run = function() {
+
+            if (private$.graphicCaptureOnly) {
+                on.exit(.mzPj_clearGraphicCapture(self),add=TRUE)
+                .mzPj_applyGraphicCapture(self)
+                return()
+            }
+            if (!is.null(self$options$graphicCapture) && nzchar(self$options$graphicCapture))
+                .mzPj_clearGraphicCapture(self)
 
             if (isTRUE(self$options$saveEditorScript)) {
                 # Il compilatore precedente non riconosce ancora export nei YAML.
@@ -33,13 +47,45 @@ PjClass <- R6::R6Class(
                 return()
             }
 
-            self$results$clear()
+            if (isTRUE(self$options$saveOmvFile)) {
+                .mzPj_saveOmvExport(self)
+                return()
+            }
+
+            previousExternal <- self$results$get('omvExport')$state
+            selectedFile <- self$options$omvFile
+            selectedKey <- if(is.null(selectedFile)) previousExternal$input_key else
+                unname(tools::md5sum(selectedFile$path))
+            readingExternal <- !is.null(selectedFile) && (private$.dataextRead ||
+                !identical(selectedKey,previousExternal$input_key))
+            if(readingExternal)on.exit({
+                .mzPj_clearReadFile(self)
+                .mzPj_dataextInfo(self)
+            },add=TRUE)
+
+            if((isTRUE(self$options$previewDataextRequest) || private$.dataextUiOnly) && !readingExternal) {
+                on.exit(.mzPj_clearPreviewRequest(self),add=TRUE)
+                .mzPj_dataextPreview(self)
+                return()
+            }
 
             # Clear non deve rilanciare il file di servizio o il report Python.
-            if (isTRUE(self$options$editorCleared))
+            if (isTRUE(self$options$editorCleared) && !readingExternal) {
+                self$results$clear()
+                .mzPj_restoreDataext(self,previousExternal,availableOnly=TRUE)
+                .mzPj_dataextInfo(self)
                 return()
+            }
+
+            externalInput <- if(readingExternal)selectedFile else NULL
+            if(!readingExternal)externalInput <- .mzPj_dataextInput(self)
+            if(!readingExternal) {
+                self$results$clear()
+                .mzPj_restoreDataext(self,previousExternal)
+            }
 
             code <- self$options$code
+            if(readingExternal)code <- ''
             if (is.null(code) || length(code) == 0) {
                 code <- ""
             } else {
@@ -96,7 +142,7 @@ PjClass <- R6::R6Class(
             # su un percorso reale nella cartella temp di sessione - jamovi stesso
             # rifiuta con un errore chiaro prima di arrivare qui se il file non e'
             # piu' disponibile (es. .omv salvato senza il file, mai ri-selezionato)
-            scriptFile <- self$options$scriptFile
+            scriptFile <- if(readingExternal)NULL else self$options$scriptFile
 
             extScriptPathFixed <- ""
             extScriptInline <- ""
@@ -135,6 +181,11 @@ PjClass <- R6::R6Class(
                 checkpoint=function() private$.checkpoint(flush=FALSE))
             script <- .mzPj_pythonScript(scriptPath, list(
                 LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error,
+                OMV_INPUT=.mzPj_omvInput(self$options$omvFile,flatpakExternal),
+                DATAEXT_ENABLED=TRUE,
+                IMAGE_CAPTURE_ENABLED=TRUE,
+                DATAEXT_INPUT=if(readingExternal).mzPj_omvInput(externalInput,flatpakExternal) else
+                    if(is.null(externalInput))NULL else .mzPj_omvInput(externalInput,flatpakExternal),
                 DATASET=datasetPathFixed, OUTPATH=outputPathFixed, CODE=code,
                 SCRIPT_NAMES=list(service=serviceLabel), EXTSCRIPT=extScriptPathFixed,
                 DATASET_INLINE=if (flatpakExternal) datasetInline else '',
@@ -143,7 +194,7 @@ PjClass <- R6::R6Class(
                 FIGWIDTH=if (is.null(figWidth)) '' else as.character(figWidth),
                 FIGHEIGHT=if (is.null(figHeight)) '' else as.character(figHeight),
                 OUTPUT_MODE=outputMode, PYTHON_MODE=self$options$python,
-                SAVECOLUMNS=tolower(as.character(self$saveColumns))))
+                SAVECOLUMNS=tolower(as.character(self$saveColumns && !readingExternal))))
 
             pythonArgs <- c('-')
 
@@ -288,12 +339,21 @@ PjClass <- R6::R6Class(
                         simplifyVector=FALSE
                     )
 
-                    tryCatch(.mzPj_addResults(self, results), mzPjResultSizeError=function(e) {
+                    tryCatch({
+                        if(!readingExternal).mzPj_addResults(self, results)
+                        if(isTRUE(results$dataext_empty)) {
+                            .mzPj_clearOmvExport(self)
+                            .mzPj_restoreDataext(self,list(input_key=selectedKey))
+                        } else .mzPj_stageOmvExport(self,results$omv_export,inputKey=selectedKey)
+                        .mzPj_dataextPreview(self)
+                    }, mzPjResultSizeError=function(e) {
                         self$results$clear()
+                        .mzPj_restoreDataext(self,previousExternal)
                         info <- jmvcore::Html$new(self$options, name='outputSizeInfo',
                             title='Python output size limit')
                         info$setContent(paste0('<p><strong>', conditionMessage(e), '</strong></p>', e$help_html))
                         self$results$add(info)
+                        .mzPj_dataextPreview(self)
                     })
                 }
             }
@@ -359,20 +419,41 @@ PjClass <- R6::R6Class(
 
                 pb <- jmvcore:::RProtoBuf_read(jamovi.coms.AnalysisResponse, conn)
                 groupPB <- pb$results$group
+                oChanges <- private$.options$compProtoBuf(pb$options)
+                private$.graphicCaptureOnly <- length(vChanges)==0L &&
+                    'graphicCapture' %in% oChanges &&
+                    all(oChanges %in% c('graphicCapture','editorState'))
+                # La preview e' un comando di sola visualizzazione: le opzioni
+                # accessorie sincronizzate dal motore non devono convertirlo in Run.
+                # Un Run esplicito (toggle) mantiene invece la normale esecuzione.
+                previewRequest <- isTRUE(self$options$previewDataextRequest) ||
+                    ('previewDataext' %in% oChanges && !'toggle' %in% oChanges)
+                readOnlyRequest <- 'omvFile' %in% oChanges &&
+                    all(oChanges %in% c('previewDataext','omvFile','dataextInfo','editorState'))
+                private$.dataextUiOnly <- previewRequest || readOnlyRequest
+                private$.dataextRead <- 'omvFile' %in% oChanges
+
+                # Un'azione di salvataggio non invalida i risultati dell'ultimo Run.
+                saving <- isTRUE(self$options$saveOmvFile) || isTRUE(self$options$saveEditorScript) ||
+                    private$.dataextUiOnly || private$.dataextRead || private$.graphicCaptureOnly
+                restoreWith <- if (saving) character() else '*'
 
                 for (itemPB in groupPB$elements) {
-                    if (itemPB$has('preformatted')) {
+                    # Il contenitore dichiarato conserva stato e clearWith propri.
+                    if (itemPB$name %in% c('omvExport','dataextPreview')) {
+                        next()
+                    } else if (itemPB$has('preformatted')) {
                         self$results$add(jmvcore::Preformatted$new(
-                            self$options, name=itemPB$name, title=itemPB$title))
+                            self$options, name=itemPB$name, title=itemPB$title, clearWith=restoreWith))
                     } else if (itemPB$has('image')) {
                         self$results$add(jmvcore::Image$new(
                             self$options, name=itemPB$name, title=itemPB$title,
                             renderFun='.render', width=itemPB$image$width,
-                            height=itemPB$image$height))
+                            height=itemPB$image$height, clearWith=restoreWith))
                     } else if (itemPB$has('table')) {
                         elem <- jmvcore::Table$new(
                             self$options, name=itemPB$name, title=itemPB$title,
-                            swapRowsColumns=itemPB$table$swapRowsColumns)
+                            swapRowsColumns=itemPB$table$swapRowsColumns, clearWith=restoreWith)
                         for (columnPB in itemPB$table$columns) {
                             elem$addColumn(
                                 name=columnPB$name, title=columnPB$title,
@@ -385,12 +466,20 @@ PjClass <- R6::R6Class(
                         self$results$add(elem)
                     } else if (itemPB$has('html')) {
                         self$results$add(jmvcore::Html$new(
-                            self$options, name=itemPB$name, title=itemPB$title))
+                            self$options, name=itemPB$name, title=itemPB$title, clearWith=restoreWith))
+                    } else if (itemPB$has('svg')) {
+                        self$results$add(jmvcore::Svg$new(
+                            self$options, name=itemPB$name, title=itemPB$title, clearWith=restoreWith))
+                    } else if (itemPB$has('text')) {
+                        self$results$add(jmvcore::Text$new(
+                            self$options, name=itemPB$name, title=itemPB$title, clearWith=restoreWith))
                     }
                 }
 
                 oChanges <- private$.options$compProtoBuf(pb$options)
-                private$.results$fromProtoBuf(pb$results, oChanges, vChanges)
+                private$.results$fromProtoBuf(pb$results,
+                    if(saving)character() else oChanges,
+                    if(saving)character() else vChanges)
             }
             private$.clear(vChanges)
         }

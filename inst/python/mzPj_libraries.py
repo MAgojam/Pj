@@ -5,6 +5,7 @@ import importlib.machinery as _pj_lib_machinery
 import pathlib as _pj_lib_pathlib
 
 _pj_library_catalog = globals().get('_pj_library_catalog', {})
+_pj_native_catalog = globals().get('_pj_native_catalog', {})
 _pj_library_path = globals().get('_pj_library_path')
 _pj_library_error = globals().get('_pj_library_error', '')
 _pj_library_active = set()
@@ -96,6 +97,58 @@ class _PjLibraryFinder(_pj_lib_abc.MetaPathFinder):
 _pj_library_finder = _PjLibraryFinder()
 
 
+# Il finder nativo e' limitato ai nomi del catalogo: nessuna modifica di sys.path.
+_pj_native_sources = {}
+
+
+def _pj_native_supported(item):
+    import sys
+    import platform
+    if platform.python_implementation() != item.get('implementation', 'CPython') or sys.maxsize <= 2**32:
+        return False
+    return sys.version_info >= (3, 10) and _pj_native_tag() in item.get('supported_platforms', [])
+
+
+def _pj_native_tag():
+    import sys
+    import platform
+    machine = platform.machine().lower()
+    arch = 'arm64' if machine in ('arm64', 'aarch64') else 'x86_64' if machine in ('amd64', 'x86_64') else machine
+    return ('win_amd64' if arch == 'x86_64' else 'win_' + arch) if sys.platform == 'win32' else ('macosx_' + arch if sys.platform == 'darwin' else 'linux_' + arch)
+
+
+def _pj_native_available(item):
+    base = globals().get('_pj_module_python_path')
+    if not base or not _pj_native_supported(item):
+        return False
+    name = item['module']
+    # PathFinder su percorso esplicito non importa il package o la sua estensione.
+    package = _pj_lib_machinery.PathFinder.find_spec(name, [base])
+    extension_path = _pj_lib_pathlib.Path(base) / name
+    if item.get('layout') == 'platform-directory':
+        extension_path /= _pj_native_tag()
+    extension = _pj_lib_machinery.PathFinder.find_spec(name + '.' + name, [str(extension_path)])
+    return package is not None and extension is not None
+
+
+class _PjNativeFinder(_pj_lib_abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        root = fullname.split('.')[0]
+        item = next((item for item in _pj_native_catalog.get('libraries', []) if item['module'] == root), None)
+        if item is None or _pj_native_sources.get(root, 'bundled') == 'system':
+            return None
+        if not _pj_native_available(item):
+            raise ImportError(root + ' has no compatible Pj native build for this platform/Python.')
+        base = globals().get('_pj_module_python_path')
+        return _pj_lib_machinery.PathFinder.find_spec(fullname, path if path is not None else [base])
+
+
+_pj_native_finder = _PjNativeFinder()
+if _pj_native_catalog.get('libraries') and globals().get('_pj_module_python_path'):
+    import sys as _pj_native_sys
+    _pj_native_sys.meta_path.insert(0, _pj_native_finder)
+
+
 def mzpjUseLibrary(name, source='bundled'):
     # Non cambia sys.path e non sostituisce moduli gia' importati da altre fonti.
     import sys
@@ -105,7 +158,39 @@ def mzpjUseLibrary(name, source='bundled'):
     aliases = {item['distribution'].lower().replace('-', '_'): key for key, item in catalog.items()}
     if not isinstance(name, str):
         raise TypeError('Library name must be a string.')
-    module = aliases.get(name.lower().replace('-', '_'), name.lower())
+    norm_name = name.lower().replace('-', '_')
+
+    # Supporto librerie native (Rust / PyO3 / C++)
+    native_libs = {item['module']: item for item in _pj_native_catalog.get('libraries', [])}
+    native_aliases = {item.get('distribution', '').lower().replace('-', '_'): key for key, item in native_libs.items()}
+    if norm_name in native_libs or norm_name in native_aliases:
+        mod_key = native_aliases.get(norm_name, norm_name)
+        existing = sys.modules.get(mod_key)
+        base = globals().get('_pj_module_python_path')
+        if existing is not None:
+            origin = getattr(existing, '__file__', '') or ''
+            bundled = bool(base and origin and _pj_lib_pathlib.Path(origin).resolve().is_relative_to(_pj_lib_pathlib.Path(base).resolve()))
+            if bundled != (source == 'bundled'):
+                raise RuntimeError(mod_key + ' was already imported from another source. Choose its source before importing it, then run the script again.')
+        if source == 'bundled' and not _pj_native_available(native_libs[mod_key]):
+            raise RuntimeError(mod_key + ' has no compatible Pj native build for this platform/Python.')
+        previous = _pj_native_sources.get(mod_key)
+        _pj_native_sources[mod_key] = source
+        try:
+            loaded = _pj_lib_import.import_module(mod_key)
+        except BaseException:
+            if previous is None:
+                _pj_native_sources.pop(mod_key, None)
+            else:
+                _pj_native_sources[mod_key] = previous
+            raise
+        if source == 'bundled':
+            _pj_library_active.add(mod_key)
+        else:
+            _pj_library_active.discard(mod_key)
+        return loaded
+
+    module = aliases.get(norm_name, name.lower())
     if module not in catalog:
         raise ValueError('Unknown Pj bundled library: ' + name + '. See mzpjListLibraries().')
     selected = set()
@@ -147,8 +232,27 @@ def mzpjUseLibrary(name, source='bundled'):
 def mzpjListLibraries():
     # Restituisce record pronti anche per mzpjShowTable, senza importare le librerie.
     import sys
-    return [dict(Library=item['module'], Version=item['version'],
-                 Dependencies=', '.join(item['dependencies']) or 'None',
-                 Available=bool(_pj_library_path),
-                 Active=item['module'] in sys.modules and item['module'] in _pj_library_active)
-            for item in sorted(_pj_library_catalog.get('libraries', []), key=lambda item: item['module'])]
+    records = []
+    # Librerie Pure Python (da mzPj_python_libraries.json)
+    for item in sorted(_pj_library_catalog.get('libraries', []), key=lambda x: x['module']):
+        records.append(dict(
+            Library=item['module'],
+            Type='Pure Python',
+            Version=item['version'],
+            Dependencies=', '.join(item.get('dependencies', [])) or 'None',
+            Available=bool(_pj_library_path),
+            Active=item['module'] in sys.modules and item['module'] in _pj_library_active
+        ))
+    # Librerie Native compilate (Rust / C++) da mzPj_native_libraries.json
+    for item in sorted(_pj_native_catalog.get('libraries', []), key=lambda x: x['module']):
+        mod_name = item['module']
+        is_avail = _pj_native_available(item)
+        records.append(dict(
+            Library=mod_name,
+            Type=item.get('backend', 'Rust (PyO3)'),
+            Version=item.get('version', '0.1.0'),
+            Dependencies='None (ABI3)',
+            Available=is_avail,
+            Active=mod_name in sys.modules
+        ))
+    return records

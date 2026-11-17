@@ -6,7 +6,7 @@
     seen <- character()
     for (item in results$items) {
         if (!is.list(item) || !is.character(item$name) || length(item$name) != 1L ||
-            !grepl('^[A-Za-z][A-Za-z0-9_]*$', item$name) || item$name %in% seen ||
+            !grepl('^[A-Za-z][A-Za-z0-9_]*$', item$name) || item$name %in% c(seen,'omvExport','dataextPreview') ||
             !is.character(item$type) || length(item$type) != 1L ||
             !item$type %in% c('Preformatted', 'Text', 'Html', 'Svg', 'Table', 'Image', 'Output'))
             stop('Python returned an invalid or duplicate result name/type.', call.=FALSE)
@@ -40,6 +40,13 @@
                 title=if (!is.null(item$title)) item$title else "HTML Python"
             )
             elem$setContent(item$content)
+            if (!is.null(item$image_request)) {
+                token <- item$image_request$token
+                if (item$type!='Html' || !is.character(token) || length(token)!=1L ||
+                    !grepl('^[a-f0-9]{32}$',token))
+                    stop('Python returned an invalid Image capture request.',call.=FALSE)
+                elem$setState(list(image_capture_token=token))
+            }
             if (!is.null(item$scripts)) {
                 scripts <- unlist(item$scripts, use.names=FALSE)
                 if (!identical(scripts, 'extdata/plotly.min.js'))

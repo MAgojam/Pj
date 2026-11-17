@@ -1,6 +1,8 @@
 # Pj or Pjp; either Python. No dataset required for this demonstration.
 # Pjp may have an empty selection. Pj normally supplies all available input columns.
 # True creates four analysis-owned dataset columns; False removes them after Run.
+# With WRITE_COLUMNS=True, use an empty dataset or exactly six input rows.
+# With another row count, set WRITE_COLUMNS=False to inspect Results only.
 WRITE_COLUMNS = True
 
 # Teaching data: each row has three 1-5 items and a group. None means missing.

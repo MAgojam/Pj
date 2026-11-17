@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "description": "Catalogo delle librerie native compilate (Rust/C++) integrate in Pj",
+  "libraries": [
+    {
+      "module": "pj_stats_rust",
+      "distribution": "pj-stats-rust",
+      "version": "1.1.0",
+      "type": "native_rust",
+      "backend": "Rust (PyO3)",
+      "abi": "cp310-abi3",
+      "description": "Native Rust statistics: validated descriptives, correlations, t-tests, ANOVA/ANCOVA/MANOVA/MANCOVA, seeded bootstrap, multiple testing, contingency tables and row summaries. Repeated-measures GLM with one within-subject factor, groups, subject covariates, GG/HF and joint multivariate tests.",
+      "supported_platforms": [
+        "win_amd64",
+        "linux_x86_64",
+        "macosx_x86_64",
+        "macosx_arm64"
+      ],
+      "exported_functions": [
+        "descrittive_complete",
+        "quantili",
+        "frequenze",
+        "correlazione_pearson",
+        "correlazione_spearman",
+        "matrice_correlazione",
+        "ttest_campione_singolo",
+        "ttest_indipendente",
+        "ttest_appaiato",
+        "mann_whitney_u",
+        "regressione_lineare",
+        "anova_robusta",
+        "ancova_robusta",
+        "manova_robusta",
+        "mancova_robusta",
+        "bootstrap_media",
+        "calcola_media",
+        "calcola_somma",
+        "correggi_p",
+        "contingenza",
+        "statistiche_righe",
+        "bootstrap_statistica",
+        "rm_anova",
+        "rm_ancova",
+        "rm_manova",
+        "rm_mancova"
+      ],
+      "requires_python": ">=3.10",
+      "implementation": "CPython",
+      "layout": "platform-directory"
+    }
+  ]
+}

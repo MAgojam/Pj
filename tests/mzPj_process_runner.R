@@ -45,8 +45,22 @@ mzPjTestProcessRunner <- function(root, python=Sys.which('python3')) {
         pid <- as.integer(readLines(pidFile,warn=FALSE))
         alive <- tryCatch({
             handle <- ps::ps_handle(pid)
-            ps::ps_is_running(handle) && ps::ps_status(handle)!='zombie'
-        },error=function(e)FALSE)
+            running <- ps::ps_is_running(handle)
+            state <- ps::ps_status(handle)
+            if (identical(running,FALSE)) FALSE
+            else if (length(state)==1L && !is.na(state)) state!='zombie'
+            else if (Sys.info()[['sysname']] %in% c('Darwin','Linux')) {
+                # The child may disappear between ps queries on macOS. Resolve
+                # the race with a fresh OS query; do not treat NA as a pass.
+                state <- suppressWarnings(system2('/bin/ps',c('-p',as.character(pid),'-o','stat='),
+                                                   stdout=TRUE,stderr=FALSE))
+                state <- trimws(state[nzchar(trimws(state))])
+                if (!length(state)) FALSE else !startsWith(state[1L],'Z')
+            } else stop('Unable to determine child process status.')
+        },error=function(e) {
+            if (identical(tryCatch(ps::ps_is_running(ps::ps_handle(pid)),error=function(e)FALSE),FALSE)) FALSE
+            else stop(e)
+        })
         if(alive)ps::ps_kill(ps::ps_handle(pid))
         check(!alive)
         if(mode=='restart')check(identical(failure,restart))

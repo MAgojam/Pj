@@ -1,6 +1,48 @@
 # Manuale delle funzioni Python di Pj
 
-[Versione inglese di riferimento](mzPj_python_functions.md). Aggiornato il 28 ottobre 2026.
+Per provare API1 da Rj usare lo [script R](../rjusepj/01_pj_api_libraries.R) e la [guida italiana](mzPj_rj_api_it.md).
+
+Tipi grafici: [selezione Html / Svg / Image](mzPj_graphic_result_types_it.md). Chart.js, Plotly e D3 condividono `result_type`; Image generato dal browser richiede il collegamento di acquisizione degli editor Pj/Pjp.
+
+## Manuale delle librerie e modelli a misure ripetute
+
+Il [manuale operativo delle librerie](mzPj_libraries_manual_it.md) copre tutte
+le undici librerie del bundle e le 26 API native, con esempi verificati.
+Sono disponibili anche le edizioni DOCX/PDF in `docs/manuals`.
+La [guida RM](mzPj_repeated_measures_it.md) documenta RM-ANOVA, RM-ANCOVA,
+RM-MANOVA e RM-MANCOVA di pj_stats_rust 1.1.0. Queste funzioni non richiedono
+NumPy/SciPy. Pj resta 1.6.0, minApp jamovi 28.17.0. Interprete e sorgente
+bundled/system sono scelte distinte; verificare il catalogo effettivo.
+
+
+Scelta dell’interprete: **Python interpreter → Embedded / System**. Embedded è il Python incluso in jamovi; System usa quello installato sul computer.
+
+## Dataset esterni e funzioni OMV - candidata Pj 1.6.0
+
+`dataext` e' un dataset inizialmente vuoto, separato da `data` di jamovi. I
+pulsanti **Read...** e **Save...** nelle impostazioni lo leggono e salvano.
+**Show preview in Results** mostra dieci righe e tutte le colonne senza eseguire
+Python. Non servono chiamate Prepare o Save nello script. Vedere la
+[guida dataext](mzPj_dataext_it.md) e la [guida trasformazioni](mzPj_datasets_it.md).
+
+Per percorsi espliciti, `mzpjReadOmv(path)` restituisce dati e metadati;
+`mzpjWriteOmv(path, dataset, meta=None, weights=None, results_language=None,
+overwrite=False, html=None)` salva una copia del solo dataset. Non aprono
+finestre. Funzionano con entrambi i Python e API1, senza Service. La
+[guida OMV](mzPj_omv_it.md) descrive tutti gli argomenti. Non sono presenti nei
+pacchetti pubblicati 1.5.0.
+
+> **Avvertenza di compatibilità — 5 novembre 2026.** Con jamovi28.17.0.0,
+> i risultati nativi Svg possono impedire il salvataggio `.omv`, con errore
+> `DataSetModel.instance_path`, riprodotto in Windows e Linux. Riguarda anche
+> D3 con `result_type='svg'`, Chart.js/Plotly con `static=True` e i moduli che
+> creano risultati Svg tramite il servizio Pj. Vedere la
+> [scheda di compatibilità](mzPj_jamovi_svg_compatibility.md) e
+> l'[issue #1907](https://github.com/jamovi/jamovi/issues/1907).
+> L'[issue #1902](https://github.com/jamovi/jamovi/issues/1902) riguarda invece
+> l'esportazione LaTeX. Questa nota non modifica API, codice o valori predefiniti.
+
+[Versione inglese di riferimento](mzPj_python_functions.md). Aggiornato l'11 novembre 2026.
 
 Questo manuale spiega le funzioni aggiunte da Pj, distinte dal linguaggio Python.
 Firme e default sono estratti dal sorgente corrente. **Chart.js, Plotly, Svg

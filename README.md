@@ -1,9 +1,45 @@
 # Pj — Python inside jamovi
 
-Version **1.5.0**. See the [release notes](docs/mzPj_release_1_5_0.md).
+Temporary CI exception authorised by the maintainer on 17 November 2026:
+the private Rust source may be transferred encrypted solely to native macOS
+build jobs. It is not committed, published as source, or packed into JMO files.
+The encrypted transport asset and decryption secret are removed after use;
+only the compiled binaries and provenance reports are retained.
+
+
+Development version **1.6.0**. See the [release notes](docs/mzPj_release_1_6_0.md).
+
+Try the public Python API from Rj with three examples: [libraries and calculations](rjusepj/01_pj_api_libraries.R), [tables and graphics](rjusepj/02_pj_api_graphics.R), and [optional System libraries](rjusepj/03_pj_api_system_libraries.R).
+[English instructions](rjusepj/README.md) · [Guida italiana](docs/mzPj_rj_api_it.md).
+No Pj editor analysis is opened; the current dataset remains unchanged.
+
+Native Rust binaries and their loader are included for Windows x64, Linux x64,
+macOS Intel and macOS Apple Silicon. The unfinished root `pj_stats_rust/`
+development project is excluded from Git and JMO packages. Native Apple builds
+passed their numerical reference tests through the authorised temporary CI
+transfer. Platform JMO checks are recorded separately from desktop GUI tests.
+
+Complete library manuals, with guided examples and repeated-measures models:
+[Italian PDF](docs/manuals/Pj_1.6.0_Libraries_IT.pdf),
+[English PDF](docs/manuals/Pj_1.6.0_Libraries_EN.pdf).
+Editable DOCX versions are available in the same directory.
 
 Python function handbook: [English](docs/mzPj_python_functions.md) ·
-[Italiano](docs/mzPj_python_functions_it.md). The handbooks document Pj 1.4.0 and identify features absent from earlier 1.3.x packages.
+[Italiano](docs/mzPj_python_functions_it.md). Features identify their required Pj version.
+
+Version **1.6.0** adds built-in `mzpjReadOmv()` and `mzpjWriteOmv()` for
+dataset-only files, available in either editor and through API1. It also fixes
+the native result-size check for images awaiting rendering. See the OMV guides
+in [English](docs/mzPj_omv.md) and [Italian](docs/mzPj_omv_it.md).
+
+The candidate provides a separate, initially empty **`dataext`**. In Settings,
+**External OMV files** offers **Read...**, **Save...** and an optional Results
+preview of ten rows and all columns. Read and preview do not execute the script;
+Save writes the last successful external dataset without using Output or
+replacing the open dataset. Sorting, column combination, wide/long and validated
+merge helpers can work with `data` or `dataext`. No preparation call is needed.
+See the external workflow in [English](docs/mzPj_dataext.md) and
+[Italian](docs/mzPj_dataext_it.md), and the [function reference](docs/mzPj_datasets.md).
 
 <img src="inst/extdata/mzPj_icon_python.png" alt="Pj icon" width="96">
 
@@ -449,6 +485,18 @@ are in English. Shared service filenames use the `mzPj_` prefix and underscores;
 preserve their exact case on Linux and macOS. Third-party license notices retain
 their original wording. Generated R help comments are user documentation and
 remain in English.
+
+## Native statistical backend and library manuals
+
+Pj1.6.0 includes pj_stats_rust1.1.0 with classical and repeated-measures
+statistics, seeded bootstrap, multiple testing, contingency tables and row
+summaries without Python statistical dependencies. Declared minimum jamovi28.17.0.
+Read the [English library manual](docs/mzPj_libraries_manual.md) or
+[Italian manual](docs/mzPj_libraries_manual_it.md), also supplied as DOCX/PDF in
+`docs/manuals`. The [RM guide](docs/mzPj_repeated_measures.md) explains model
+hypotheses, subject alignment and corrections. Windows/Linux native candidates
+are tested automatically; macOS Intel/Apple Silicon use GitHub Actions. Desktop
+visual/export checks on the exact baseline precede the signed commit/release.
 
 ## Author and license
 

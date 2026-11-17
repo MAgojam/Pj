@@ -6,3 +6,9 @@
 ^\.github$
 ^docs$
 ^\.RData$
+^pj_stats_rust/.*$
+^pj_stats_rust$
+^inst/python/(.*/)?__pycache__($|/)
+^inst/python/.*\.py[co]$
+^rjusepj$
+^build-native-foreign$
