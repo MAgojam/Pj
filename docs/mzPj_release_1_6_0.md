@@ -1,5 +1,12 @@
 # Pj 1.6.0 — development candidate
 
+Temporary CI exception authorised by the maintainer on 17 November 2026:
+the private Rust source may be transferred encrypted solely to native macOS
+build jobs. It is not committed, published as source, or packed into JMO files.
+The encrypted transport asset and decryption secret are removed after use;
+only the compiled binaries and provenance reports are retained.
+
+
 ## Pj 1.6.0 — signed commit preparation, 17 November 2026
 
 This version adds external dataset-only OMV read/write with `dataext`, dataset

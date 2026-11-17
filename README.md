@@ -1,5 +1,12 @@
 # Pj — Python inside jamovi
 
+Temporary CI exception authorised by the maintainer on 17 November 2026:
+the private Rust source may be transferred encrypted solely to native macOS
+build jobs. It is not committed, published as source, or packed into JMO files.
+The encrypted transport asset and decryption secret are removed after use;
+only the compiled binaries and provenance reports are retained.
+
+
 Development version **1.6.0**. See the [release notes](docs/mzPj_release_1_6_0.md).
 
 Try the public Python API from Rj with three examples: [libraries and calculations](rjusepj/01_pj_api_libraries.R), [tables and graphics](rjusepj/02_pj_api_graphics.R), and [optional System libraries](rjusepj/03_pj_api_system_libraries.R).

@@ -1,5 +1,16 @@
 # Pj / Pjp maintenance map
 
+## macOS Rust CI: temporary encrypted transfer authorised — 17 November 2026
+
+The maintainer explicitly authorised a temporary encrypted copy of the local
+Rust source solely for GitHub Actions native builds on Apple Intel/Silicon.
+It is never committed or included in JMO/upload artifacts. A temporary encrypted
+draft-release asset and repository decryption secret are removed after the run.
+Runner plaintext lives only in a temporary directory cleaned on completion.
+The native-only job exports just the binary and a hash/provenance report.
+Normal macOS JMO jobs consume precompiled binaries and are skipped (not PASSED)
+until both are available. No complete Rust project is published in Pj.
+
 ## Distribuzione della libreria nativa — 17 novembre 2026
 
 Nel repository e nei JMO entrano i **binari Python/Rust**, il loader Python

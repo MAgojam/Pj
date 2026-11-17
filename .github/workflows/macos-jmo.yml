@@ -2,6 +2,19 @@ name: Build Pj macOS JMO
 
 on:
   workflow_dispatch:
+    inputs:
+      native_source_asset_id:
+        description: 'Authorised temporary encrypted source asset ID (native-only build; omit for JMO)'
+        required: false
+        type: string
+      native_source_sha256:
+        description: 'SHA256 of the authorised plaintext archive'
+        required: false
+        type: string
+      native_cipher_sha256:
+        description: 'SHA256 of the temporary encrypted archive'
+        required: false
+        type: string
   pull_request:
     paths:
       - '.github/workflows/macos-jmo.yml'
@@ -19,6 +32,7 @@ on:
       - 'R/mzPj_service_api.R'
       - 'inst/**'
       - '.github/scripts/prepare-native-jmo.py'
+      - '.github/scripts/build-private-native.py'
       - 'tests/mzPj_native_libraries.py'
       - 'tests/mzPj_service_api.R'
       - 'tests/mzPj_preparation.R'
@@ -32,7 +46,76 @@ permissions:
   contents: read
 
 jobs:
+  availability:
+    name: Check precompiled macOS backends
+    if: github.event_name != 'workflow_dispatch' || inputs.native_source_asset_id == ''
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.native.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - id: native
+        shell: bash
+        run: |
+          ready=true
+          for arch in arm64 x86_64; do
+            if test ! -f "inst/python/pj_stats_rust/macosx_$arch/pj_stats_rust.abi3.so"; then
+              echo "Native macOS $arch binary pending; JMO build is skipped, not PASSED."
+              ready=false
+            fi
+          done
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+  native:
+    name: Private native macOS ${{ matrix.arch }}
+    if: github.event_name == 'workflow_dispatch' && inputs.native_source_asset_id != ''
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: module
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Prepare Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - name: Build and test authorised temporary private source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PJ_PRIVATE_NATIVE_KEY_160: ${{ secrets.PJ_PRIVATE_NATIVE_KEY_160 }}
+          PJ_NATIVE_SOURCE_ASSET: ${{ inputs.native_source_asset_id }}
+          PJ_NATIVE_SOURCE_SHA256: ${{ inputs.native_source_sha256 }}
+          PJ_NATIVE_CIPHER_SHA256: ${{ inputs.native_cipher_sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = "${{ matrix.arch }}"
+          python3 -B module/.github/scripts/build-private-native.py module "$GITHUB_WORKSPACE/results-native"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Pj-native-macos-${{ matrix.arch }}-1.1.0
+          path: results-native/
+          if-no-files-found: error
+          retention-days: 7
   build:
+    needs: availability
+    if: needs.availability.outputs.ready == 'true'
     name: macOS ${{ matrix.arch }} - jamovi 28.17
     timeout-minutes: 45
     strategy:

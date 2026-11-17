@@ -1,5 +1,12 @@
 # Native Rust statistics in Pj / Pjp
 
+Temporary CI exception authorised by the maintainer on 17 November 2026:
+the private Rust source may be transferred encrypted solely to native macOS
+build jobs. It is not committed, published as source, or packed into JMO files.
+The encrypted transport asset and decryption secret are removed after use;
+only the compiled binaries and provenance reports are retained.
+
+
 ## Native library distribution policy — 17 November 2026
 
 The repository and platform JMO packages include the **compiled Python/Rust
