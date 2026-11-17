@@ -56,6 +56,11 @@ with tempfile.TemporaryDirectory(prefix='pj-private-native-', dir=os.environ['RU
     extdata = project / 'inst' / 'extdata'
     extdata.mkdir(parents=True)
     shutil.copy2(module / 'inst/extdata/mzPj_native_libraries.json', extdata)
+    shutil.copy2(module / 'inst/extdata/mzPj_icon_python.png', extdata)
+    examples = project / 'pjscript'
+    examples.mkdir()
+    for filename in ('71_rust_stats_descriptives.py', '72_rust_batch_inference.py', '73_rust_repeated_measures.py'):
+        shutil.copy2(module / 'pjscript' / filename, examples / filename)
     env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1')
     # The compiler/tests do not need either GitHub token or the decryption key.
     for name in ('GH_TOKEN', 'GITHUB_TOKEN', 'PJ_PRIVATE_NATIVE_KEY_160'):
