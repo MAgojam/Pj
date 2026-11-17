@@ -65,7 +65,18 @@ with tempfile.TemporaryDirectory(prefix='pj-private-native-', dir=os.environ['RU
     # The compiler/tests do not need either GitHub token or the decryption key.
     for name in ('GH_TOKEN', 'GITHUB_TOKEN', 'PJ_PRIVATE_NATIVE_KEY_160'):
         env.pop(name, None)
-    subprocess.run([sys.executable, '-B', str(project / 'pj_stats_rust/build_native.py')], env=env, check=True)
+    # PyO3 extension symbols are supplied by the importing Python process on macOS.
+    env['RUSTFLAGS'] = (env.get('RUSTFLAGS', '') + ' -Awarnings -C link-arg=-undefined -C link-arg=dynamic_lookup').strip()
+    # Compiler diagnostics can quote private Rust source lines: keep them off public logs.
+    result = subprocess.run([sys.executable, '-B', str(project / 'pj_stats_rust/build_native.py')],
+                            env=env, capture_output=True, text=True)
+    if result.returncode:
+        safe_errors = [line for line in result.stderr.splitlines()
+                       if line.startswith(('error:', 'error[', 'AssertionError:', 'ImportError:', 'ModuleNotFoundError:'))]
+        for line in safe_errors:
+            print(line, file=sys.stderr)
+        raise SystemExit('Private native compilation/tests failed; no private source diagnostics published.')
+    print('Native compilation and native/repeated-measures reference tests PASSED.')
     binary = package / tag / 'pj_stats_rust.abi3.so'
     subprocess.run(['lipo', str(binary), '-verify_arch', arch], check=True)
     destination = output / tag
