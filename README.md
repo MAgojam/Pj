@@ -1,13 +1,9 @@
 # Pj — Python inside jamovi
 
-Temporary CI exception authorised by the maintainer on 17 November 2026:
-the private Rust source may be transferred encrypted solely to native macOS
-build jobs. It is not committed, published as source, or packed into JMO files.
-The encrypted transport asset and decryption secret are removed after use;
-only the compiled binaries and provenance reports are retained.
-
-
-Development version **1.6.0**. See the [release notes](docs/mzPj_release_1_6_0.md).
+Version **1.6.1** requires **jamovi 28.18.0 or later**. This compatibility
+update adopts the official desktop fixes for saving native SVG results and
+language-dependent image invalidation. The Python API and pj_stats_rust 1.1.0
+are unchanged. See the [release notes](docs/mzPj_release_1_6_1.md).
 
 Try the public Python API from Rj with three examples: [libraries and calculations](rjusepj/01_pj_api_libraries.R), [tables and graphics](rjusepj/02_pj_api_graphics.R), and [optional System libraries](rjusepj/03_pj_api_system_libraries.R).
 [English instructions](rjusepj/README.md) · [Guida italiana](docs/mzPj_rj_api_it.md).
@@ -32,7 +28,7 @@ dataset-only files, available in either editor and through API1. It also fixes
 the native result-size check for images awaiting rendering. See the OMV guides
 in [English](docs/mzPj_omv.md) and [Italian](docs/mzPj_omv_it.md).
 
-The candidate provides a separate, initially empty **`dataext`**. In Settings,
+Pj provides a separate, initially empty **`dataext`**. In Settings,
 **External OMV files** offers **Read...**, **Save...** and an optional Results
 preview of ten rows and all columns. Read and preview do not execute the script;
 Save writes the last successful external dataset without using Output or
@@ -490,7 +486,7 @@ remain in English.
 
 Pj1.6.0 includes pj_stats_rust1.1.0 with classical and repeated-measures
 statistics, seeded bootstrap, multiple testing, contingency tables and row
-summaries without Python statistical dependencies. Declared minimum jamovi28.17.0.
+summaries without Python statistical dependencies. Pj 1.6.1 requires jamovi 28.18.0 or later.
 Read the [English library manual](docs/mzPj_libraries_manual.md) or
 [Italian manual](docs/mzPj_libraries_manual_it.md), also supplied as DOCX/PDF in
 `docs/manuals`. The [RM guide](docs/mzPj_repeated_measures.md) explains model

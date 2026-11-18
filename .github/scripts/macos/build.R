@@ -10,7 +10,7 @@ dir.create(tools, recursive=TRUE, showWarnings=FALSE)
 options(repos=c(jamovi='https://repo.jamovi.org', CRAN='https://cloud.r-project.org'), timeout=600)
 cat('R home:', R.home(), '\nR:', R.version.string, '\nPlatform:', R.version$platform, '\n')
 if (!requireNamespace('node', quietly=TRUE)) install.packages('node', lib=tools, type='source', INSTALL_opts='--no-help')
-# Pin the build-tool version for this jamovi 28.17 release instead of installing
+# Pin the build-tool version for this jamovi 28.18 release instead of installing
 # the latest package then rejecting it against the old 28.4 assertion.
 install.packages('https://repo.jamovi.org/src/contrib/jmvtools_28.17.tar.gz',
                  lib=tools, repos=NULL, dependencies=FALSE, type='source', INSTALL_opts='--no-help')
@@ -31,7 +31,7 @@ version <- read.dcf(file.path(root,'DESCRIPTION'),fields='Version')[1,1]
 stopifnot(grepl('^[0-9]+\\.[0-9]+\\.[0-9]+$',version))
 package <- file.path(root,paste0('Pj_',version,'.jmo'))
 stopifnot(file.exists(package))
-dest <- file.path(out,paste0('Pj_',version,'_macos_',Sys.getenv('EXPECTED_ARCH'),'_jamovi28.17.jmo'))
+dest <- file.path(out,paste0('Pj_',version,'_macos_',Sys.getenv('EXPECTED_ARCH'),'_jamovi28.18.jmo'))
 stopifnot(file.copy(package,dest,overwrite=FALSE))
 writeLines(c(paste('R:',R.version.string),paste('Platform:',R.version$platform),
              paste('R.home:',R.home()),paste('jmvtools:',packageVersion('jmvtools'))),

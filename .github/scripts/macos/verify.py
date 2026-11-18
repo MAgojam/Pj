@@ -26,7 +26,7 @@ with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
     assert 'apple-darwin' in runtime
     assert ('aarch64' if arch=='arm64' else 'x86_64') in runtime
     meta=z.read('Pj/jamovi.yaml').decode()
-    assert re.search(r'minApp:\s*[\"\']?28\.17\.0',meta) and version in meta
+    assert re.search(r'minApp:\s*[\"\']?28\.18\.0',meta) and version in meta
     datasets=re.findall(r'^\s+path:\s*(\S+\.omv)\s*$',meta,re.M)
     assert len(datasets)==5
     for name in datasets:
@@ -50,7 +50,7 @@ with zipfile.ZipFile(artifact) as z, tempfile.TemporaryDirectory() as temporary:
             subprocess.run(['lipo',str(path),'-verify_arch',arch],check=True)
             native.append({'path':name,'file':subprocess.check_output(['file',str(path)],text=True).strip()})
 digest=hashlib.sha256(artifact.read_bytes()).hexdigest()
-report={'module':'Pj','version':version,'sourceCommit':commit,'jamovi':'28.17.0.0',
+report={'module':'Pj','version':version,'sourceCommit':commit,'jamovi':'28.18.0.0',
         'architecture':arch,'file':artifact.name,'sha256':digest,'bytes':artifact.stat().st_size,
         'nativeLibraries':native,'packageChecks':'PASSED','desktopGui':'Not tested'}
 (out/'BUILD.json').write_text(json.dumps(report,indent=2)+'\n')

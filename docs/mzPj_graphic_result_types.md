@@ -1,5 +1,12 @@
 # Graphic result types: Html, Svg and Image
 
+> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
+> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
+> document-save fix. Earlier advisories below describe the affected 28.17
+> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
+> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
+
+
 Pj 1.6.0 provides `result_type='html'`, `'svg'` or `'image'` for Chart.js,
 Plotly and all ten D3 plotting helpers. The option selects the native jamovi
 Results container. It does not change the statistical calculations.

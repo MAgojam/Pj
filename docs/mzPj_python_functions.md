@@ -1,5 +1,12 @@
 # Pj Python function handbook
 
+> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
+> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
+> document-save fix. Earlier advisories below describe the affected 28.17
+> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
+> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
+
+
 Use Pj API1 from Rj with the [R script](../rjusepj/01_pj_api_libraries.R) and its [instructions](../rjusepj/README.md).
 
 Graphic result types: [Html / Svg / Image selection](mzPj_graphic_result_types.md). Chart.js, Plotly and D3 now share `result_type`; browser-generated Image requires the Pj/Pjp editor capture bridge.

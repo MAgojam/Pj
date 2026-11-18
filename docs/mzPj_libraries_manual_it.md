@@ -1,5 +1,12 @@
 # Manuale delle librerie Python per Pj
 
+> **Pj 1.6.1 / jamovi 28.18 (18 novembre 2026).** Il minimo è ora
+> jamovi 28.18.0 inclusa. Il runtime ufficiale include la correzione del
+> salvataggio dei documenti con Svg nativo. Gli avvisi precedenti qui sotto
+> descrivono la 28.17. Restano separati i limiti delle proporzioni Office e del
+> ridimensionamento Rj; vedi le [note 1.6.1](mzPj_release_1_6_1.md).
+
+
 Guida operativa con esempi e riferimento statistico. Pj 1.6.0, pj_stats_rust 1.1.0. Edizione del 16 novembre 2026.
 
 Questo manuale è destinato a chi scrive script negli editor Pj e Pjp di jamovi. Spiega come scegliere e attivare le librerie fornite dal modulo, preparare i dati, produrre risultati e usare il backend statistico Rust. Gli esempi sono riproducibili; le analisi richiedono comunque un disegno corretto e un’interpretazione coerente delle ipotesi.

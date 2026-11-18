@@ -1,5 +1,12 @@
 # Plotly in Pj 1.4.0
 
+> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
+> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
+> document-save fix. Earlier advisories below describe the affected 28.17
+> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
+> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
+
+
 See [graphic result types](mzPj_graphic_result_types.md): `result_type='html'|'svg'|'image'` is now supported in Pj/Pjp. Native Image uses the editor capture bridge; Svg still wraps a PNG snapshot.
 
 > **Compatibility advisory — 5 November 2026.** On jamovi 28.17.0.0,
