@@ -1,5 +1,12 @@
 # Python libraries supplied by Pj
 
+> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
+> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
+> document-save fix. Earlier advisories below describe the affected 28.17
+> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
+> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
+
+
 ## Current library manual
 
 Read the [English manual](mzPj_libraries_manual.md) or

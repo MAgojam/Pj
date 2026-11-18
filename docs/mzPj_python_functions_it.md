@@ -1,5 +1,12 @@
 # Manuale delle funzioni Python di Pj
 
+> **Pj 1.6.1 / jamovi 28.18 (18 novembre 2026).** Il minimo è ora
+> jamovi 28.18.0 inclusa. Il runtime ufficiale include la correzione del
+> salvataggio dei documenti con Svg nativo. Gli avvisi precedenti qui sotto
+> descrivono la 28.17. Restano separati i limiti delle proporzioni Office e del
+> ridimensionamento Rj; vedi le [note 1.6.1](mzPj_release_1_6_1.md).
+
+
 Per provare API1 da Rj usare lo [script R](../rjusepj/01_pj_api_libraries.R) e la [guida italiana](mzPj_rj_api_it.md).
 
 Tipi grafici: [selezione Html / Svg / Image](mzPj_graphic_result_types_it.md). Chart.js, Plotly e D3 condividono `result_type`; Image generato dal browser richiede il collegamento di acquisizione degli editor Pj/Pjp.
