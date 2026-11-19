@@ -1,35 +1,17 @@
-# Pj 1.6.2 — draft
+# Pj 1.6.2
 
-[Note in italiano](mzPj_release_1_6_2_it.md).
+Requires jamovi 28.18.0 or later. This release includes:
 
-This version is being prepared; it is not a published release. jamovi 28.18.0
-or later is required. The current candidate is Windows only; other platform
-builds and release acceptance are pending.
+- Individual native figure sizes: `mzpjShowImage(..., width=, height=)` and new `mzpjShowSvg(markup, width=, height=)`. Explicit dimensions affect that result only; omitted values use global defaults. One explicit dimension preserves the image/SVG aspect ratio. Original PNG bytes remain unchanged. Example 76 and English/Italian guides are included.
+- Shared animated `line` and `bordered` accordions for Html content, Html charts and Html tables. Native Svg/Image/Table are not wrapped; native Svg has no Html zoom or resize observer competing with jamovi. Example 75 compares the supported cases.
+- Visible, draggable editor scrollbars; reduced space above the toolbar; consistent popup typography on Windows and Ubuntu.
+- Richer teaching examples and clearer Pj Data Library instructions. Library examples already contain analyses: add a new Pj/Pjp analysis in the same document to compare the current script. Save edits outside Data Library; bundled OMVs remain unchanged.
+- A native-Image capture state guard: receiving the PNG together with informational option updates must not rerun Python and recreate pending captures.
 
-- Unify eligible Html result containers. `line` is the default accordion;
-  `bordered` uses a rotating SVG chevron. D3, Chart.js, Plotly, free HTML
-  and HTML tables share the same options and style implementation. Native Svg
-  has no accordion or HTML zoom; jamovi alone controls its resizing. Native Image
-  and Table remain unchanged. See the [accordion guide](mzPj_accordions.md).
-- Replace example 04's local style override with the common implementation and
-  add example 75 for direct visual comparison. Update handwritten plot examples
-  to avoid nested outer accordions.
-- Give the Ace editor scrollbars an explicit contrasting thumb, scoped to the
-  editor. Long comments and code remain accessible without forcing line wrapping.
-- Reduce the blank space before the toolbar. Pj halves the core's top padding
-  and the preceding layout margin; Pjp halves the margin after its Variables area.
-- Expand teaching scripts 04, 07-09, 12, 15 and 17 with clearer examples and notes.
-- Clarify all example input sources. Pj Data Library OMVs already contain saved
-  analyses. Add a new Pj/Pjp analysis in the same document to compare the current
-  script against those saved results; the distributed library OMV is not overwritten.
-- Include the native-Image capture state guard: accepting a PNG together with
-  informational option changes must not rerun Python and recreate pending captures.
-  Automated capture regression checks are distinct from desktop acceptance.
+Windows and Ubuntu 26.04 dualboot/WSL2 visual checks were reported by the maintainer for the editor/accordion/native-graphic updates. Automated tests separately cover per-figure dimensions, both Python modes, capture state and API integration. Final package manifests record each platform's build checks; no macOS desktop visual acceptance is inferred from Actions.
 
-Script 04 currently defaults to native Svg and avoids asynchronous PNG capture.
-The reported native-Image preparation issue needs a desktop retest of this
-candidate; it is not certified fixed by the editor changes.
+API version 1, minApp 28.18.0 and the four pj_stats_rust 1.1.0 binaries are unchanged. No Rust rebuild is needed. The independent Rust development source is not shipped in Pj or its JMO packages.
 
-API version 1, the minimum jamovi version and all four pj_stats_rust 1.1.0
-binaries are unchanged. No Rust rebuild is required. Windows script 75 visual acceptance is PASSED. Ubuntu dualboot verification and
-release packages remain pending; no release tag is prepared at this stage.
+The native resize grip appears at the lower left on the tested Ubuntu jamovi, including official Rj and MetaJam; this release does not claim to fix its placement. Explicit per-figure dimensions and global Settings dimensions provide alternatives. Native Svg document export still depends on the host jamovi version and does not acquire private portable-only patches from this module.
+
+The 1.6.0 library manuals remain valid for the unchanged statistical libraries. Updated English/Italian Python helper handbooks and figure-dimension guides accompany this version.

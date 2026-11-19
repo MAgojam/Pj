@@ -1,6 +1,6 @@
 # Accordion condivisi — Pj 1.6.2
 
-La funzione fa parte del candidato 1.6.2. Installare il nuovo candidato prima di
+La funzione è disponibile in Pj1.6.2. Installare la versione1.6.2 prima di
 provare lo [script 75](../pjscript/75_accordion_styles.py), senza dataset o librerie
 aggiuntive. Lo script 04 usa ora il componente comune: rimossi CSS locale e
 modifiche manuali al dizionario del risultato.

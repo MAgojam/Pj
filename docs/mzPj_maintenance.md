@@ -1500,3 +1500,12 @@ Su richiesta dell'autore, alla verifica precedente segue una piccola correzione 
 
 
 CI PR19: test timeout runner reso deterministico con clock simulato. Il test imponeva100ms anche alla serializzazione e su macOS System Python il processo mock non partiva prima della scadenza; starts==1 falliva correttamente per lentezza della macchina. Il test ora simula150ms consumati dal primo processo e richiede lo stesso errore timeout prima del secondo. Nessuna modifica del runner o dei timeout reali.
+
+
+2026-11-19: implementate dimensioni individuali per risultati nativi. Pj: ShowImage width/height keyword-only e nuovo ShowSvg; Rj: rjShowImage/rjShowSvg(plot=function(){...},width,height,name,title) nel valutatore serializzato per System R, dispositivo separato/no duplicazione. Valori locali prevalgono sul popup; omissione usa globali; una misura mantiene proporzioni (PNG/viewBox Pj, ratio globale Rj). Pj su ramo feature/per-figure-dimensions, Rj resta feat/editor-ui-modernization. Guide e esempi76/04 aggiunti. Nessun commit/push/installazione, necessaria nuova compilazione. Rj ufficiale ripristinato dall’autore resta intatto. Test Rj source Windows/Ubuntu embedded PASSED.
+
+
+Anteprima dimensioni per figura: compilazione Windows Pj_1.6.2_figure_dimensions_win64.jmo PASSED; copia sideload in Temp. Nessuna installazione/commit/push. Pj API compilata script76 Embedded/System Python PASSED; Rj valutatore compilato esempio04 PASSED. Sorgente Rj testato anche in Embedded/System R Windows/WSL; evaluate del System WSL solo in cartella isolata di test. Stato/hash nel relativo Pj_builds\figure_dimensions_20261119/STATE.json. Conferma visiva ancora necessaria.
+
+
+Preparazione release1.6.2 autorizzata dopo conferme autore: feature/per-figure-dimensions aggiunge ShowImage width/height e ShowSvg nativo, mantiene accordion soloHtml e resizejamovi.50testPython interessati e API compilata2Python PASSED. Esempio76 e manualiEN/IT aggiornati. BinariRust1.1.0 invariati. Nuovo commit firmato e4build dello stesso snapshot; le compilazioni utente precedenti sono evidenza visiva, non sostituiscono le build finali dal commit. Rj commit91a27c8 pubblicato su ramo separato; processxRj rinviato per istruzione autore al secondo commit.

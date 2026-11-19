@@ -1,12 +1,14 @@
 # Pj — Python inside jamovi
 
-Version **1.6.2** is in preparation and requires **jamovi 28.18.0 or later**.
-This maintenance update unifies Html/Svg accordions with selectable line and
-bordered styles, improves editor scrollbar visibility and toolbar spacing,
-updates the teaching scripts and their Data Library instructions, and includes
-the pending native-image capture state correction. The Python API and
-pj_stats_rust 1.1.0 binaries are unchanged. See the
-[draft release notes](docs/mzPj_release_1_6_2.md).
+Version **1.6.2** requires **jamovi 28.18.0 or later**.
+This update adds per-figure Image/Svg dimensions, shared line/bordered accordions
+for Html results, clearer editor scrollbars and compact toolbar spacing. Native
+Svg resizing remains controlled by jamovi. Teaching scripts and Data Library
+instructions have been expanded, and native-image capture preserves its state
+when PNG acknowledgements arrive with informational option changes. The Python
+service API remains version 1; pj_stats_rust 1.1.0 binaries are unchanged.
+See the [release notes](docs/mzPj_release_1_6_2.md) and
+[per-figure dimensions guide](docs/mzPj_figure_dimensions.md).
 
 Try the public Python API from Rj with three examples: [libraries and calculations](rjusepj/01_pj_api_libraries.R), [tables and graphics](rjusepj/02_pj_api_graphics.R), and [optional System libraries](rjusepj/03_pj_api_system_libraries.R).
 [English instructions](rjusepj/README.md) · [Guida italiana](docs/mzPj_rj_api_it.md).

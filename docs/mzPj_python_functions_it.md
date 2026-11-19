@@ -1,6 +1,6 @@
 # Manuale delle funzioni Python di Pj
 
-> **Pj 1.6.2 in preparazione:** accordion condivisi Html, stili `line` e `bordered`.
+> **Pj 1.6.2:** accordion condivisi Html, stili `line` e `bordered`.
 > [Guida completa ed esempi](mzPj_accordions_it.md). Svg, Image e Table nativi esclusi.
 
 
@@ -128,7 +128,7 @@ Aggiunge un risultato Image PNG nativo.
 
 
 ```python
-mzpjShowImage(png_data, name=None, title=None)
+mzpjShowImage(png_data, name=None, title=None, *, width=None, height=None)
 ```
 
 
@@ -142,6 +142,16 @@ mzpjShowImage(png_data, name=None, title=None)
 | `title` | Titolo visibile; None usa quello predefinito della funzione. |
 
 
+
+| `width`, `height` | Dimensioni locali opzionali in pixel. Omissione usa il popup; una misura mantiene le proporzioni PNG. |
+
+### mzpjShowSvg
+
+```python
+mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)
+```
+
+Markup SVG completo come risultato Svg nativo. Dimensioni locali prevalgono sul popup; una misura usa il rapporto del viewBox/dimensioni intrinseche. Senza accordion o zoom Html. [Guida](mzPj_figure_dimensions_it.md).
 
 ### mzpjShowHtml
 
@@ -1132,3 +1142,6 @@ esplicita, non una scelta universalmente appropriata. Gli IC grezzi non sono
 troncati ai limiti naturali. Ritrasformare gli IC non ritrasforma vi. Consultare
 la guida dettagliata delle misure prima dell’utilizzo.
 
+
+
+Per-figure Image/Svg dimensions: [guide](mzPj_figure_dimensions.md), [italiano](mzPj_figure_dimensions_it.md). New helper: `mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)`.
