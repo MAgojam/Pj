@@ -1,3 +1,8 @@
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# First open Data Library > Pj > Paired measurements - interactive D3 explorer.
+# Add a NEW Pj editor; load this file via Service... and script 27 via Scripts > Load.
 # Load this file with Service..., then load script 27 in the editor.
 # Both Python interpreters are supported. SciPy is required; pandas/matplotlib are not.
 # This file defines reusable services only; the editor chooses which results to display.
@@ -72,15 +77,14 @@ def mzpjDemoPairedDashboard(summary, d3_source):
 .mzpj-paired .case,.mzpj-paired .interval{cursor:pointer;outline:none}
 .mzpj-paired .case:focus,.mzpj-paired .interval:focus{stroke:#1e293b;stroke-width:3}
 </style>
-<details class="mzpj-paired" id="__ROOT__" open>
-<summary><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10" stroke="currentColor" stroke-width="1.5"/><path class="vertical" d="M7 2v10" stroke="currentColor" stroke-width="1.5"/></svg>Paired-change explorer — individuals and uncertainty</summary>
+<div class="mzpj-paired" id="__ROOT__">
 <div class="groups" role="group" aria-label="Visible groups"></div>
 <div class="tools"><label><input class="individuals" type="checkbox" checked> Show individual pairs</label><button class="reset" type="button">Reset view</button><span class="count"></span></div>
 <div class="viewport" tabindex="0" aria-label="Scrollable paired-change plot"></div>
 <div class="inspect" role="status" aria-live="polite">Hover or focus a participant or a mean for details. Click or press Enter to pin a participant.</div>
 <p class="note">Left: paired measurements; thick segments connect group means calculated from complete pairs. Right: individual changes and group mean change with a 95% Student-t CI. The dashed line marks zero change. Intervals describe within-group mean changes, not differences between groups. Missing pairs are excluded from both panels and tables.</p>
 <p class="note">Group controls change visibility only. Axes, estimates and intervals stay fixed. Transitions respect reduced-motion preferences. Use Tab/Enter for keyboard inspection; Escape clears a pinned case. Fictional data, with no causal or treatment-effect interpretation.</p>
-</details><script>
+</div><script>
 (() => {
 const root=document.getElementById('__ROOT__'), payload=__PAYLOAD__, rows=payload.participants, groups=payload.groups;
 const duration=window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:280;

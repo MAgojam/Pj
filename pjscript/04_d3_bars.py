@@ -1,30 +1,41 @@
-# Run in the Pj/Pjp editor, or load as a service script with Service... and Run.
-import uuid
+# D3 bar chart: labelled categories with an exact source table.
+# Run in Pj or Pjp with Embedded or System Python. No extra package is needed.
+# Default data are invented counts; the current dataset is not changed.
+ACCORDION_TYPE = 'line'  # Html only; 'line': animated +/- and extending rules; 'bordered': rotating SVG chevron.
+RESULT_TYPE = 'svg'  # Native vector figure. Use 'html' for interactive controls.
+# JavaScript-to-Image capture is deliberately not used in this example.
 
-chart_id = 'mzpj_bars_' + uuid.uuid4().hex
-mzpjShowHtml(
-    d3_script +
-    f'<div id="{chart_id}" data-width="{mzpjFigureSize["width"]}" '
-    f'data-height="{mzpjFigureSize["height"]}"></div>' + """
-    <script>
-    (function () {
-        const root = document.getElementById('CHART_ID');
-        const values = [12, 25, 18, 31];
-        const width = Number(root.dataset.width);
-        const height = Number(root.dataset.height);
-        const svg = d3.select(root).append('svg')
-            .attr('width', width).attr('height', height);
-        const scale = d3.scaleLinear().domain([0, d3.max(values)])
-            .range([0, Math.max(0, width - 20)]);
-        const bands = d3.scaleBand().domain(d3.range(values.length))
-            .range([10, Math.max(10, height - 10)]).padding(0.25);
-        svg.selectAll('rect').data(values).join('rect')
-            .attr('x', 10).attr('y', (d, i) => bands(i))
-            .attr('width', d => scale(d)).attr('height', bands.bandwidth())
-            .attr('fill', '#3e6da9');
-    })();
-    </script>
-    """.replace('CHART_ID', chart_id),
-    name="d3_bars",
-    title="D3 bar chart"
+sample = {
+    'Activity': ['Reading', 'Exercises', 'Discussion', 'Project'],
+    'Responses': [12, 25, 18, 31],
+}
+
+mzpjShowTable(
+    [{'Activity': label, 'Responses': value}
+     for label, value in zip(sample['Activity'], sample['Responses'])],
+    name='d3_bars_source', title='Illustrative activity preferences',
+    notes='Invented counts. Each category occurs once; the current dataset is unchanged.'
+)
+
+# identity displays supplied totals without computing another statistic.
+# To use your own rows, replace sample with data and select your columns:
+#   category='group', value=None, stat='count' -> observations per group
+#   category='group', value='score', stat='mean' -> mean score per group
+# In Pjp, first select those columns in Variables. Data are not modified.
+mzpjShowBar(
+    sample, category='Activity', value='Responses', stat='identity',
+    orientation='horizontal',
+    name='d3_bars', title='Activity preferences: illustrative response counts',
+    x_label='Number of responses', y_label='Activity',
+    result_type=RESULT_TYPE, accordion=True, expanded=True, accordion_type=ACCORDION_TYPE
+)
+
+
+mzpjShowText(
+    'The bars compare invented response counts; exact values are in the table. '
+    'No confidence intervals or statistical tests are calculated. '
+    'The default Svg result is a native vector figure. Html keeps interactive '
+    'controls. Change RESULT_TYPE at the top and run again to compare. '
+    'This example does not request asynchronous PNG capture.',
+    name='d3_bars_note'
 )

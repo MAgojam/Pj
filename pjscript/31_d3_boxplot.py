@@ -1,4 +1,5 @@
 # Open Data Library > Tooth Growth (included with jamovi). No extra dataset is needed.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # In Pjp select len and supp. Both Python interpreters work without extra packages.
 # Both Python interpreters work. Quartiles use linear interpolation, not Tukey hinges.
 mzpjShowBoxPlot(

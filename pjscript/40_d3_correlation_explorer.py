@@ -1,4 +1,5 @@
 # Open Data Library > Big 5 (Dolan, Oort, Stoel & Wicherts, 2009).
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # In Pjp select all five columns listed below. Leave Service... empty and Load this script.
 # Both Python interpreters work without additional scientific libraries.
 columns = ['Neuroticism', 'Extraversion', 'Openness', 'Agreeableness', 'Conscientiousness']

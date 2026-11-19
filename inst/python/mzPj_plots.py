@@ -43,7 +43,7 @@ def _pj_plot_domain(values, function):
     return low, high
 
 
-def _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type='html'):
+def _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type='html', accordion_type='line'):
     import re
     import uuid
     if not isinstance(accordion, bool) or not isinstance(expanded, bool):
@@ -65,7 +65,8 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
         dimensions.append(int(value))
     if not D3_INLINE or not _pj_plot_js or not _pj_plot_css:
         raise RuntimeError('The Pj D3 plot resources are unavailable. Reinstall the updated Pj module.')
-    payload.update(width=dimensions[0], height=dimensions[1], accordion=accordion,
+    _pj_accordion_options(accordion, expanded, accordion_type)
+    payload.update(width=dimensions[0], height=dimensions[1], accordion=False, hideHeading=accordion,
                    expanded=expanded, color=color)
     if result_type in ('svg', 'image'):
         payload.update(resultType='svg',
@@ -82,16 +83,17 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
                '<script>(function(){const p=' + encoded + ';window.mzPjD3[p.kind]('
                'document.getElementById("' + root_id + '"),p);})();</script>')
     if result_type in ('svg', 'image'):
-        import html
         result_name = _pj_result_name(name, 'svg', _html_counter)
-        _pj_emit_graphic(content, result_name, html.escape(payload['title']), result_type)
+        _pj_emit_graphic(content, result_name, payload['title'], result_type,
+                         accordion=accordion, expanded=expanded, accordion_type=accordion_type)
     else:
-        _pj_add_html(content, name=name, title='')
+        _pj_add_html(content, name=name, title=payload['title'] if accordion else '',
+                     accordion=accordion, expanded=expanded, accordion_type=accordion_type)
 
 
 def _pj_show_scatter(dataset, x, y, group=None, labels=None, name=None, title=None,
                      x_label=None, y_label=None, color='#3e6da9', width=None,
-                     height=None, accordion=True, expanded=True, result_type='html'):
+                     height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Costruisce punti e gruppi senza stime inferenziali o trasformazioni implicite."""
     function = 'mzpjShowScatter'
     if not all(isinstance(value, str) and value for value in (x, y)):
@@ -118,7 +120,7 @@ def _pj_show_scatter(dataset, x, y, group=None, labels=None, name=None, title=No
                    xLabel=str(x_label) if x_label is not None else x,
                    yLabel=str(y_label) if y_label is not None else y,
                    note=f'N = {len(points)}; {count - len(points)} rows excluded for missing or non-finite coordinates or missing groups. Group visibility does not change the axes. Plot-size zoom preserves the data scales.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_plot_category(value):
@@ -163,7 +165,7 @@ def _pj_plot_quantile(values, probability):
 
 def _pj_show_boxplot(dataset, variable, group=None, labels=None, show_points=False,
                      name=None, title=None, x_label=None, y_label=None,
-                     color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html'):
+                     color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Quartili interpolati linearmente e baffi entro 1.5 IQR, senza test inferenziali."""
     function = 'mzpjShowBoxPlot'
     if not isinstance(variable, str) or not variable:
@@ -208,12 +210,12 @@ def _pj_show_boxplot(dataset, variable, group=None, labels=None, show_points=Fal
                    xLabel=str(x_label) if x_label is not None else (group or variable),
                    yLabel=str(y_label) if y_label is not None else variable,
                    note=f'N = {len(rows)}; {count - len(rows)} rows excluded. Quartiles use linear interpolation at (N - 1) p. Whiskers extend to observed values within 1.5 IQR, or stop at the quartile if no such value lies beyond it. Potential outliers are displayed, not excluded. Horizontal jitter only separates overlapping points.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_bar(dataset, category, value=None, stat='count', orientation='vertical',
                  name=None, title=None, x_label=None, y_label=None,
-                 color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html'):
+                 color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Aggregazione esplicita: frequenze, somma, media o valori gia' riepilogati."""
     function = 'mzpjShowBar'
     if not isinstance(category, str) or not category:
@@ -257,12 +259,12 @@ def _pj_show_bar(dataset, category, value=None, stat='count', orientation='verti
                    xLabel=str(x_label) if x_label is not None else xlabel,
                    yLabel=str(y_label) if y_label is not None else ylabel,
                    note=f'N = {len(rows)}; {count - len(rows)} rows excluded. Statistic: {stat}. Categories are sorted by label; the numeric axis includes zero. No uncertainty interval is calculated.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_line(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=False,
                   show_points=True, name=None, title=None, x_label=None, y_label=None,
-                  color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html'):
+                  color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Collega le osservazioni nel loro ordine; i mancanti interrompono la linea per default."""
     function = 'mzpjShowLine'
     if not all(isinstance(value, str) and value for value in (x, y)):
@@ -307,13 +309,13 @@ def _pj_show_line(dataset, x, y, group=None, labels=None, sort_x=False, connect_
                    ('Rows sorted by x within each series. ' if sort_x else 'Lines follow dataset order within each series. ') +
                    ('Gaps are connected explicitly. ' if connect_gaps else 'Missing coordinates break the line. ') +
                    'No interpolation, smoothing or statistical model is fitted.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_intervals(dataset, estimate, lower, upper, labels=None, reference=None,
                        interval_label='Interval', name=None, title=None, x_label=None,
                        y_label=None, color='#3e6da9', width=None, height=None,
-                       accordion=True, expanded=True, result_type='html'):
+                       accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Mostra stime e limiti forniti dallo script, senza attribuire loro un livello di confidenza."""
     function = 'mzpjShowIntervals'
     if not all(isinstance(value, str) and value for value in (estimate, lower, upper)):
@@ -342,12 +344,12 @@ def _pj_show_intervals(dataset, estimate, lower, upper, labels=None, reference=N
                    xLabel=str(x_label) if x_label is not None else estimate,
                    yLabel=str(y_label) if y_label is not None else '',
                    note=f'N = {len(intervals)}; {count - len(intervals)} incomplete rows excluded. Estimates and interval bounds are supplied by the script; no confidence level or statistical model is inferred. Original row order is preserved.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_histogram(dataset, variable, bins=10, density=False, name=None, title=None,
                        x_label=None, y_label=None, color='#3e6da9', width=None,
-                       height=None, accordion=True, expanded=True, result_type='html'):
+                       height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Calcola intervalli di uguale ampiezza: l'ultimo include il massimo."""
     from numbers import Integral
     function = 'mzpjShowHistogram'
@@ -388,12 +390,12 @@ def _pj_show_histogram(dataset, variable, bins=10, density=False, name=None, tit
                    xLabel=str(x_label) if x_label is not None else variable,
                    yLabel=str(y_label) if y_label is not None else ('Density' if density else 'Frequency'),
                    note=f'N = {len(values)}; {count - len(values)} missing or non-finite values excluded. {int(bins)} equal-width bins; intervals are left-closed and right-open, except the last includes the maximum. Plot-size zoom preserves the data scales.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_distribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=True,
                           name=None, title=None, x_label=None, y_label=None,
-                          color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html'):
+                          color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Modello didattico normale esplicito: la dispersione della media e' sigma / sqrt(N)."""
     from numbers import Integral
     function = 'mzpjShowDistribution'
@@ -419,7 +421,7 @@ def _pj_show_distribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=Tr
                    xLabel=str(x_label) if x_label is not None else ('Observation' if mode == 'population' else 'Observation / sample mean'),
                    yLabel=str(y_label) if y_label is not None else 'Probability density',
                    note='Teaching model: independent observations from a normal population with known mean and population SD. The sample mean is exactly normal with SE = SD / sqrt(N); no sample is generated and no test is fitted. Changing N does not change the population distribution. The x-axis is fixed while density height rescales; native tables outside this graphic do not update when its controls move.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_plot_ranks(values):
@@ -456,7 +458,7 @@ def _pj_plot_correlation(x, y):
 
 def _pj_show_correlation(dataset, columns, labels=None, missing='pairwise', method='pearson',
                          name=None, title=None, color='#3e6da9', width=None, height=None,
-                         accordion=True, expanded=True, result_type='html'):
+                         accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Matrice e scatter collegati; nessuna inferenza o selezione modifica i dati originali."""
     function = 'mzpjShowCorrelation'
     if not isinstance(columns, (list, tuple)) or not 2 <= len(columns) <= 12:
@@ -493,12 +495,12 @@ def _pj_show_correlation(dataset, columns, labels=None, missing='pairwise', meth
     payload = dict(kind='correlation', columns=list(columns), rows=rows, cells=cells,
                    method=method, missing=missing, title=str(title) if title is not None else 'Correlation explorer',
                    note=f'Missing-data rule: {missing}. Coefficients require at least 3 complete observations and nonzero variation. Spearman uses average ranks for ties. Scatter coordinates remain in original units. Brushing highlights rows only: it does not recompute coefficients, infer significance or change the dataset. Pairwise matrices need not be positive semidefinite.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_paired(dataset, first, second, group=None, labels=None, name=None, title=None,
                     first_label=None, second_label=None, y_label=None, color='#3e6da9',
-                    width=None, height=None, accordion=True, expanded=True, result_type='html'):
+                    width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Profili individuali e differenze collegati con selezione e riepiloghi descrittivi."""
     function = 'mzpjShowPaired'
     if not all(isinstance(column,str) and column for column in (first,second)):
@@ -535,12 +537,12 @@ def _pj_show_paired(dataset, first, second, group=None, labels=None, name=None, 
                    yLabel=str(y_label) if y_label is not None else 'Observed value',
                    title=str(title) if title is not None else f'{second} minus {first}: paired explorer',
                    note=f'{len(rows)} complete pairs; {count-len(rows)} rows excluded. Pairs are matched by dataset row. Measurements must have comparable units. Drag a rectangle over the change points or click a subject to highlight its profile. Filters and selections update descriptive summaries only; no test or confidence interval is calculated. Axes remain fixed across filters.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
 def _pj_show_test_distribution(distribution='t', df=10, df2=20, statistic=2, tail='right',
                                alpha=.05, name=None, title=None, color='#3e6da9',
-                               width=None, height=None, accordion=True, expanded=True, result_type='html'):
+                               width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Modello teorico con aree di coda: non stima una statistica a partire dai dati."""
     from numbers import Integral
     function = 'mzpjShowTestDistribution'
@@ -562,4 +564,4 @@ def _pj_show_test_distribution(distribution='t', df=10, df2=20, statistic=2, tai
                    title=str(title) if title is not None else 'Theoretical test-distribution explorer',
                    xLabel='Statistic', yLabel='Probability density',
                    note='Theoretical null model, not a test fitted to the dataset. Move degrees of freedom, statistic and alpha to explore tail probabilities and critical regions. Two-sided t uses 2 × the smaller tail. The visible curve may omit extreme tails; probabilities use the full distribution. Controls do not rerun Python or update other results. A probability below alpha alone does not establish model assumptions or practical importance.')
-    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type)
+    _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)

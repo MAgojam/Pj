@@ -1,4 +1,5 @@
 # Pj 1.6.0. Open Data Library -> Anderson's Iris Data.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # Pj uses the full data; in Pjp select the five columns below.
 # No OMV input file or Service script is needed for this example.
 # Run; in Settings -> External OMV files enable the preview, then choose Save... .

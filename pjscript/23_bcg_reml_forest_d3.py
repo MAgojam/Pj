@@ -1,7 +1,14 @@
-# Run in the Pjp editor; no external service script is needed.
-# Pjp supplies the selected variables as data: do not load or recreate the dataset.
-# Select author, tpos, tneg, cpos, cneg; year and D1-D5/Overall are optional.
-# Works with either Python interpreter when SciPy is available; no pandas or matplotlib.
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# BCG example: open the DATASET BEFORE loading this script.
+# 1. Open > Data Library > Pj > BCG vaccine - REML and D3 forest plot.
+#    Dataset file in this repository: data/Pj_BCG_vaccine.omv.
+# 2. Add a NEW Pjp (Editor +) analysis; keep the original example analysis unchanged.
+#    Select author, tpos, tneg, cpos, cneg; year and D1-D5/Overall are optional.
+# 3. Scripts > Load this file into the editor, then Run. Leave Service... empty.
+# Both Python interpreters work when SciPy is available; no pandas or matplotlib.
+# The script uses the selected study data; it does not open or recreate a dataset.
 import json
 import math
 import statistics
@@ -29,7 +36,9 @@ CONFIDENCE = 0.95
 required = [COLUMNS[key] for key in ('study', 'a', 'b', 'c', 'd')]
 missing = [name for name in required if name not in data]
 if missing:
-    raise ValueError('Select these variables in Pjp: ' + ', '.join(missing) + '.')
+    raise ValueError('First open Data Library > Pj > BCG vaccine - REML and D3 forest plot. '
+                     'Select these variables in Pjp, then load this script and Run: '
+                     + ', '.join(missing) + '.')
 if not 0 < CONFIDENCE < 1:
     raise ValueError('CONFIDENCE must be between 0 and 1.')
 if not d3_script:
@@ -220,8 +229,7 @@ html = d3_script + '''
 .mzpj-bcg .legend i { width:15px; height:15px; border-radius:50%; display:inline-block; }
 .mzpj-bcg .note { color:#64748b; font-size:12px; margin:10px 0; }
 </style>
-<details class="mzpj-bcg" id="__ROOT__" open>
-<summary><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h10" stroke="currentColor" stroke-width="1.6"/><path class="vertical" d="M7 2v10" stroke="currentColor" stroke-width="1.6"/></svg>Forest plot — risk ratio (REML)</summary>
+<div class="mzpj-bcg" id="__ROOT__">
 <div class="controls"><span class="zoom-control"><input class="zoom" type="range" min="0.5" max="2" step="0.05" value="1" aria-label="Forest plot zoom" title="Resize the entire forest plot proportionally"><span class="zoom-marker" aria-hidden="true">Z</span></span><span class="zoom-value" aria-hidden="true">100%</span><button type="button">Reset</button></div>
 <details class="legend"><summary>Risk-of-bias legend</summary><div>
 <span><i style="background:#168c4e"></i>Low risk (+)</span>
@@ -232,7 +240,7 @@ html = d3_script + '''
 <div class="viewport" tabindex="0" aria-label="Scrollable forest plot"></div>
 <p class="note">Diamond: confidence interval for the pooled effect. Orange horizontal dashed line: prediction interval. Orange vertical dashed line: pooled effect. Gray vertical dotted line: no effect (RR = 1).</p>
 <p class="note">Risk-of-bias judgments are taken from the selected dataset columns, not calculated by this script. Hover over a study or judgment for details. Zoom resizes the whole plot; effect sizes and the risk-ratio axis remain unchanged.</p>
-</details>
+</div>
 <script>
 (function () {
     const payload = __PAYLOAD__;

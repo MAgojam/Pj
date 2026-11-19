@@ -1,4 +1,5 @@
 # Run in Pjp. Open Anderson's Iris Data from jamovi Data Library, then select
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # two continuous measurements and, optionally, the species column.
 # Other datasets work too. Only selected columns are available in data.
 # Both Python interpreters are supported; no pandas or matplotlib required.

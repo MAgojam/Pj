@@ -1,4 +1,5 @@
 # Open Data Library > Tooth Growth. In Pjp select supp and len.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # Both Python interpreters work without additional libraries.
 # Doses are pooled: these bars describe the data, not a dose-adjusted supplement effect.
 mzpjShowBar(data, category='supp', name='group_counts', title='Observations by supplement')

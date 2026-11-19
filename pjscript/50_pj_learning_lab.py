@@ -1,5 +1,9 @@
 # (participant_id, group, pre_score, post_score, study_hours, attendance)
-# Open Pj_Learning_Lab.omv and run this example in Pj (Editor, without +).
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# First open Data Library > Pj > Learning Lab - resampling and prediction; then load this script.
+# Add a NEW Pj analysis (Editor, without +) to run this script alongside the saved example.
 # The first-line directive above requests the six dataset columns automatically.
 # Leave Service... empty and load this file into the editor. Both Python interpreters work.
 # All observations are synthetic teaching data, not evidence about teaching efficacy.

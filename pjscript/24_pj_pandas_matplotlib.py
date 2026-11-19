@@ -1,7 +1,15 @@
 # (participant_id, group, age, score, followup)
-# Pj example: use System Python with pandas and matplotlib installed.
-# The first line tells Pj which columns to transfer from the open dataset as data.
-# No external service script or file-reading code is needed.
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# Open the DATASET BEFORE loading this script:
+# 1. Open > Data Library > Pj > Synthetic participants - pandas and matplotlib.
+#    Dataset file in this repository: data/Pj_Pandas_Matplotlib.omv.
+# 2. Add a NEW Pj editor, or Pjp with the five columns above selected.
+# 3. Choose System Python, then Scripts > Load this file and Run.
+# Requires pandas and matplotlib already installed; never installs packages.
+# Leave Service... empty. This script does not generate data or read another file.
+# All participant observations are synthetic teaching data.
 import io
 import math
 import os
@@ -40,8 +48,10 @@ GROUP, AGE, INITIAL, FINAL = 'group', 'age', 'score', 'followup'
 required = [GROUP, AGE, INITIAL, FINAL]
 missing = [name for name in required if name not in data]
 if missing:
-    raise ValueError('Open Pj_Pandas_Matplotlib.omv. Required columns: ' + ', '.join(missing) + '.')
-df = pd.DataFrame(data)
+    raise ValueError('First open Data Library > Pj > Synthetic participants - pandas and matplotlib. '
+                     'In Pjp select the required columns, then load this script and Run. '
+                     'Missing: ' + ', '.join(missing) + '.')
+df = pd.DataFrame({name: data[name] for name in required}).copy(deep=True)
 if df.empty:
     raise ValueError('The example needs a dataset with observations.')
 for name in (AGE, INITIAL, FINAL):
@@ -52,7 +62,7 @@ df['change'] = df[FINAL] - df[INITIAL]
 
 mzpjShowText(
     '**System Python — pandas and matplotlib**\n\n'
-    'Synthetic data for learning and software demonstration: 32 fictional participants. '
+    f'Synthetic data for learning and software demonstration: {len(df)} fictional participants. '
     'The dataset is already open in jamovi; this script reads the columns supplied as data.\n\n'
     f'Loaded pandas {pd.__version__} and matplotlib {matplotlib.__version__}.',
     name='pandas_intro')

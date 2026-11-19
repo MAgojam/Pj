@@ -1,4 +1,4 @@
-# Pj 1.6.0 / pj_stats_rust >=1.1: four repeated-measures models.
+# Pj 1.6.1 or newer / pj_stats_rust >=1.1: four repeated-measures models.
 # SIMULATED DATA, not Iris or the currently loaded dataset. Works in Pj and Pjp.
 # Each list is one time column; each position is one subject across ALL columns.
 # To use your data, replace the lists below with list(data['column_name']).
@@ -57,10 +57,11 @@ for outcome in reports[2]['outcomes']:
 # The bundled PNG is a known image, not another statistical result. It isolates
 # native Image export from the two profile figures above, without
 # requiring matplotlib, Pillow, a browser service or another Python dependency.
+# This PNG is supplied inside the installed Pj module; no external download is needed.
 with open(mzpjResourcePath('mzPj_icon_python.png'), 'rb') as image_file:
     mzpjShowImage(image_file, name='rm_image_export_control',
                   title='Native Image export control: Pj icon')
 mzpjShowText('Export check: the Pj icon is a native Image result, not a statistical graph. '
              'In the LaTeX ZIP, check for its figure file and an active includegraphics command. '
-             'Assess the two Svg profile figures separately.', name='rm_export_check')
+             'Assess the two profile figures separately for the selected GRAPHIC_RESULT_TYPE.', name='rm_export_check')
 print('Four RM models completed; 45 input subjects, one listwise exclusion. Data/dataext unchanged.')

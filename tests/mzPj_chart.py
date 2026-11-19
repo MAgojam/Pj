@@ -91,7 +91,11 @@ class ChartTests(unittest.TestCase):
         self.assertIn('toBase64Image()', item['content'])
         self.assertIn('devicePixelRatio=2', item['content'])
         self.assertIn('config.options.events=[]', item['content'])
-        self.assertNotIn('<details', item['content'])
+        self.assertEqual(item['content'].count('<details '), 0)
+        self.assertIn('jmv-results-svg-selection', item['content'])
+        self.assertTrue(item['title'])
+        self.show('bar', [{'data': [1, 2]}], static=True, accordion=False)
+        self.assertNotIn('<details ', self.ns['results']['items'][-1]['content'])
         with self.assertRaises(TypeError):
             self.show('bar', [{'data': [1]}], static='True')
 

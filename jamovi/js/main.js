@@ -150,6 +150,8 @@ const events = {
         let $contents = ui.view.el;
         $contents.style.display = 'flex';
         $contents.style.flexDirection = 'column';
+        $contents.classList.add('mzpj-editor-content');
+        $contents.classList.toggle('mzpj-plain-editor', !ui.pjpAccordion);
 
         $contents.insertAdjacentHTML('beforeend', `
             <div id="editor-box">

@@ -36,6 +36,7 @@ on:
       - 'tests/mzPj_native_libraries.py'
       - 'tests/mzPj_service_api.R'
       - 'tests/mzPj_preparation.R'
+      - 'tests/mzPj_accordions.py'
       - 'tests/mzPj_meta.py'
       - 'tests/mzPj_data.py'
       - 'tests/fixtures/**'

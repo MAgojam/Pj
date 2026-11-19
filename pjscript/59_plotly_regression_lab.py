@@ -1,7 +1,7 @@
-# Run in Pj or Pjp with either Python and the updated Plotly preview. No dataset required.
+# Pj 1.6.1 or newer; Pj or Pjp with either Python. No dataset required.
 # Uses Python's standard library for calculations; no pandas/matplotlib required.
 # Activate the Plotly distribution bundled with Pj, including its dependencies.
-# The installed stable 1.3.0 packages do not yet include this helper.
+# mzpjUseLibrary activates the Plotly version distributed with Pj.
 import math
 import random
 
@@ -12,8 +12,8 @@ try:
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
 except ImportError as error:
-    raise ImportError('This first trial needs System Python with Plotly installed. '
-                      'Jamovi Python will require the updated Pj library bundle.') from error
+    raise ImportError('Plotly could not be imported in the selected Python. '
+                      'Use the Pj bundled library or install Plotly in System Python.') from error
 
 # Change these parameters and run again. Browser interactions do not refit OLS.
 N = 90

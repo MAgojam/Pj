@@ -409,6 +409,7 @@ PjClass <- R6::R6Class(
         },
 
         .load=function(vChanges=character()) {
+            private$.graphicCaptureOnly <- FALSE
             jmvcore:::initProtoBuf()
             path <- private$.statePathSource()
             Encoding(path) <- 'UTF-8'
@@ -420,9 +421,13 @@ PjClass <- R6::R6Class(
                 pb <- jmvcore:::RProtoBuf_read(jamovi.coms.AnalysisResponse, conn)
                 groupPB <- pb$results$group
                 oChanges <- private$.options$compProtoBuf(pb$options)
+                # Il client puo' restituire insieme alla PNG lo stato informativo
+                # aggiornato dal backend. Non convertirlo in un nuovo Run.
+                capturePending <- is.character(self$options$graphicCapture) &&
+                    length(self$options$graphicCapture)==1L && nzchar(self$options$graphicCapture)
                 private$.graphicCaptureOnly <- length(vChanges)==0L &&
-                    'graphicCapture' %in% oChanges &&
-                    all(oChanges %in% c('graphicCapture','editorState'))
+                    ('graphicCapture' %in% oChanges || capturePending) &&
+                    all(oChanges %in% c('graphicCapture','editorState','dataextInfo','createdColumns'))
                 # La preview e' un comando di sola visualizzazione: le opzioni
                 # accessorie sincronizzate dal motore non devono convertirlo in Run.
                 # Un Run esplicito (toggle) mantiene invece la normale esecuzione.

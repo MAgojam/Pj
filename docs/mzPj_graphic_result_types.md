@@ -1,5 +1,7 @@
 # Graphic result types: Html, Svg and Image
 
+[Shared accordion options](mzPj_accordions.md) — Pj 1.6.2.
+
 > **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
 > jamovi 28.18.0, inclusive. The official runtime includes the native SVG
 > document-save fix. Earlier advisories below describe the affected 28.17

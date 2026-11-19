@@ -1,6 +1,6 @@
 # Pj or Pjp; either Python; no dataset required.
 # Change RESULT_TYPE to 'html' to compare the previous HTML result.
-# 'svg' creates native vector figures while keeping Results interactions.
+# 'svg' creates a native vector figure; choose 'html' for interactive controls.
 # Use Analysis/All -> Export for DOCX/ODT/PDF; the figure menu offers SVG/PNG.
 RESULT_TYPE = 'svg'
 

@@ -1,4 +1,5 @@
 # Pj 1.6.0; works in Pj and Pjp with either Python. No Service script is needed.
+# Iris_wide.omv is YOUR saved output of example 69, not a Data Library entry or download.
 # First use example 69 with OUTPUT_SHAPE='wide' and Save... as Iris_wide.omv.
 # Settings -> External OMV files -> Read... loads that file into dataext.
 # Read does not run this script. Then choose Run to transform dataext.

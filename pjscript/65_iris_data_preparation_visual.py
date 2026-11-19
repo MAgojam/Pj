@@ -1,4 +1,5 @@
 # Open Data Library -> Anderson's Iris Data. Do not create another OMV.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # Works in Pj or Pjp, with jamovi Python or System Python (NumPy/SciPy required).
 # Pjp: select Sepal.Length, Sepal.Width, Petal.Length, Petal.Width and Species.
 # Pj: the script explicitly chooses those inputs from the supplied dataset.

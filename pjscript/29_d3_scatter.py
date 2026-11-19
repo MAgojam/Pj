@@ -1,4 +1,8 @@
-# Pj/Pjp example: open Pj_Linear_Regression.omv from Data Library.
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# First open Data Library > Pj > Linear regression - linked D3 diagnostics; then load this script.
+# Add a NEW Pj or Pjp editor in the opened example document.
 # In Pjp select study_hours, final_score and optionally participant_id.
 # Both Python interpreters work; no pandas, matplotlib, NumPy or SciPy is required.
 # This function creates an HTML result automatically; no JavaScript is needed.

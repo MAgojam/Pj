@@ -1,5 +1,70 @@
 # Risultati condivisi: nomi, immagini, testo e serializzazione.
 
+def _pj_accordion_options(accordion, expanded, accordion_type):
+    if not isinstance(accordion, bool) or not isinstance(expanded, bool):
+        raise TypeError('accordion and expanded must be True or False.')
+    if accordion_type not in ('line', 'bordered'):
+        raise ValueError('accordion_type must be line or bordered.')
+    if not accordion and not expanded:
+        raise ValueError('expanded=False requires accordion=True.')
+
+
+def _pj_wrap_accordion(content, title, accordion=True, expanded=True, accordion_type='line'):
+    """Un solo contenitore condiviso; il contenuto del grafico resta esportabile da solo."""
+    _pj_accordion_options(accordion, expanded, accordion_type)
+    if not accordion:
+        return content
+    import html
+    import uuid
+    root = 'mzpj_accordion_' + uuid.uuid4().hex
+    style = '''<style>
+.jmv-results-html:has(> .content > .mzpj-accordion){width:500px;min-width:0;max-width:100%}
+.mzpj-accordion{width:100%;box-sizing:border-box;max-width:100%;min-width:0;margin:6px 0 12px;font:13px/1.5 Arial,sans-serif;color:#334155}
+.mzpj-accordion>summary{display:flex;align-items:center;gap:6px;list-style:none;cursor:pointer;color:#3e6da9;font-weight:500;padding:4px 0;overflow-x:auto}
+.mzpj-accordion>summary::-webkit-details-marker{display:none}
+.mzpj-accordion>summary:focus-visible{outline:2px solid #3e6da9;outline-offset:3px}
+.mzpj-accordion[open]>summary{font-weight:700}
+.mzpj-accordion-icon{display:flex;align-items:center;justify-content:center;flex:none;width:18px;padding-inline-end:6px;border-inline-end:1px solid rgba(62,109,169,.5)}
+.mzpj-accordion-icon svg{width:14px;height:14px;flex:none;overflow:visible}
+.mzpj-accordion-icon .mzpj-accordion-plus-minus{width:12px;height:12px}
+.mzpj-accordion-icon .horizontal,.mzpj-accordion-icon .vertical{transform-origin:center;transform-box:view-box;transition:transform .3s ease,opacity .3s ease}
+.mzpj-accordion-icon .vertical{transform:rotate(0deg);opacity:1}
+.mzpj-accordion[open]>summary .vertical{transform:rotate(90deg);opacity:0}
+.mzpj-accordion-title{display:flex;align-items:center;flex:1;min-width:0;gap:8px}
+.mzpj-accordion-label{flex:none;white-space:nowrap}
+.mzpj-accordion-line>summary .mzpj-accordion-title::before,.mzpj-accordion-line>summary .mzpj-accordion-title::after{content:'';height:1px;background:rgba(62,109,169,.5);flex:0 0 30px;transition:height .3s ease,flex-grow .3s ease,background .3s ease}
+.mzpj-accordion-line[open]>summary .mzpj-accordion-title::before,.mzpj-accordion-line[open]>summary .mzpj-accordion-title::after{height:2px;background:rgba(62,109,169,.7)}
+.mzpj-accordion-line[open]>summary .mzpj-accordion-title::after{flex-grow:1}
+.mzpj-accordion-bordered>summary{border-block:1px solid #c5d6e9;padding:7px 0}
+.mzpj-accordion-bordered>summary .mzpj-accordion-icon{border:0;padding:0}
+.mzpj-accordion-icon .mzpj-accordion-arrow{width:10px;height:10px}
+.mzpj-accordion-arrow{transform-origin:center;transform-box:view-box;transform:rotate(0deg);transition:transform .3s ease}
+.mzpj-accordion-bordered:dir(rtl)>summary .mzpj-accordion-arrow{transform:rotate(180deg)}
+.mzpj-accordion-bordered[open]>summary .mzpj-accordion-arrow{transform:rotate(90deg)}
+.mzpj-accordion-content{padding-top:9px;min-width:0;max-width:100%}
+/* Le vecchie analisi salvate possono includere transition:none!important.
+   Limita la precedenza alle animazioni SVG di questa revisione, come richiesto. */
+.mzpj-accordion[data-mzpj-motion="svg"]>summary .horizontal,.mzpj-accordion[data-mzpj-motion="svg"]>summary .vertical{transition:transform .3s ease,opacity .3s ease!important}
+.mzpj-accordion[data-mzpj-motion="svg"]>summary .mzpj-accordion-arrow{transition:transform .3s ease!important}
+.mzpj-accordion[data-mzpj-motion="svg"]>summary .mzpj-accordion-title::before,.mzpj-accordion[data-mzpj-motion="svg"]>summary .mzpj-accordion-title::after{transition:height .3s ease,flex-grow .3s ease,background .3s ease!important}
+</style>'''
+    # Stessa geometria del controllo Variables Pjp e di Info & Notes Metafora.
+    icon = ('<svg class="mzpj-accordion-plus-minus" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">'
+            '<line class="horizontal" x1="4" y1="8" x2="12" y2="8"/>'
+            '<line class="vertical" x1="8" y1="4" x2="8" y2="12"/></svg>'
+            if accordion_type == 'line' else
+            '<svg class="mzpj-accordion-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5">'
+            '<polyline points="6,4 10,8 6,12"/></svg>')
+    return (style + f'<details id="{root}" data-mzpj-motion="svg" class="mzpj-accordion mzpj-accordion-{accordion_type}"'
+            + (' open' if expanded else '') + '><summary class="ignore-html">'
+            '<span class="mzpj-accordion-icon" aria-hidden="true">' + icon + '</span>'
+            '<span class="mzpj-accordion-title"><span class="mzpj-accordion-label">'
+            + html.escape(str(title)) + '</span></span></summary>'
+            '<div class="mzpj-accordion-content">' + content + '</div></details>'
+            '<script>(function(){const panel=document.getElementById("' + root + '");'
+            'panel.addEventListener("toggle",()=>requestAnimationFrame(()=>'
+            'window.dispatchEvent(new Event("resize"))));})();</script>')
+
 def _pj_result_name(name, prefix, counter, table=False):
     import re
     used = {item.get('name'): item for item in results['items']}
@@ -41,9 +106,11 @@ def _pj_graphic_mode(result_type, static=False):
     return result_type
 
 
-def _pj_emit_graphic(content, name, title, result_type, scripts=None):
+def _pj_emit_graphic(content, name, title, result_type, scripts=None, *,
+                     accordion=False, expanded=True, accordion_type='line'):
     """Native SVG now; native Image after an acknowledged browser PNG capture."""
     if result_type == 'svg':
+        # Native Svg sizing belongs exclusively to jamovi, without Html containers.
         item = dict(type='Svg', name=name, title=title, content=content)
         if scripts:
             item['scripts'] = scripts
@@ -198,7 +265,8 @@ def _pj_add_image(png_data, name=None, title=None):
         'state': img_b64
     })
 
-def _pj_add_html(content, name=None, title=None):
+def _pj_add_html(content, name=None, title=None, *, accordion=True, expanded=True,
+                 accordion_type='line'):
     """title e' opzionale (default "HTML Python" lato R se non indicato)."""
     name = _pj_result_name(name, 'html', _html_counter)
 
@@ -207,10 +275,12 @@ def _pj_add_html(content, name=None, title=None):
     elif not isinstance(content, str):
         content = str(content)
 
+    content = _pj_wrap_accordion(content, title if title is not None else 'HTML Python',
+                                accordion, expanded, accordion_type)
     results['items'].append({
         'type': 'Html',
         'name': name,
-        'title': title,
+        'title': '' if accordion else title,
         'content': content
     })
 

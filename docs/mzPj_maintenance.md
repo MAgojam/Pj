@@ -1107,3 +1107,396 @@ NON attribuire un PASSED generale di impaginazione: tabelle con molte colonne
 con parole e cifre spezzate; problema di leggibilita' ancora aperto. Nessun
 originale modificato. Evidenze/hash in scripts_audit_20261116/docx_exports.
 Nessuna deduzione di PASSED LaTeX Svg, save/reopen OMV, Ubuntu o macOS.
+
+
+## 19 novembre 2026: Pj Ubuntu, cattura PNG e prova clone
+Rj sospeso per richiesta esplicita; lavoro attivo su Pj, ramo
+fix/linux-native-image-capture. L'Ubuntu dual boot del manutentore simula un
+utente con clone GitHub; WSL2 serve ai controlli di sviluppo e NON lo sostituisce.
+Riprodotto: graphicCapture insieme a dataextInfo faceva ricadere nel Run e
+ricreava i pending Image. Corretta la classificazione includendo dati informativi
+senza assorbire Run espliciti o modifiche ai dati. Test 73 con iframe distinti,
+17 tabelle/3 Image e un'esecuzione Python PASSED in Windows e backend Linux WSL2,
+Pj/Pjp x embedded/System. PDF native prodotti; GUI dual boot ancora da confermare.
+Percorso iniziale del FilePicker non impostato da Pj: avviso transitorio coerente
+con cartella ricordata dal selettore, componente preciso non accertato senza
+profilo dual boot. Nessuna cancellazione preferenze o percorso fisso aggiunto.
+Revisionati avvisi obsoleti di 59/60, note 58/73 e README. Guida completa:
+Pj/docs/mzPj_ubuntu_capture_fix_it.md. Artefatti in
+Pj_builds/ubuntu_capture_fix_20261119; Rust invariato. Nessuna nuova release
+pubblica o merge: consegna patch/JMO per conferma del manutentore.
+
+
+## 19 novembre 2026: intervento UI rinviato al termine dei test Pj
+Richiesta esplicita del manutentore, riferimento immagine
+codex-clipboard-4c58f716-f646-47b1-889f-4403ddd11312.png.
+DA FARE DOPO IL COMPLETAMENTO DEI TEST: ridurre di circa il 50% lo spazio
+verticale tra la linea inferiore dell'intestazione (titolo/Service/freccia)
+e l'intera toolbar dell'editor. Devono salire insieme Clear, Python editor,
+nome script, gruppo Scripts Load/Save, Settings e Run. Individuare prima la
+regola responsabile nel layout/CSS (padding, margin o contenitore jamovi),
+senza presumere che sia il gap interno della toolbar. Conservare allineamenti
+e spazi relativi dei controlli. Verificare Pj/Pjp e popup dopo la modifica.
+Non modificare ora la build durante il collaudo del manutentore; nessuna
+ricompilazione o installazione richiesta per questa sola annotazione.
+
+
+## 19 novembre 2026: revisione post-test dello script 04 D3
+Il manutentore segnala che 04_d3_bars.py non comunica chiaramente lo scopo e
+il risultato non offre un aggancio per il ridimensionamento.
+Codice attuale: quattro barre orizzontali con valori illustrativi 12, 25, 18,
+31, senza etichette/assi; mzpjShowHtml contiene un SVG D3 e rimane type Html.
+Non confondere un SVG interno all'HTML con un Results type Svg nativo.
+DA FARE DOPO I TEST: chiarire obiettivo e dati illustrativi; aggiungere titolo,
+etichette e assi; decidere esplicitamente se preservare l'esempio di D3 manuale
+in Html con un controllo dimensioni dedicato oppure convertirlo a un helper
+pubblico con risultato Svg/Image nativo. Dichiarare il tipo nell'esempio e
+verificare effettivamente il resize prima di prometterlo. Non chiamare funzioni
+private del runtime negli script pubblici. Se mantenuto Html per motivi didattici,
+spiegare chiaramente le differenze dai risultati nativi. Verificare Pj/Pjp e
+entrambi i Python. Non cambiare adesso la build durante il collaudo in corso.
+
+
+## 19 novembre 2026: script 04 aggiornato subito su richiesta
+La richiesta successiva del manutentore anticipa la revisione dello script 04:
+completata, non piu rinviata a fine test. Usa mzpjShowBar pubblico, categorie
+nominate, assi, tabella dei conteggi illustrativi e Image nativo come default;
+Html e Svg sono selezionabili in testa allo script. Nessun pacchetto opzionale.
+Verificata generazione nei tre modi, quattro valori corretti e input invariato;
+Image richiede il successivo completamento della cattura nel frontend.
+Il test visivo del manutentore resta da eseguire. Script 01, 02 e 03: PASSED
+segnalato dal manutentore. Le prossime anomalie degli script vengono corrette
+subito; la riduzione dello spazio sopra la toolbar resta rinviata a fine test.
+
+
+### Correzione successiva: script 04, cattura Image non superata
+Il manutentore segnala lampeggio continuo della preparazione Image: il precedente
+controllo Python verificava soltanto la richiesta, non il completamento in jamovi.
+Script 04 ora usa Svg nativo come default e propone solo Svg/Html; non invia
+richieste PNG asincrone. Tabella, categorie e assi sono mantenuti. Verificati
+entrambi i rendering in Chromium, tutte le etichette, assenza di errori JS e di
+placeholder di cattura. Evidenze in Pj_builds/script04_20261119. Non equivale a
+un nuovo PASSED visivo di jamovi: serve riprova del manutentore. Il problema
+Image segnalato resta aperto; non presentare la generazione della richiesta
+come verifica della sua conclusione. Nessun cambio runtime o build in questa
+correzione dello script.
+
+
+### Script 04: intestazione unica e accordion coerente
+Rimosso il titolo esterno duplicato dal singolo risultato tramite l'oggetto
+pubblico results; aggiunto CSS circoscritto al grafico per usare la linea a
+fianco del titolo che si allunga ad accordion aperto, riprendendo lo stile
+pj-accordion-title di jamovi/js/css.js. Eliminati i due bordi orizzontali.
+Verifica Chromium Svg/Html: un solo summary, bordo zero, linea espansa maggiore
+della chiusa, chiusura/riapertura funzionanti, categorie e assi presenti.
+Nessuna modifica runtime o JMO; riprova visiva jamovi ancora da confermare.
+
+
+## 19 novembre 2026: esempi 07-09 arricchiti
+Script 04: test visivo PASSED del manutentore. Anche 07-09 passavano, ma richiesto
+contenuto didattico maggiore: ora ciascuno mostra due tabelle native e una nota.
+07 record: descrittive calcolate, N e mancanti; 08 colonne: cambiamento appaiato
+per gruppo e SD delle differenze; 09 matrice: correlazioni Pearson su casi
+completi comuni, gestione delle colonne costanti. Dati esplicitamente inventati,
+nessuna libreria opzionale, nessuna modifica al dataset corrente, testi inglesi.
+Verificati calcoli (correlazioni confrontate con statistics.correlation), conteggi,
+mancanti e costanti. Esecuzione tramite API reale Pj con Python embedded e System:
+07,08,09 PASSED in entrambi. Driver in Pj_builds/scripts07_09_20261119/check.R.
+Solo script e documentazione: non occorre compilare/installare un nuovo JMO.
+
+
+## 19 novembre 2026: script 12 arricchito
+Conservato lo scopo di mostrare formats pvalue nelle tabelle native. Aggiunti
+conteggi illustrativi e cinque test dei segni binomiali esatti a due code,
+con valori piccoli, segni bilanciati e sole parita (p mancante). Due tabelle
+e nota inglese: assunzioni, nessun aggiustamento multiplo, p numerico distinto
+dalla sua presentazione. Validati conteggi interi non negativi e casi limite.
+Verificati p noti, simmetria, formato pvalue, dataset invariato ed esecuzione
+API reale Pj con Python embedded e System: PASSED entrambi. Nessun nuovo JMO.
+Driver locale Pj_builds/script12_20261119/check.R; test visivo da confermare.
+
+
+## 19 novembre 2026: script 15 arricchito
+Mantenuto lo scopo di annotazione tabelle native: due gruppi per tre visite,
+intestazioni raggruppate, etichette unite, tre note di cella, simboli derivati
+dai p illustrativi. Aggiunti mancanti rispetto al baseline, SE e differenze
+tra medie available-case (esplicitamente non cambiamenti appaiati). Tutti i
+valori sorgente e p sono dichiarati inventati, nessun test stimato. Commenti
+e spiegazioni inglesi. Verificati derivati, coordinate note e simboli; API
+reale Pj con Python embedded e System: PASSED. Nessun JMO da ricompilare.
+Driver locale Pj_builds/script15_20261119/check.R; riprova visiva da confermare.
+
+
+## 19 novembre 2026: script 17 arricchito
+Esempio colori HTML trasformato in dashboard didattico di sei team con conteggi
+inventati: tabella sorgente nativa, percentuali calcolate, residui, stati testuali,
+soglie configurabili, stili colonna/riga/cella e zebratura. Denominatore zero
+produce percentuale mancante; conteggi invalidi generano errore esplicito.
+Nessuna dipendenza opzionale o modifica al dataset. Verificati calcoli e stati,
+API reale embedded/System PASSED; Chromium conferma sei righe e colori verde,
+ambra, rosso e grigio. Artefatti in Pj_builds/script17_20261119. Nessun nuovo JMO.
+
+
+## 19 novembre 2026: script 24 senza file OMV non distribuito
+Rimosso riferimento obbligatorio a Pj_Pandas_Matplotlib.omv e filtro variabili
+in prima riga che impediva l'esempio autonomo. Default USE_CURRENT_DATA=False:
+32 partecipanti sintetici, seed locale 2401, mancanti dichiarati, 29 coppie
+complete. Modalita True copia solo le colonne richieste dal dataset corrente;
+Pjp richiede la loro selezione. Restano richiesti System Python, pandas e
+Matplotlib installati; nessuna installazione automatica. Introduzione e conteggio
+righe ora riflettono la sorgente scelta. Verificati entrambi i percorsi: due
+tabelle e due Image native PNG, conteggi corretti, input invariato. API reale
+System Python PASSED; driver Pj_builds/script24_20261119/check.R. Nessun nuovo JMO.
+
+
+## 19 novembre 2026: distinzione Data Library e input degli script
+Correzione esplicita del manutentore: Pj/data contiene esempi Data Library gia
+installati in jamovi; non considerarli automaticamente i file OMV richiamati
+nelle istruzioni degli script standalone. Compatibilita di nomi delle colonne
+o esecuzione riuscita non dimostra identita del dataset atteso. Le cinque copie
+a soli dati e CSV appena aggiunte in pjscript/data sono state rimosse insieme
+ai nuovi riferimenti, senza modificare Pj/data o i riferimenti preesistenti.
+pjscript/data conserva il preesistente Pj_Meta_Lab.csv. Non ricreare copie dalla
+Data Library per risolvere un riferimento mancante: prima identificare sorgente,
+contenuto e istruzioni del singolo script. Fornitura di eventuali OMV standalone
+ancora da risolvere. Script 24 conserva la revisione autonoma gia verificata,
+senza dipendenza da file OMV; non annullati gli altri aggiornamenti richiesti.
+
+
+## 19 novembre 2026: script 23 adattato all'esempio dicotomico Data Library
+Scelta del manutentore: usare l'esempio dicotomico, adeguando i nomi delle colonne,
+e indicare nei commenti di aprire il dataset dalla Data Library PRIMA di caricare
+lo script. Verificata registrazione reale Metafora/jamovi/0000.yaml: nome
+Example_Dichotomous. Istruzioni 23: Open > Data Library > Metafora >
+Example_Dichotomous, aggiungere Pjp, selezionare study, Exp_events, Exp_nonevents,
+Ctrl_events, Ctrl_nonevents e opzionali year/D1-D5/Overall, poi Load e Run.
+Richiede Metafora installato. Mappatura ed etichette aggiornate Experimental/Control;
+nessun modello subgroup/moderatori implicito. Calcolo REML invariato. Nome file
+storico 23_bcg_reml_forest_d3.py conservato per continuita; documentato che il
+contenuto ora usa Example_Dichotomous. Nessun nuovo OMV/CSV creato o copiato.
+Verificati 24 studi, conteggi e primo RR; pooled RR 0.6669, CI [0.5946,0.7479].
+API reale Python embedded e System PASSED con il dataset dicotomico. La guida
+BCG resta per l'analisi storica Data Library e non certifica i nuovi valori.
+Riprova visiva del nuovo script ancora da confermare. Nessuna ricompilazione.
+Artefatti locali Pj_builds/script23_dichotomous_20261119/check.R.
+
+
+## 19 novembre 2026: script 24 usa lo stesso esempio Data Library del 23
+Su richiesta del manutentore, sostituita la generazione autonoma con input da
+Open > Data Library > Metafora > Example_Dichotomous. Sequenza obbligatoria nei
+commenti: aprire dataset, aggiungere Pj/Pjp, scegliere System Python, caricare
+script e Run. In Pjp selezionare study/Exp_events/Exp_nonevents/Ctrl_events/
+Ctrl_nonevents. La prima riga conserva la direttiva di selezione per Pj.
+Tabelle pandas dei rischi/RR per studio e descrittive non pesate; scatter rischi
+experimental/control e dot plot RR logaritmico ritornati come Image PNG dirette
+via Matplotlib, senza cattura browser. Nessuna meta-analisi implicita, nessun
+nuovo file dati e nessun cambiamento al dataset. Mancanti e bracci vuoti esclusi;
+rischio controllo zero rende RR mancante, RR zero escluso dal solo grafico log.
+Verificato dataset di 24 studi, primo RR, due tabelle/due Image e input invariato;
+verificati casi limite con zero eventi/mancanti/bracci vuoti. API reale System
+Python PASSED; driver Pj_builds/script24_dichotomous_20261119/check.R.
+Questa scelta sostituisce la precedente versione autonoma e USE_CURRENT_DATA.
+Nessuna ricompilazione; resta da confermare il test visivo del manutentore.
+
+
+## 19 novembre 2026: conferma definitiva input Pj Data Library e audit dopo il 24
+Il manutentore ha ricontrollato e confermato: i cinque OMV in Pj/data sono gli
+esempi corretti e sono gia forniti nella Data Library Pj. Contengono anche
+analisi, codice editor e risultati salvati. Questa conferma supera le precedenti
+indicazioni temporanee di usare Example_Dichotomous di Metafora per 23/24.
+23 ripristinato BCG (author/tpos/tneg/cpos/cneg); 24 ripristinato partecipanti
+pandas/Matplotlib (group/age/score/followup). Nessun dato generato o copiato.
+Commenti espliciti: aprire prima il titolo esatto della Data Library Pj, usare
+l'analisi Pj/Pjp gia presente e caricare nel suo editor lo script corrente per
+riprovarlo, senza duplicare l'analisi. Metafora non e richiesto da 23/24.
+Verificati 23 sui 13 studi BCG, RR pooled 0.4894 e CI [0.3441,0.6962]; 24 sui
+32 partecipanti e 27 coppie complete, due tabelle e due Image PNG. API reale:
+23 embedded/System PASSED; 24 System PASSED. Nessuna modifica al dataset.
+
+Audit di tutti gli script dopo 24: verificati titoli/file registrati in Pj e
+jmv 28.18.0 e colonne dei CSV standard. Chiariti i commenti dei dipendenti da
+Data Library Pj (25-30,50-51) e standard (31-33,36-41,54,63,65,68-69).
+Eccezioni documentate: 26 e service per 27 (entrambi forniti); 64 usa il CSV
+pjscript/data/Pj_Meta_Lab.csv incluso, NON in Data Library, OMV eventualmente
+salvato dall'utente; 68 crea Iris_snapshot.omv, original.omv/copy.omv sono solo
+placeholder commentati; 70 legge Iris_wide.omv generato e salvato con 69;
+73 legge il PNG incluso nel modulo tramite mzpjResourcePath. Nessun input
+obbligatorio mancante rilevato nell'audit. 64 eseguito sui sei MODEL con entrambi
+i Python: PASSED 12 combinazioni. Tutti gli script parsano correttamente.
+Questi controlli di input non certificano grafici/export di tutti gli script;
+il problema separato della cattura Image non e risolto da questo intervento.
+Guida pubblica docs/mzPj_example_inputs.md; evidenze Pj_builds/input_audit_20261119
+e Pj_builds/scripts23_24_pj_library_20261119. Nessun JMO ricompilato.
+
+
+## 19 novembre 2026: confronto affiancato con nuova analisi Pj/Pjp
+Il manutentore preferisce conservare l'analisi salvata nell'OMV della Data Library
+e aggiungere una NUOVA analisi Pj/Pjp nello stesso documento, caricarvi lo script
+corrente e Run: doppia visualizzazione dei Results. Superata la precedente
+indicazione di riusare l'editor esistente. Non occorre una nuova finestra jamovi.
+Aggiornati commenti dei dipendenti da Data Library Pj (23-30,50-51) e guide.
+Per 51 indicato WRITE_COLUMNS=False prima di Run per un confronto limitato ai
+Results; lasciato invariato il valore predefinito e il codice statistico.
+Modifica solo istruzioni/documentazione: nessuna ricompilazione necessaria.
+
+
+## 19 novembre 2026: candidato Windows Pj 1.6.2, scrollbar e spazio toolbar
+Richieste del manutentore: sistemare scrollbar orizzontale poco visibile su righe
+lunghe (script29), applicare subito anche il precedente dimezzamento dello spazio
+prima della toolbar, compilare solo Windows e predisporre versione1.6.2.
+DESCRIPTION e jamovi/0000.yaml aggiornati insieme a1.6.2; minApp28.18 invariata.
+Badge derivato automaticamente dal transform, verificato nei due bundle compilati.
+README e bozze release1.6.2 EN/IT preparati; nessun commit/tag/pubblicazione.
+
+CSS scrollbar native Ace circoscritto a #editor: cursore contrastato, track e
+dimensione14px, nessun a-capo forzato. Chromium con scrollbar native abilitate:
+script29 trascinamento mouse muove realmente scrollLeft fino a223px (fine riga),
+contenuto identico; sorgente lungo mantiene ultima riga sopra barra; sorgente
+breve nasconde la barra superflua. Nota per futuri test: Playwright avvia Chromium
+con --hide-scrollbars per default; disabilitare quel flag via ignoreDefaultArgs
+quando si controllano le scrollbar native. Un test con scrollbar nascoste dal
+runner non prova un difetto del modulo.
+
+Spazio individuato nei sorgenti core: .silky-options-content padding-top15px,
+.top-level margin-bottom20px. Classi aggiunte solo al contenuto editor Pj/Pjp:
+Pj padding7.5px e margine10px; Pjp mantiene padding Variables e margine10px dopo
+la loro area. Fixture con CSS reale: tutti i cinque bottoni si spostano insieme,
+Pj17.5px e Pjp10px, senza variazioni agli spazi interni della toolbar.
+Non usati margin negativi o spostamenti individuali dei bottoni.
+
+Build su stage isolato Pj_builds/1.6.2_editor_preview_20261119/source_win con
+jamovi desktop ufficiale28.18: PASSED; sandbox non riceveva stdout versionejamovi,
+compilazione autorizzata fuori sandbox completata. JMO1.6.2 verificato: entrambi
+bundle contengono classi/stili/versione; hash dei cinque OMV Data Library e DLL
+Rust Windows identici ai sorgenti. Nessuna ricompilazione Rust. Test regressione
+cattura PNG passa Pj/Pjp embedded/System, con .libPaths del runtime completo
+(incluso jmv/R per png/ggplot2); GUI cattura Image ancora da ricontrollare.
+JMO disponibile in Temp/Pj_1.6.2_editor_win64.jmo, SHA256
+b696d34e716bd989a4c3a1da621d9a0b2672fa274846171a3a3d91ee5ca7e5df.
+Non installato automaticamente: nessuna chiusura/riavvio di jamovi. Prova visiva
+scrollbar/spazi/badge/popup ancora da confermare. Nessuna buildLinux/macOS.
+La richiesta toolbar precedentemente rinviata e ora implementata nel candidato;
+non resta da eseguirne la modifica, ma solo da completare la verifica visiva.
+
+
+## 19 novembre 2026: accettazione GUI editor1.6.2 e verifica cartella tests
+Manutentore: PASSED scrollbar visibile/trascinabile, distanza toolbar ridotta,
+versione e badge1.6.2. Restano da discutere/rivedere accordion prima del commit.
+Non estendere questi tre PASSED alla cattura Image o agli export non riprovati.
+
+Richiesta di chiarimento sulla cartella tests: 40 file gia tracciati piu nuovi
+driver locali ancora non tracciati. La CI macOS richiama esplicitamente test R
+e Python tramite .github/scripts/macos/check.R e workflow macos-jmo.yml, quindi
+non si tratta solo di prove locali da rimuovere dal repository. Non presente
+configurazione testthat (nessuna dipendenza testthat in DESCRIPTION); GitHub
+Actions non richiede questo framework. Struttura futura eventuale: launcher
+/tests/testthat.R e casi R /tests/testthat/test-*.R, non launcher dentro testthat.
+La suite attuale e mista, usa stopifnot/unittest e non e ancora organizzata per
+un R CMD check convenzionale. Nuovi driver capture_roundtrip includono default
+di percorso Windows/WSL specifici: vanno resi configurabili o tenuti locali.
+JMO Windows1.6.2 ispezionato: nessun membro /tests/. Nessuna riorganizzazione,
+rimozione o modifica della CI eseguita durante questa sola verifica.
+
+
+## 19 novembre 2026: accordion condivisi Html/Svg, candidato1.6.2
+Richiesta del manutentore: tutte le funzioni compatibili devono esporre
+accordion=True, expanded=True e scelta stile. Implementato componente unico
+_pj_wrap_accordion in inst/python/mzPj_results.py, senza patch nei singoli script.
+Stili: accordion_type='line' default, +/- SVG animato, tratto prima del titolo e
+linea dopo che si allunga, titolo700 aperto/500 chiuso; 'bordered' con due bordi
+e triangolo SVG pieno verso il titolo chiuso, ruotato in basso aperto. Supporto
+Enter/Spazio, focus e reduced-motion. Toggle solo DOM: nessun setOption/Run Python.
+D3 dieci helper, Chart.js, Plotly, ShowHtml e Table render=html usano il componente.
+ShowTable accordion=None risolve False per Table nativa e True per HTML; default
+render=native invariato. Native Image/Table, incluse Image catturate, non racchiusi.
+
+Un solo titolo: item.title esplicitamente vuoto quando presente il contenitore;
+i consumer API devono rispettare il vuoto e usare il fallback solo per NULL/None.
+Per HTML personalizzato gia dotato di contenitore usare accordion=False. Rimossi
+contenitori principali manuali dagli script23,25,26/27,28,51; le sezioni interne
+esplicative/legende restano contenuto. Eliminata patch CSS/results dello script04,
+aggiunto script75 di confronto senza dataset. I file /data Data Library restano
+immutati. D3 bundle rigenerato dai sorgenti locali local-tools/mzPj_d3_sources;
+flag hideHeading evita di produrre una seconda intestazione interna.
+
+Svg nativi: main SVG marcato jmv-results-svg-selection anche in Chart.js/Plotly;
+il viewer ufficiale28.18 sceglie quella classe prima del primo svg. Essenziale
+quando il titolo contiene un SVG icona: non ridimensionare/esportare il +/- o il
+triangolo. Header ignore-html e controlli fuori dalla figura. La selezione SVG
+non trasforma il raster Chart.js/Plotly in geometria vettoriale.
+
+Verifiche:46 testPython (25D3,10Chart,4Plotly,3tipi,4accordion con sottocasi);
+32 casi browser (8 varianti contenuto x2stili x2stati iniziali), titolo unico,
+font/linea/icona, mouse/tastiera e sola figuraSVG; altri6 casi di figure complete
+inizialmente chiuse, PNG interno decodificato per Chart/Plotly. API reale nuova
+build embedded/System, script04/75, API1/Output/errori/timeout e regressione
+Image Pj/Pjp nei due Python PASSED. Script23/25/27/28/51 nei due Python e relativi
+5 grafici nel browser PASSED senza contenitore esterno duplicato/erroriJS.
+Il driver API isola LOCALAPPDATA in workspace per non scrivere nella cache utente
+fuori sandbox; non e un cambiamento del modulo. TestCI macOS predisposto per
+il nuovo unittest portabile; nessuna Action avviata e nessuna buildMac/Linux.
+
+JMO Windows1.6.2 compilato con jamovi ufficiale28.18 in stage isolato:
+Temp/Pj_1.6.2_accordions_win64.jmo; SHA256
+4e2dac9d378869025f122102104af7406a785051ef37fff87a4d4979856c8953.
+Verificato contenuto: codice uguale ai sorgenti,5OMV Data Library e DLLRust
+invariati, tests assente, preservati editor spacing/scrollbar/badge gia PASSED.
+Nessuna installazione automatica o commit/tag/release. GUI/exportOffice/LaTeX
+ancora da confermare, non certificati dalla sola serializzazione browser.
+Evidenze Pj_builds/accordions_20261119, VERIFICATION.json e log. GuideEN/IT
+mzPj_accordions.md/_it.md, riferimenti funzioni e bozze release aggiornati.
+
+
+## 19 novembre 2026: revisione movimento accordion dopo feedback GUI
+Il manutentore approva la resa generale degli accordion, ma segnala indicatori
+che sembrano simboli statici e richiama le animazioni apprezzabili di Variables
+Pjp e Info & Notes Metafora. Confrontati i sorgenti reali: entrambi usano due
+line SVG (orizzontale4,8->12,8, verticale8,4->8,12), vertical ruota90gradi e sfuma
+in0.3s. Il nuovo line usa esattamente quella geometria, dimensione12px e origine
+centrale; nessun carattere + o - viene sostituito. Per bordered adottato il
+chevron SVG sottile di Metafora (polyline6,4 10,8 6,12,10px), singolo elemento
+che ruota90gradi, sostituendo il triangolo pieno precedente.
+
+I vecchi test verificavano prevalentemente gli stati finali e non dimostravano
+la percepibilita del movimento. Nuova prova requestAnimationFrame in entrambe
+le direzioni: almeno5 trasformazioni intermedie distinte e opacita intermedia
+per line; identita del nodoSVG mantenuta. Passa per entrambi gli stili con media
+no-preference e reduce. La vecchia regola @media pref-reduced-motion azzerava
+transition; tolta per questo componente su richiesta di allineamento a Pjp,
+che non la usa. Non modificata alcuna impostazione Windows. Non misurata la
+preferenza del frame Qt dell'utente, quindi non attribuire con certezza a essa
+la causa della segnalazione. Registro Windows MinAnimate0 letto solo come
+contesto, non come prova del comportamento Qt.
+
+Compatibilita con Results salvati: vecchi style globali potevano contenere
+transition:none!important. Le nuove animazioni hanno precedenza circoscritta
+al contenitore marcato data-mzpj-motion=svg; non cambiano altre animazioni del
+modulo/core. Verifica aggiuntiva con vecchio CSS caricato insieme: fotogrammi
+intermedi mantengono movimento. Classe di selezione del grafico invariata;
+Image/Table nativi e parte statistica invariati. Guide EN/IT e script75 aggiornati.
+
+Nuovo candidato Windows1.6.2: Temp/Pj_1.6.2_accordion_motion_win64.jmo.
+Build e4unit test del contratto accordion PASSED; controlli di integrita su
+codice runtime,5OMV Data Library, DLLRust invariata e assenza tests nel JMO PASSED.
+Evidenze e fotogrammiJSON in Pj_builds/accordion_motion_20261119. Nessuna
+installazione automatica, commit o pubblicazione. Il manutentore deve installare
+questo candidato, riavviare jamovi e rieseguire75 per la conferma GUI del movimento.
+
+
+### 2026-11-19 — Accordion closed layout correction (source only)
+Native Svg results inherit jamovi's `.jmv-results-item { width: max-content }`; hiding the figure can therefore shrink the entire result to its header. Shared accordion hosts now use the standard Html result width (500 CSS px, capped by available space), consistently for Svg and Html. Header labels stay on one line; very narrow headers scroll rather than wrap or truncate the title. Chart native renderers must not override the shared accordion host width; the selected figure retains its independent dimensions. Browser checks with the actual resultsview CSS cover open/closed/open transitions at 900, 500 and 360 px, comparing Svg and Html. SVG animations remain unchanged. 47 Python tests passed. No JMO compiled or installed: user will compile and perform jamovi visual verification. Evidence: Pj_builds/accordion_layout_20261119.
+
+
+### 2026-11-19 — Native Svg: rimozione accordion e zoom Html
+Decisione utente successiva alla verifica del layout: gli accordion sono riservati a Html. Svg nativo viene emesso direttamente con titolo jamovi e selettore della figura, senza wrapper, regole di larghezza dell'accordion o zoom Html. Il renderer D3 non osserva più il viewport nativo per riscrivere width/height; Chart non forza più la larghezza dell'host; il contenitore statico Plotly non impone una larghezza fissa. Argomenti accordion accettati per compatibilità, senza effetto sul contenitore Svg. Script 04 e 75 e manuali aggiornati. Browser con CSS reale jamovi: riduzione a 620x410 e ampliamento a 1000x660 mantenuti dopo eventi resize; Html conserva accordion e zoom. Nessuna compilazione JMO/installazione: compila l'utente. Questa decisione supera le precedenti note sugli accordion Svg. Evidenze locali: Pj_builds/native_svg_no_accordion_20261119.
+
+
+### 2026-11-19 — Accettazione Windows e confronto popup prima del commit 1.6.2
+L'autore conferma script75 PASSED e fornisce Pj/Pj_1.6.2_win64.jmo compilato. Confronto Git con v1.6.1: le sole variazioni CSS dell'editor sono riduzione dello spazio sopra la toolbar e scrollbar Ace; larghezza popup (280 CSS px), padding interno e gap invariati. Le schermate Ubuntu/Windows hanno scala grafica differente: non dedurre una modifica CSS dai pixel fisici. Nessuna modifica al popup richiesta/effettuata. Prossimo controllo dell'autore: git pull e compilazione su Ubuntu26.04 dualboot, script75, restituzione JMO Linux; releases quattro SO rinviate alla conferma. JMO Windows locale non aggiunto a Git.
+
+
+### 2026-11-19 — Popup uniforme tra Windows e Ubuntu (prima della firma)
+Su richiesta dell'autore, alla verifica precedente segue una piccola correzione condivisa: font Arial/Liberation Sans per metriche compatibili, titolo External OMV files su una riga, min-width dei pulsanti OMV azzerato, gap della riga interprete ridotti a6/7px per rientrare nella larghezza interna senza invadere il padding. Larghezza esterna280CSSpx e padding invariati. Test Chromium con i due fallback: titolo su una riga; verifica nativa Ubuntu demandata al prossimo test dualboot dell'autore. Il JMO Windows già fornito precede questa sola correzione CSS: per la release occorre ricompilare dal commit finale.
+
+
+CI PR19: test timeout runner reso deterministico con clock simulato. Il test imponeva100ms anche alla serializzazione e su macOS System Python il processo mock non partiva prima della scadenza; starts==1 falliva correttamente per lentezza della macchina. Il test ora simula150ms consumati dal primo processo e richiede lo stesso errore timeout prima del secondo. Nessuna modifica del runner o dei timeout reali.

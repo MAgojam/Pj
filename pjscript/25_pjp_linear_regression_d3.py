@@ -1,4 +1,8 @@
-# Run in Pjp. Select only final_score, study_hours and baseline for the model.
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# First open Data Library > Pj > Linear regression - linked D3 diagnostics; then load this script.
+# Add a NEW Pjp editor. Select only final_score, study_hours and baseline for the model.
 # participant_id is optional: it labels points and is never a statistical predictor.
 # Both Python interpreters are supported; NumPy, SciPy and bundled D3 are required.
 # All comments and results are editable teaching material; observations come from data.
@@ -114,13 +118,13 @@ html = d3_script + r'''
 .mzpj-ols circle.point{cursor:pointer;outline:none}
 .mzpj-ols circle.point:focus{stroke:#1e293b;stroke-width:3}
 </style>
-<details class="mzpj-ols" id="__ROOT__" open><summary>Regression explorer — linked diagnostics</summary>
+<div class="mzpj-ols" id="__ROOT__">
 <div class="tools"><label>Residual scale <select class="mode"><option value="residual">Raw residuals</option><option value="standardized">Internally standardized</option></select></label>
 <label><input class="references" type="checkbox" checked> Reference lines</label><button type="button">Clear selection</button></div>
 <div class="viewport" tabindex="0" aria-label="Scrollable regression diagnostics"></div>
 <div class="inspect" role="status" aria-live="polite">Hover or focus a point for details. Click or press Enter to pin it in both panels.</div>
 <p class="note">Each point is one complete case. Left: observed versus fitted values, with the identity line. Right: residuals versus fitted values, with zero and (when standardized) ±2 guides. Guides are visual aids, not automatic outlier tests. Selection does not refit the model.</p>
-</details><script>
+</div><script>
 (() => {
 const root=document.getElementById('__ROOT__'), payload=__PAYLOAD__, rows=payload.points;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches, duration=reduced?0:240;
