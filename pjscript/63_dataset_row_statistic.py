@@ -1,4 +1,5 @@
 # Open Data Library -> Anderson's Iris Data. Works with either Python.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # Pjp: select the four numeric variables below; leave Species unselected.
 # Pj: the full input dataset is available; COLUMNS chooses the variables to use.
 # Descriptive row summaries only: these measurements do not form a validated scale.

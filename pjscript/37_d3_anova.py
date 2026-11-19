@@ -1,4 +1,5 @@
 # Open Data Library > Anderson's Iris Data. In Pjp select Species and Sepal.Length.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # Independent-group, one-way ANOVA of sepal length across the three species.
 # Requires SciPy in either interpreter; pandas/matplotlib are not required.
 import math

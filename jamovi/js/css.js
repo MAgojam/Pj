@@ -1,5 +1,14 @@
 
 const css = `
+/* Il core riserva 15px sopra il contenuto e 20px dopo .top-level.
+   Dimezza il vuoto prima della toolbar; Pjp mantiene il padding dei Variables. */
+.silky-options-content.mzpj-plain-editor {
+    padding-top: 7.5px;
+}
+.silky-options-content.mzpj-editor-content > .top-level {
+    margin-bottom: 10px;
+}
+
 #editor-box {
     margin-bottom: 6px ;
     flex-grow: 1 ;
@@ -15,6 +24,30 @@ const css = `
     flex-grow: 1 ;
     min-height: 0 ;
     transition: border-color 0.2s ease, box-shadow 0.2s ease ;
+}
+
+/* Ace usa scrollbar native: con quelle sovrapposte il cursore puo restare invisibile.
+   Stile circoscritto all'editor, senza alterare scrollbar dei Results o popup. */
+#editor .ace_scrollbar::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+    background: #eef2f7;
+}
+#editor .ace_scrollbar::-webkit-scrollbar-thumb {
+    background: #8299b8;
+    border: 3px solid #eef2f7;
+    border-radius: 8px;
+    min-width: 24px;
+    min-height: 24px;
+}
+#editor .ace_scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #3e6da9;
+}
+#editor .ace_scrollbar::-webkit-scrollbar-track {
+    background: #eef2f7;
+}
+#editor .ace_scrollbar::-webkit-scrollbar-corner {
+    background: #eef2f7;
 }
 
 #editor:focus-within {
@@ -166,6 +199,7 @@ const css = `
     top: calc(100% + 10px) ;
     right: 0px ;
     width: 280px ;
+    font-family: Arial, "Liberation Sans", sans-serif ;
     max-width: calc(100vw - 24px) ;
     max-height: calc(100vh - 24px) ;
     overflow-y: auto ;
@@ -195,7 +229,7 @@ const css = `
 
 /* File OMV separati dagli script; il contenuto va a capo senza allargare il popup. */
 #omv-files { grid-column: 1 / -1; grid-row: 5; border-top: 1px solid #dbe5f1; padding-top: 10px; min-width: 0; cursor: default; }
-.mzpj-omv-title { color: #3e6da9; font-weight: 600; font-size: 12px; margin: 0; }
+.mzpj-omv-title { white-space: nowrap; flex-shrink: 0; color: #3e6da9; font-weight: 600; font-size: 12px; margin: 0; }
 .mzpj-omv-header { display:flex; align-items:center; justify-content:space-between; gap:6px; }
 .mzpj-omv-buttons { display:flex; align-items:center; gap:6px; flex-shrink:0; }
 .mzpj-omv-input { display: flex; align-items: center; min-width: 0; margin: 0; }
@@ -203,7 +237,7 @@ const css = `
 #omv-files .jmv-file-selector { min-width: 0; flex: 1; flex-wrap: wrap; }
 #omv-files .jmv-file-selector-list { display: none; }
 #omv-files .jmv-file-selector-item { max-width: 100%; }
-#omv-files button { border: 1px solid #b6cce8; background: #f6f9fd; color: #3e6da9; border-radius: 4px; padding: 5px 8px; font-family: inherit; font-size: 12px; cursor: pointer; }
+#omv-files button { min-width: 0; border: 1px solid #b6cce8; background: #f6f9fd; color: #3e6da9; border-radius: 4px; padding: 5px 8px; font-family: inherit; font-size: 12px; cursor: pointer; }
 #omv-files button:hover { background: #eaf1fa; }
 #omv-files button:focus-visible { outline: 2px solid #3e6da9; outline-offset: 2px; }
 #omv-files button:disabled { opacity:.45; cursor:default; }
@@ -257,9 +291,9 @@ const css = `
 }
 
 /* Radio nativi: scelta esplicita, nessuna dipendenza da widget esterni. */
-#python-setting { gap: 9px ; }
+#python-setting { gap: 6px ; }
 #python-label { flex: 0 0 auto ; font-size: 12px ; }
-#python-interpreter { display: flex ; align-items: center ; gap: 10px ; min-width: 0 ; }
+#python-interpreter { display: flex ; align-items: center ; gap: 7px ; min-width: 0 ; }
 .mzpj-python-choice { position: relative ; display: inline-flex ; align-items: center ; gap: 4px ;
     white-space: nowrap ; font-size: 12px ; cursor: pointer ; }
 .mzpj-python-choice input { margin: 0 ; width: 13px ; height: 13px ; accent-color: #3e6da9 ; cursor: pointer ; }

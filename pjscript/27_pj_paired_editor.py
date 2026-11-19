@@ -1,4 +1,9 @@
 # (participant_id, group, before, after)
+# The library OMV already restores its original analyses, code and Results.
+# Keep them for comparison: add a NEW Pj/Pjp analysis in the SAME open document,
+# then load this script into the new editor and Run. Both sets of Results remain visible.
+# First open Data Library > Pj > Paired measurements - interactive D3 explorer.
+# Add a NEW Pj editor, then load service 26 via Service... and this script via Scripts > Load.
 # Load 26_pj_paired_service.py with Service... first.
 # This short editor script calls the reusable services; edit settings and results here.
 # Both Python interpreters work when SciPy is available; no pandas or matplotlib.

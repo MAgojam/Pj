@@ -1,5 +1,5 @@
 # Run in Pj or Pjp with either Python. No dataset or extra libraries required.
-# Requires the Pj output-size protection preview (not the earlier installed build).
+# Pj 1.6.1 includes this output-size protection in both editors.
 # True deliberately creates more than 4 MiB across two HTML results.
 # Expected: one compact "Python output size limit" information panel, no freeze.
 # Change to False and run again to verify normal results recover immediately.

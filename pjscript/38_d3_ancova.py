@@ -1,4 +1,5 @@
 # Open Data Library > Anderson's Iris Data.
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # In Pjp select Species, Sepal.Width and Sepal.Length.
 # ANCOVA: Sepal.Length ~ Species + Sepal.Width, with a common linear slope.
 # This observational comparison is not a treatment or longitudinal analysis.

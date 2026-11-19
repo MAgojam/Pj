@@ -28,10 +28,11 @@ def _pj_chart_json(value, path='configuration'):
 
 def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
                    options=None, width=None, height=None, accordion=True, expanded=True,
-                   static=False, floating_legend=None, result_type=None):
+                   static=False, floating_legend=None, result_type=None, accordion_type='line'):
     """Chart.js: result_type selects html, svg or image; legacy static calls remain valid."""
     import html
     import uuid
+    _pj_accordion_options(accordion, expanded, accordion_type)
     mode = _pj_graphic_mode(result_type, static)
     static = mode != 'html'
     from numbers import Integral, Real
@@ -126,14 +127,11 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
     root_id = 'mzpj_chartjs_' + uuid.uuid4().hex
     heading = html.escape(str(title) if title is not None else 'Chart.js plot')
     if static:
-        _pj_chart_static(payload, name, heading, root_id, dimensions, mode)
+        _pj_chart_static(payload, name, heading, root_id, dimensions, mode,
+                         accordion=accordion, expanded=expanded, accordion_type=accordion_type)
         return
     style = '''<style>
 .mzpj-chartjs{font-family:Arial,sans-serif;color:#34445b;margin:12px 0;max-width:100%}
-.mzpj-chartjs summary{cursor:pointer;list-style:none;color:#3e6da9;font-weight:600;padding:11px 2px;border-top:1px solid #d7e3f3;border-bottom:1px solid #d7e3f3}
-.mzpj-chartjs summary::-webkit-details-marker{display:none}
-.mzpj-chartjs summary::before{content:'+';display:inline-block;width:22px;font-size:18px}
-.mzpj-chartjs details[open]>summary::before{content:'−'}
 .mzpj-chartjs .mzpj-cj-body{padding:12px 0 4px}
 .mzpj-chartjs .mzpj-cj-surface{position:relative;max-width:100%;background-size:100% 100%;background-repeat:no-repeat;background-color:white}
 .mzpj-chartjs .mzpj-cj-note{font-size:12px;color:#657b9b;margin:8px 0;line-height:1.5}
@@ -152,7 +150,7 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
 .mzpj-chartjs .mzpj-cj-float-item[aria-pressed=false]{opacity:.55}
 .mzpj-chartjs .mzpj-cj-float-item[aria-pressed=false] strong{text-decoration:line-through}
 .mzpj-chartjs .mzpj-cj-float-description{display:block;font-size:11px;line-height:1.4;margin-top:2px;font-weight:400}
-@media print{.mzpj-chartjs canvas{visibility:visible!important}.mzpj-chartjs summary::before{content:''}
+@media print{.mzpj-chartjs canvas{visibility:visible!important}
 .mzpj-chartjs .mzpj-cj-note,.mzpj-chartjs .mzpj-cj-float{display:none!important}.mzpj-chartjs .mzpj-cj-surface{background-image:none!important;break-inside:avoid}}
 </style>'''
     surface = (f'<div class="mzpj-cj-body"><div class="mzpj-cj-surface" '
@@ -162,8 +160,7 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
                'Interactions affect this view only; run Python again to recalculate results.</p>'
                '<p class="mzpj-cj-error" hidden></p></div>')
     content = (f'<div id="{root_id}" class="mzpj-chartjs">' +
-               (f'<details{" open" if expanded else ""}><summary>{heading}</summary>{surface}</details>'
-                if accordion else f'<div style="color:#3e6da9;font-weight:600">{heading}</div>{surface}') + '</div>')
+               (surface if accordion else f'<div style="color:#3e6da9;font-weight:600">{heading}</div>{surface}') + '</div>')
     # Il costruttore privato evita di sostituire window.Chart usato da altri moduli.
     library = ('<script>(function(){if(window.mzPjChart461)return;const previous=window.Chart;'
                'const module=undefined,exports=undefined,define=undefined;' + _pj_chart_js +
@@ -248,10 +245,13 @@ window.addEventListener('beforeprint',preparePrint);window.addEventListener('aft
 render();
 })();</script>'''
     renderer = renderer.replace('__ROOT__', root_id).replace('__PAYLOAD__', encoded)
-    _pj_add_html(style + content + library + renderer, name=name, title='')
+    _pj_add_html(style + content + library + renderer, name=name,
+                 title=html.unescape(heading) if accordion else '',
+                 accordion=accordion, expanded=expanded, accordion_type=accordion_type)
 
 
-def _pj_chart_static(payload, name, heading, root_id, dimensions, result_type='svg'):
+def _pj_chart_static(payload, name, heading, root_id, dimensions, result_type='svg', *,
+                     accordion=True, expanded=True, accordion_type='line'):
     # Svg e il contratto nativo per fotografie client: il contenuto PNG resta raster.
     encoded = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     for char, replacement in (('&', '\\u0026'), ('<', '\\u003c'), ('>', '\\u003e'),
@@ -259,7 +259,7 @@ def _pj_chart_static(payload, name, heading, root_id, dimensions, result_type='s
         encoded = encoded.replace(char, replacement)
     width, height = dimensions
     content = (f'<div id="{root_id}">'
-               f'<svg xmlns="http://www.w3.org/2000/svg" class="jmv-results-svg-content" '
+               f'<svg xmlns="http://www.w3.org/2000/svg" class="jmv-results-svg-content jmv-results-svg-selection" '
                f'width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
                'style="max-width:100%;height:auto" role="img">'
                f'<title>{heading}</title><image width="{width}" height="{height}" /></svg>'
@@ -269,7 +269,6 @@ def _pj_chart_static(payload, name, heading, root_id, dimensions, result_type='s
                '\nwindow.mzPjChart461=window.Chart;window.Chart=previous;})();</script>')
     renderer = r'''<script>(function(){
 const root=document.getElementById('__ROOT__'),config=__PAYLOAD__,svg=root.querySelector('svg');
-const host=root.closest('.jmv-results-svg');if(host){host.style.width='__WIDTH__px';host.style.maxWidth='100%';}
 const canvas=document.createElement('canvas');canvas.width=__WIDTH__;canvas.height=__HEIGHT__;
 const holder=document.createElement('div');holder.style.cssText='position:absolute;left:-100000px;top:0';
 holder.appendChild(canvas);root.appendChild(holder);let chart;
@@ -290,4 +289,6 @@ finally{const c=chart||window.mzPjChart461.getChart(canvas);if(c)c.destroy();hol
     renderer = (renderer.replace('__ROOT__', root_id).replace('__WIDTH__', str(width))
                 .replace('__HEIGHT__', str(height)).replace('__PAYLOAD__', encoded))
     result_name = _pj_result_name(name, 'chart', _html_counter)
-    _pj_emit_graphic(content + library + renderer, result_name, heading, result_type)
+    import html
+    _pj_emit_graphic(content + library + renderer, result_name, html.unescape(heading), result_type,
+                     accordion=accordion, expanded=expanded, accordion_type=accordion_type)

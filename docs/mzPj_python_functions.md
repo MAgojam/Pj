@@ -1,5 +1,9 @@
 # Pj Python function handbook
 
+> **Pj 1.6.2 in preparation:** shared Html accordions, `line` and `bordered` styles.
+> [Full guide and examples](mzPj_accordions.md). Native Image and Table are excluded.
+
+
 > **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
 > jamovi 28.18.0, inclusive. The official runtime includes the native SVG
 > document-save fix. Earlier advisories below describe the affected 28.17
@@ -141,7 +145,7 @@ Append an HTML result. Arbitrary JS figures do not automatically gain native Off
 
 
 ```python
-mzpjShowHtml(content, name=None, title=None)
+mzpjShowHtml(content, name=None, title=None, *, accordion=True, expanded=True, accordion_type='line')
 ```
 
 
@@ -183,7 +187,7 @@ Append a native Table or styled HTML table. Display options do not change source
 
 
 ```python
-mzpjShowTable(data, name=None, title=None, columns=None, formats=None, notes=None, include_index=True, column_groups=None, combine_below=None, footnotes=None, symbols=None, render='native', zebra=False, column_styles=None, row_styles=None, cell_styles=None, digits=3, transpose=False, accordion=False, expanded=True, max_height=None, sticky_header=False, max_width=None, scroll='auto')
+mzpjShowTable(data, name=None, title=None, columns=None, formats=None, notes=None, include_index=True, column_groups=None, combine_below=None, footnotes=None, symbols=None, render='native', zebra=False, column_styles=None, row_styles=None, cell_styles=None, digits=3, transpose=False, accordion=None, expanded=True, max_height=None, sticky_header=False, max_width=None, scroll='auto', accordion_type='line')
 ```
 
 
@@ -226,9 +230,11 @@ mzpjShowTable(data, name=None, title=None, columns=None, formats=None, notes=Non
 
 | `transpose` | Swap table rows and columns for presentation. Styling/annotation coordinates follow the table rules in the detailed guide. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `max_height` | HTML scroll-container limits in CSS pixels; not dataset size limits. Use with scroll and the detailed table guide. |
 
@@ -247,7 +253,7 @@ D3 scatterplot of complete numeric pairs.
 
 
 ```python
-mzpjShowScatter(dataset, x, y, group=None, labels=None, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowScatter(dataset, x, y, group=None, labels=None, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -278,9 +284,11 @@ mzpjShowScatter(dataset, x, y, group=None, labels=None, name=None, title=None, x
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -293,7 +301,7 @@ D3 histogram with explicit counts or density.
 
 
 ```python
-mzpjShowHistogram(dataset, variable, bins=10, density=False, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowHistogram(dataset, variable, bins=10, density=False, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -322,9 +330,11 @@ mzpjShowHistogram(dataset, variable, bins=10, density=False, name=None, title=No
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -337,7 +347,7 @@ D3 descriptive box plots, optionally with individual observations.
 
 
 ```python
-mzpjShowBoxPlot(dataset, variable, group=None, labels=None, show_points=False, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowBoxPlot(dataset, variable, group=None, labels=None, show_points=False, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -368,9 +378,11 @@ mzpjShowBoxPlot(dataset, variable, group=None, labels=None, show_points=False, n
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -383,7 +395,7 @@ D3 bars from categories and the requested descriptive statistic.
 
 
 ```python
-mzpjShowBar(dataset, category, value=None, stat='count', orientation='vertical', name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowBar(dataset, category, value=None, stat='count', orientation='vertical', name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -414,9 +426,11 @@ mzpjShowBar(dataset, category, value=None, stat='count', orientation='vertical',
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -429,7 +443,7 @@ D3 lines, with explicit sorting and gap policies.
 
 
 ```python
-mzpjShowLine(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=False, show_points=True, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowLine(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=False, show_points=True, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -466,9 +480,11 @@ mzpjShowLine(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -481,7 +497,7 @@ D3 display of estimates and already calculated intervals.
 
 
 ```python
-mzpjShowIntervals(dataset, estimate, lower, upper, labels=None, reference=None, interval_label='Interval', name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowIntervals(dataset, estimate, lower, upper, labels=None, reference=None, interval_label='Interval', name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -516,9 +532,11 @@ mzpjShowIntervals(dataset, estimate, lower, upper, labels=None, reference=None, 
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -531,7 +549,7 @@ Normal population/sampling-mean teaching explorer; no sample is generated.
 
 
 ```python
-mzpjShowDistribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=True, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowDistribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=True, name=None, title=None, x_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -562,9 +580,11 @@ mzpjShowDistribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=True, n
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -577,7 +597,7 @@ Descriptive Pearson/Spearman correlation explorer.
 
 
 ```python
-mzpjShowCorrelation(dataset, columns, labels=None, missing='pairwise', method='pearson', name=None, title=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowCorrelation(dataset, columns, labels=None, missing='pairwise', method='pearson', name=None, title=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -604,9 +624,11 @@ mzpjShowCorrelation(dataset, columns, labels=None, missing='pairwise', method='p
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -619,7 +641,7 @@ Paired-measurement explorer using complete pairs.
 
 
 ```python
-mzpjShowPaired(dataset, first, second, group=None, labels=None, name=None, title=None, first_label=None, second_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowPaired(dataset, first, second, group=None, labels=None, name=None, title=None, first_label=None, second_label=None, y_label=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -652,9 +674,11 @@ mzpjShowPaired(dataset, first, second, group=None, labels=None, name=None, title
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -667,7 +691,7 @@ Theoretical t/chi-square/F tail-probability explorer, not an automatic fitted te
 
 
 ```python
-mzpjShowTestDistribution(distribution='t', df=10, df2=20, statistic=2, tail='right', alpha=0.05, name=None, title=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html')
+mzpjShowTestDistribution(distribution='t', df=10, df2=20, statistic=2, tail='right', alpha=0.05, name=None, title=None, color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line')
 ```
 
 
@@ -696,9 +720,11 @@ mzpjShowTestDistribution(distribution='t', df=10, df2=20, statistic=2, tail='rig
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `result_type` | D3: html (default) or svg (native jamovi Svg). Svg retains supported Results interactions and supplies a static figure for document export. |
 
@@ -711,7 +737,7 @@ Chart.js renderer; chart values and statistical calculations come from your scri
 
 
 ```python
-mzpjShowChart(chart_type, datasets, *, labels=None, name=None, title=None, options=None, width=None, height=None, accordion=True, expanded=True, static=False, floating_legend=None)
+mzpjShowChart(chart_type, datasets, *, labels=None, name=None, title=None, options=None, width=None, height=None, accordion=True, expanded=True, static=False, floating_legend=None, result_type=None, accordion_type='line')
 ```
 
 
@@ -734,9 +760,11 @@ mzpjShowChart(chart_type, datasets, *, labels=None, name=None, title=None, optio
 
 | `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
 
-| `accordion` | True wraps the interactive plot/HTML table in a collapsible section. Not an option for native tables. |
+| `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
 | `expanded` | Initial accordion state: True open, False collapsed. |
+
+| `accordion_type` | `line` (default): animated SVG +/- and title rules; `bordered`: borders and rotating SVG chevron. Html only; native Svg/Image/Table excluded. |
 
 | `static` | False: interactive HTML, no native snapshot. True: one static snapshot in native Svg for document export; it does not remain interactive. |
 
@@ -751,7 +779,7 @@ Render a supplied Plotly figure interactively or as an explicit static snapshot.
 
 
 ```python
-mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None, static=False, export_width=960)
+mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None, static=False, export_width=960, result_type=None, accordion=True, expanded=True, accordion_type='line')
 ```
 
 

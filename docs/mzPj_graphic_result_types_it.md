@@ -1,5 +1,7 @@
 # Tipi di risultato grafico: Html, Svg e Image
 
+[Argomenti degli accordion condivisi](mzPj_accordions_it.md) — Pj 1.6.2.
+
 > **Pj 1.6.1 / jamovi 28.18 (18 novembre 2026).** Il minimo è ora
 > jamovi 28.18.0 inclusa. Il runtime ufficiale include la correzione del
 > salvataggio dei documenti con Svg nativo. Gli avvisi precedenti qui sotto

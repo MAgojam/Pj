@@ -1,4 +1,5 @@
 # Open Data Library > Bugs (Ryan, Wilde & Crist, 2013).
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # In Pjp select Gender, LDLF and LDHF; Subject is not required.
 # Works in either Python interpreter with SciPy installed; pandas/matplotlib are not required.
 # Independent comparison: LDHF ratings by Gender. Paired comparison: LDHF minus LDLF.

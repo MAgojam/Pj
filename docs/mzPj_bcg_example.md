@@ -1,6 +1,9 @@
 # BCG vaccine: REML tables and a D3 forest plot
 
 Standalone script: [23_bcg_reml_forest_d3.py](../pjscript/23_bcg_reml_forest_d3.py).
+First open **Data Library > Pj > BCG vaccine - REML and D3 forest plot**, then
+add a new Pjp analysis in the same document and load the current standalone script.
+Keep the saved example analysis for comparison. No Metafora dataset is required.
 Dataset: [Pj_BCG_vaccine.omv](../data/Pj_BCG_vaccine.omv).
 
 The example's comments are in English because users can read and edit this code
@@ -13,7 +16,10 @@ Pj's implementation sources.
 2. Select **BCG vaccine - REML and D3 forest plot**.
 3. Enable code execution when jamovi asks. The OMV already contains a Pjp
    analysis, selected variables and the editable script in its editor.
-4. Run with **jamovi Python** or **System Python**. No service script is needed.
+4. Keep that saved analysis unchanged. Add a **new Pjp analysis**, select the inputs
+   below, and load script 23 into the new editor with **Scripts > Load**.
+5. Run with **jamovi Python** or **System Python**. Both analyses remain visible
+   for comparison. No service script is needed.
 
 The required inputs are `author`, `tpos`, `tneg`, `cpos`, `cneg`. `year` adds
 study dates; `D1`–`D5` and `Overall` supply risk-of-bias judgments. Selecting

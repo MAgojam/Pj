@@ -5,12 +5,16 @@ def _pj_add_table(data, name=None, title=None, columns=None, formats=None,
                   combine_below=None, footnotes=None, symbols=None,
                   render='native', zebra=False, column_styles=None,
                   row_styles=None, cell_styles=None, digits=3, transpose=False,
-                  accordion=False, expanded=True, max_height=None, sticky_header=False,
-                  max_width=None, scroll='auto'):
+                  accordion=None, expanded=True, max_height=None, sticky_header=False,
+                  max_width=None, scroll='auto', accordion_type='line'):
     """Converte dati tabellari in risultati nativi o HTML, senza dipendenze obbligatorie."""
     from collections.abc import Mapping
     import re
     from numbers import Integral
+
+    if accordion is None:
+        accordion = render == 'html'
+    _pj_accordion_options(accordion, expanded, accordion_type)
 
     if not isinstance(transpose, bool):
         raise TypeError('mzpjShowTable(): transpose must be True or False.')
@@ -181,9 +185,12 @@ def _pj_add_table(data, name=None, title=None, columns=None, formats=None,
             'columns': definitions, 'rows': rows, 'notes': notes,
             'footnotes': cell_footnotes, 'symbols': cell_symbols, 'transpose': transpose}
     if render == 'html':
-        item = {'type': 'Html', 'name': name, 'title': item['title'], '_pjTable': True,
-                'content': _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
-                                          accordion, expanded, max_height, sticky_header, max_width, scroll)}
+        heading = item['title']
+        content = _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
+                                 max_height, sticky_header, max_width, scroll,
+                                 external_heading=accordion)
+        item = {'type': 'Html', 'name': name, 'title': '', '_pjTable': True,
+                'content': _pj_wrap_accordion(content, heading, accordion, expanded, accordion_type)}
     # Un nome esplicito aggiorna la stessa tabella senza duplicare il risultato.
     for i, existing in enumerate(results['items']):
         if existing.get('name') == name:
@@ -194,8 +201,8 @@ def _pj_add_table(data, name=None, title=None, columns=None, formats=None,
     results['items'].append(item)
 
 def _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
-                   accordion=False, expanded=True, max_height=None, sticky_header=False,
-                   max_width=None, scroll='auto'):
+                   max_height=None, sticky_header=False,
+                   max_width=None, scroll='auto', external_heading=False):
     """Rende i dati gia' normalizzati; gli stili restano confinati alla tabella."""
     from collections.abc import Mapping
     from numbers import Integral
@@ -329,7 +336,7 @@ def _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
         body = [[header(escape(columns[col]['title']))] + [row[col] for row in original]
                 for col in range(1, len(columns))]
 
-    layout = accordion or max_height is not None or max_width is not None or scroll != 'auto'
+    layout = external_heading or max_height is not None or max_width is not None or scroll != 'auto'
     horizontal = scroll in ('auto', 'both', 'horizontal')
 
     def cell_html(cell, tag, stripe_color=None):
@@ -352,28 +359,10 @@ def _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
         # Selettori confinati al contenitore Pj; nessuno script o stile del core.
         parts.append('''<style>
 .mzpj-table-layout { margin-bottom:12px; }
-.mzpj-table-layout .mzpj-table-accordion > summary { display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;color:#3e6da9;padding:5px 0;font-weight:500; }
-.mzpj-table-layout .mzpj-table-accordion > summary::-webkit-details-marker { display:none; }
-.mzpj-table-layout .mzpj-table-accordion > summary:focus-visible { outline:2px solid #3e6da9;outline-offset:3px;border-radius:2px; }
-.mzpj-table-layout .mzpj-table-icon { display:flex;flex-shrink:0;padding-right:7px;border-right:1px solid rgba(62,109,169,.35); }
-.mzpj-table-layout .mzpj-table-icon svg { width:16px;height:16px; }
-.mzpj-table-layout .mzpj-table-icon-v { transform-origin:8px 8px;transition:opacity .15s ease,transform .15s ease; }
-.mzpj-table-layout .mzpj-table-accordion[open] > summary .mzpj-table-icon-v { opacity:0;transform:rotate(90deg); }
-.mzpj-table-layout .mzpj-table-title { display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow-wrap:anywhere; }
-.mzpj-table-layout .mzpj-table-title::before,.mzpj-table-layout .mzpj-table-title::after { content:'';height:1px;background:rgba(62,109,169,.35);flex:0 0 24px; }
-.mzpj-table-layout .mzpj-table-accordion[open] > summary { font-weight:600; }
-.mzpj-table-layout .mzpj-table-accordion[open] > summary .mzpj-table-title::after { flex:1 0 24px; }
-.mzpj-table-layout .mzpj-table-body { padding-top:9px; }
 .mzpj-table-layout .mzpj-table-viewport { scrollbar-gutter:stable; }
 .mzpj-table-layout .mzpj-table-viewport th,.mzpj-table-layout .mzpj-table-viewport td { white-space:nowrap; }
 .mzpj-table-layout .mzpj-table-viewport[data-wrap] th,.mzpj-table-layout .mzpj-table-viewport[data-wrap] td { white-space:normal;overflow-wrap:anywhere; }
-@media (prefers-reduced-motion:reduce) { .mzpj-table-layout .mzpj-table-icon-v { transition:none; } }
 </style>''')
-    if accordion:
-        parts.append('<details class="mzpj-table-accordion"' + (' open' if expanded else '') + '><summary>'
-                     '<span class="mzpj-table-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">'
-                     '<line x1="4" y1="8" x2="12" y2="8"/><line class="mzpj-table-icon-v" x1="8" y1="4" x2="8" y2="12"/>'
-                     '</svg></span><span class="mzpj-table-title">' + escape(item['title']) + '</span></summary><div class="mzpj-table-body">')
     viewport = 'max-width:100%;overflow-x:auto'
     if layout:
         # clip non attiva uno scroll container sull'asse disabilitato.
@@ -391,8 +380,8 @@ def _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
     if layout and not horizontal:
         table_style += ';table-layout:fixed'
     parts.append('<table style="' + table_style + ';width:100%;font:inherit;color:inherit"' +
-                 (' aria-label="' + escape(item['title'], quote=True) + '"' if accordion else '') + '>')
-    if not accordion:
+                 (' aria-label="' + escape(item['title'], quote=True) + '"' if external_heading else '') + '>')
+    if not external_heading:
         parts.append('<caption style="text-align:left;font-weight:600;padding:0 0 9px;color:#3e6da9">' + escape(item['title']) + '</caption>')
     # L'intero thead resta fisso: anche le intestazioni su due righe dei gruppi.
     parts.append('<thead' + (' style="position:sticky;top:0;z-index:1;background:#fff"' if sticky_header else '') + '>')
@@ -419,8 +408,6 @@ def _pj_table_html(item, zebra, column_styles, row_styles, cell_styles, digits,
         for note in footnotes:
             parts.append('<div style="margin-top:3px"><sup>' + footnote_marks[note] + '</sup> ' + escape(note) + '</div>')
         parts.append('</div>')
-    if accordion:
-        parts.append('</div></details>')
     parts.append('</div>')
     return ''.join(parts)
 

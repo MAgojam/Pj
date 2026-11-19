@@ -1,4 +1,7 @@
-# Open pjscript/data/Pj_Meta_Lab.csv, or its saved OMV copy. Works with either Python.
+# First open the supplied pjscript/data/Pj_Meta_Lab.csv using jamovi Open > This PC.
+# This CSV is included with these scripts; it is NOT a Data Library entry.
+# Then add Pj/Pjp, select the required variables and load this script. Either Python works.
+# You may Save As OMV after importing the CSV; no pre-existing OMV is required.
 # Pj: data contains the input dataset; the mapping below chooses the columns.
 # Pjp: select study and the required columns for MODEL (see the mapping below).
 # The six groups of teaching summaries are separate examples, not one joint analysis.
@@ -20,7 +23,8 @@ measure, columns, scale = models[MODEL]
 required = ['study'] + list(columns.values())
 missing = [name for name in required if name not in data]
 if missing:
-    raise ValueError('Open Pj_Meta_Lab.csv (or its saved OMV) and, in Pjp, select: ' + ', '.join(required))
+    raise ValueError('First open the supplied pjscript/data/Pj_Meta_Lab.csv via Open > This PC; '
+                     'then, in Pjp, select: ' + ', '.join(required))
 
 # One independent effect per study; no pooled model or tau-squared is estimated here.
 effect = mzpjEffectSize(measure, **{key:data[name] for key,name in columns.items()})

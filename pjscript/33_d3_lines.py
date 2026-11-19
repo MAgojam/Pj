@@ -1,4 +1,5 @@
 # Open Data Library > Bugs (Ryan, Wilde & Crist, 2013).
+# Open the Data Library dataset first; then select the stated variables in Pjp and load this script.
 # In Pjp select Gender, LDLF and LDHF.
 # This teaching example calculates group means on complete pairs using the standard library.
 # Both Python interpreters work without additional packages.

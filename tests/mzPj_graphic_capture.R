@@ -1,4 +1,4 @@
-# Windows engine lifecycle; run against the compiled candidate.
+# Engine lifecycle on Windows/Linux; run against the compiled candidate.
 library(Pj);jmvcore:::initProtoBuf()
 optionPB <- function(value) {
     out <- RProtoBuf::new(RProtoBuf::P('jamovi.coms.AnalysisOption'))
@@ -53,7 +53,13 @@ for(prefix in c('Pj','Pjp')) for(mode in c('bundled','external')) {
  external<-a$results$get('omvExport')$state
  output<-a$results$get('createdColumns')$asProtoBuf(incAsText=TRUE,status=3L)$outputs
  stopifnot(length(output$outputs)==1L,identical(c(as.numeric(output$outputs[[1]]$d),as.numeric(output$outputs[[1]]$i)),c(2,4)))
- b<-make(z$options$asProtoBuf(),text)
+ # Real engine replies may synchronize Output bookkeeping with the PNG callback.
+ synced <- z$options$asProtoBuf()
+ i <- match('createdColumns',synced$names)
+ synced$options[[i]] <- optionPB(list(value=TRUE,vars=list(),synced=list('"1"','"2"')))
+ i <- match('dataextInfo',synced$names)
+ synced$options[[i]] <- optionPB(list(json='{}'))
+ b<-make(synced,text)
  b$run()
  stopifnot(inherits(b$results$get('chart'),'Image'),identical(b$results$get('chart')$state,entry$content),
   identical(b$results$get('omvExport')$state,external),b$results$get('explanation')$isFilled(),

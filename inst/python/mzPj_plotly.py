@@ -1,11 +1,13 @@
 # Plotly: interactive Html, static Svg, or a native PNG Image.
 def _pj_show_plotly(figure, *, name=None, title=None, height=800, config=None,
-                    static=False, export_width=960, result_type=None):
+                    static=False, export_width=960, result_type=None,
+                    accordion=True, expanded=True, accordion_type='line'):
     """Show a Plotly Figure using result_type=html, svg or image (editor capture)."""
     import json
     import uuid
     import html
     import re
+    _pj_accordion_options(accordion, expanded, accordion_type)
     mode = _pj_graphic_mode(result_type, static)
     static = mode != 'html'
     if not isinstance(static, bool):
@@ -35,10 +37,10 @@ def _pj_show_plotly(figure, *, name=None, title=None, height=800, config=None,
     heading = html.escape(str(title or payload['layout'].get('title', {}).get('text', 'Plotly figure')))
     if static:
         # La superficie temporanea scompare dopo toImage: nessun listener persistente.
-        content = (f'<div id="{root_id}" style="width:{export_width}px;max-width:100%">'
+        content = (f'<div id="{root_id}" style="width:max-content;max-width:100%">'
                    '<p class="mzpj-plotly-status ignore-html" role="status" '
                    'style="font:12px Arial;color:#657b9b">Preparing static Plotly imageâ€¦</p>'
-                   f'<svg xmlns="http://www.w3.org/2000/svg" class="jmv-results-svg-content" '
+                   f'<svg xmlns="http://www.w3.org/2000/svg" class="jmv-results-svg-content jmv-results-svg-selection" '
                    f'width="{export_width}" height="{height}" viewBox="0 0 {export_width} {height}" '
                    'style="max-width:100%;height:auto">'
                    f'<title>{heading}</title><image width="{export_width}" height="{height}" /></svg></div>')
@@ -101,9 +103,11 @@ finally{if(temporary){if(P)P.purge(plot);plot.remove();}}
                       lambda match: substitutions[match.group(1)], renderer)
     scripts = ['extdata/plotly.min.js'] if not _pj_plotly_gzip else None
     if static:
-        _pj_emit_graphic(content, name, title or '', mode, scripts=scripts)
+        _pj_emit_graphic(content, name, html.unescape(heading), mode, scripts=scripts,
+                         accordion=accordion, expanded=expanded, accordion_type=accordion_type)
     else:
-        item = dict(type='Html', name=name, title=title or '', content=content)
+        content = _pj_wrap_accordion(content, html.unescape(heading), accordion, expanded, accordion_type)
+        item = dict(type='Html', name=name, title='' if accordion else (title or ''), content=content)
         if scripts:
             item['scripts'] = scripts
         results['items'].append(item)
