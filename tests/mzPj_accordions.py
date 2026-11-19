@@ -1,5 +1,8 @@
 """Shared accordion contract across eligible result types."""
 import unittest
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from mzPj_chart import chart_runner
 from mzPj_plotly import Figure
 
