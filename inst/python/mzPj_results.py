@@ -193,13 +193,77 @@ def _pj_figure_dimension(value, default):
         return default
     return dimension if dimension > 0 else default
 
-def _pj_add_image(png_data, name=None, title=None):
+def _pj_explicit_dimension(value, parameter):
+    if value is None:
+        return None
+    from numbers import Integral
+    if isinstance(value, bool) or not isinstance(value, Integral) or not 1 <= value <= 10000:
+        raise ValueError(f'{parameter} must be an integer between 1 and 10000 pixels.')
+    return int(value)
+
+
+def _pj_add_svg(content, name=None, title=None, *, width=None, height=None):
+    """Display standalone SVG markup as a native Svg result, without HTML controls."""
+    import xml.etree.ElementTree as ET
+    import re
+    if not isinstance(content, str):
+        raise TypeError('mzpjShowSvg(): expected SVG markup as a string.')
+    root = ET.fromstring(content)
+    if root.tag not in ('svg', '{http://www.w3.org/2000/svg}svg'):
+        raise ValueError('mzpjShowSvg(): the root element must be svg.')
+    requested_width = _pj_explicit_dimension(width, 'width')
+    requested_height = _pj_explicit_dimension(height, 'height')
+    if width is None and height is None:
+        requested_width = _pj_figure_dimension(FIGWIDTH, None)
+        requested_height = _pj_figure_dimension(FIGHEIGHT, None)
+    viewbox = re.split(r'[ ,]+', root.get('viewBox', '').strip())
+    ratio = None
+    if len(viewbox) == 4:
+        try:
+            vw, vh = float(viewbox[2]), float(viewbox[3])
+            if math.isfinite(vw) and math.isfinite(vh) and vw > 0 and vh > 0:
+                ratio = vw / vh
+        except ValueError:
+            pass
+    if ratio is None:
+        try:
+            vw = float(root.get('width', '').removesuffix('px'))
+            vh = float(root.get('height', '').removesuffix('px'))
+            if math.isfinite(vw) and math.isfinite(vh) and vw > 0 and vh > 0:
+                ratio = vw / vh
+        except ValueError:
+            pass
+    if (requested_width is None) != (requested_height is None):
+        if ratio is None:
+            raise ValueError('mzpjShowSvg(): one dimension requires a valid viewBox or numeric SVG width and height.')
+        if requested_width is None:
+            requested_width = max(1, round(requested_height * ratio))
+        else:
+            requested_height = max(1, round(requested_width / ratio))
+    if requested_width is not None:
+        root.set('width', str(requested_width))
+        root.set('height', str(requested_height))
+    root.set('class', (root.get('class', '') + ' jmv-results-svg-content jmv-results-svg-selection').strip())
+    # Explicit attributes own the initial size; old inline dimensions must not override them.
+    if requested_width is not None:
+        style = re.sub(r'(^|;)\s*(width|height)\s*:[^;]*', '', root.get('style', ''), flags=re.I)
+        root.set('style', style)
+    ET.register_namespace('', 'http://www.w3.org/2000/svg')
+    if root.tag == 'svg':
+        root.set('xmlns', 'http://www.w3.org/2000/svg')
+    name = _pj_result_name(name, 'svg', _html_counter)
+    _pj_emit_graphic(ET.tostring(root, encoding='unicode'), name, title, 'svg')
+
+
+def _pj_add_image(png_data, name=None, title=None, *, width=None, height=None):
     """Aggiunge un'immagine PNG (bytes gia' pronti) direttamente ai risultati,
     senza passare da matplotlib - utile per librerie con motore di rendering
     indipendente (plotly, plotnine, PIL, ecc.) che sanno gia' esportare in
     PNG per conto loro. Accetta bytes grezzi, un buffer io.BytesIO, o
     qualunque oggetto con .getvalue()/.read(). title e' opzionale (default
     "Plot Python" lato R se non indicato)."""
+    local_width = _pj_explicit_dimension(width, 'width')
+    local_height = _pj_explicit_dimension(height, 'height')
     if hasattr(png_data, 'getvalue'):
         png_data = png_data.getvalue()
     elif hasattr(png_data, 'read'):
@@ -237,8 +301,11 @@ def _pj_add_image(png_data, name=None, title=None):
         raise ValueError('mzpjShowImage(): invalid PNG dimensions.')
 
     # Dimensioni di visualizzazione: i bytes PNG originali restano invariati.
-    requested_width = _pj_figure_dimension(FIGWIDTH, None)
-    requested_height = _pj_figure_dimension(FIGHEIGHT, None)
+    requested_width = local_width
+    requested_height = local_height
+    if local_width is None and local_height is None:
+        requested_width = _pj_figure_dimension(FIGWIDTH, None)
+        requested_height = _pj_figure_dimension(FIGHEIGHT, None)
     if width <= 0 or height <= 0:
         width, height = 600, 500
     if requested_width is not None and requested_height is not None:

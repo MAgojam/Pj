@@ -1,6 +1,6 @@
 # Pj Python function handbook
 
-> **Pj 1.6.2 in preparation:** shared Html accordions, `line` and `bordered` styles.
+> **Pj 1.6.2:** shared Html accordions, `line` and `bordered` styles.
 > [Full guide and examples](mzPj_accordions.md). Native Image and Table are excluded.
 
 
@@ -123,7 +123,7 @@ Append a native PNG Image result.
 
 
 ```python
-mzpjShowImage(png_data, name=None, title=None)
+mzpjShowImage(png_data, name=None, title=None, *, width=None, height=None)
 ```
 
 
@@ -137,6 +137,16 @@ mzpjShowImage(png_data, name=None, title=None)
 | `title` | Visible result heading; None uses the function default. |
 
 
+
+| `width`, `height` | Optional per-result pixel dimensions. Neither uses global defaults; one preserves the PNG ratio. |
+
+### mzpjShowSvg
+
+```python
+mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)
+```
+
+Standalone SVG markup as a native Svg result. Per-result dimensions override global defaults; one dimension uses the viewBox/intrinsic ratio. No accordion or Html zoom. See the [guide](mzPj_figure_dimensions.md).
 
 ### mzpjShowHtml
 
@@ -1125,3 +1135,6 @@ study. This changes denominators; it is a stated convention, not a universal
 choice. Raw-scale intervals are not clipped to natural bounds. Back-transformed
 intervals do not back-transform vi. Read the detailed measure guide before use.
 
+
+
+Per-figure Image/Svg dimensions: [guide](mzPj_figure_dimensions.md), [italiano](mzPj_figure_dimensions_it.md). New helper: `mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)`.

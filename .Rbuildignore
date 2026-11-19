@@ -12,3 +12,5 @@
 ^inst/python/.*\.py[co]$
 ^rjusepj$
 ^build-native-foreign$
+
+^tests$

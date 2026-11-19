@@ -101,6 +101,7 @@ def execute_user_code(code, ext_script_path=""):
     local_vars['matplotlib'] = matplotlib
     local_vars['plt'] = plt
     local_vars['mzpjShowImage'] = _pj_add_image
+    local_vars['mzpjShowSvg'] = _pj_add_svg
     local_vars['mzpjShowHtml'] = _pj_add_html
     local_vars['mzpjShowText'] = _pj_add_text
     local_vars['mzpjShowTable'] = _pj_add_table

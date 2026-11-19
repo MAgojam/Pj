@@ -1,6 +1,6 @@
 # Shared accordions — Pj 1.6.2
 
-This feature is part of the 1.6.2 candidate. Install the current candidate before
+This feature is available in Pj 1.6.2. Install version 1.6.2 before
 running example [75](../pjscript/75_accordion_styles.py). No dataset or additional
 Python library is required. Example 04 now uses this shared implementation;
 it contains no local CSS patch or manipulation of the result dictionary.
