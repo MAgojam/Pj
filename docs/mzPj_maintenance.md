@@ -1497,3 +1497,6 @@ L'autore conferma script75 PASSED e fornisce Pj/Pj_1.6.2_win64.jmo compilato. Co
 
 ### 2026-11-19 — Popup uniforme tra Windows e Ubuntu (prima della firma)
 Su richiesta dell'autore, alla verifica precedente segue una piccola correzione condivisa: font Arial/Liberation Sans per metriche compatibili, titolo External OMV files su una riga, min-width dei pulsanti OMV azzerato, gap della riga interprete ridotti a6/7px per rientrare nella larghezza interna senza invadere il padding. Larghezza esterna280CSSpx e padding invariati. Test Chromium con i due fallback: titolo su una riga; verifica nativa Ubuntu demandata al prossimo test dualboot dell'autore. Il JMO Windows già fornito precede questa sola correzione CSS: per la release occorre ricompilare dal commit finale.
+
+
+CI PR19: test timeout runner reso deterministico con clock simulato. Il test imponeva100ms anche alla serializzazione e su macOS System Python il processo mock non partiva prima della scadenza; starts==1 falliva correttamente per lentezza della macchina. Il test ora simula150ms consumati dal primo processo e richiede lo stesso errore timeout prima del secondo. Nessuna modifica del runner o dei timeout reali.

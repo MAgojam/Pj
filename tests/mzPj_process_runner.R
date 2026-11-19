@@ -77,10 +77,15 @@ mzPjTestProcessRunner <- function(root, python=Sys.which('python3')) {
     check(inherits(failure,'mzPjServiceError'),failure$kind=='timeout')
     env$.mzPj_runProcess <- original
     # Una seconda preparazione usa la stessa scadenza, senza arrotondare ogni fase.
+    # Use a controlled clock: CI scheduling/serialization may consume the whole
+    # 100ms budget before the mocked process is even started. Test deadline reuse,
+    # not the speed of the machine running this test.
     starts <- 0L
+    simulatedTime <- 0
+    env$.mzPj_processClock <- function() simulatedTime
     env$.mzPj_runProcess <- function(...) {
         starts <<- starts+1L
-        Sys.sleep(0.15)
+        simulatedTime <<- simulatedTime + 0.15
         '__MZPJ_CACHE__ {"ready":false}'
     }
     failure <- tryCatch(env$.mzPj_prepareLibraries(file.path(root,'inst/remote.py'),python,timeout=0.1),error=identity)
