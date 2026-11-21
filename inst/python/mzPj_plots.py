@@ -56,7 +56,7 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
     from numbers import Integral
     dimensions = []
     for parameter, value, fallback, minimum in (
-            ('width', width, _pj_figure_dimension(FIGWIDTH, 800), 320),
+            ('width', width, _pj_figure_dimension(FIGWIDTH, 600), 320),
             ('height', height, _pj_figure_dimension(FIGHEIGHT, 500), 240)):
         if value is None:
             value = max(minimum, fallback)
@@ -70,8 +70,8 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
                    expanded=expanded, color=color)
     if result_type in ('svg', 'image'):
         payload.update(resultType='svg',
-                       exportStyle=_pj_plot_css.replace('.mzpj-d3 ', '.mzpj-d3-export ')
-                       .replace('.mzpj-d3{', '.mzpj-d3-export{') + '.mzpj-d3-export{margin:0}')
+                       exportStyle=_pj_plot_css.replace('.mz-d3 ', '.mz-d3-export ')
+                       .replace('.mz-d3{', '.mz-d3-export{') + '.mz-d3-export{margin:0}')
     encoded = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     # I dati non devono chiudere il blocco script, neppure quando contengono etichette ostili.
     for character, escaped in (('&', '\\u0026'), ('<', '\\u003c'), ('>', '\\u003e'),
@@ -80,7 +80,7 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
     root_id = 'mzpj_chart_' + uuid.uuid4().hex
     content = ('<style>' + _pj_plot_css + '</style><div id="' + root_id + '"></div>'
                '<script>' + D3_INLINE + '</script><script>' + _pj_plot_js + '</script>'
-               '<script>(function(){const p=' + encoded + ';window.mzPjD3[p.kind]('
+               '<script>(function(){const p=' + encoded + ';window.mzD3[p.kind]('
                'document.getElementById("' + root_id + '"),p);})();</script>')
     if result_type in ('svg', 'image'):
         result_name = _pj_result_name(name, 'svg', _html_counter)
@@ -91,7 +91,7 @@ def _pj_plot_html(payload, name, width, height, accordion, expanded, color, resu
                      accordion=accordion, expanded=expanded, accordion_type=accordion_type)
 
 
-def _pj_show_scatter(dataset, x, y, group=None, labels=None, name=None, title=None,
+def _pj_prepare_scatter(dataset, x, y, group=None, labels=None, name=None, title=None,
                      x_label=None, y_label=None, color='#3e6da9', width=None,
                      height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Costruisce punti e gruppi senza stime inferenziali o trasformazioni implicite."""
@@ -120,6 +120,14 @@ def _pj_show_scatter(dataset, x, y, group=None, labels=None, name=None, title=No
                    xLabel=str(x_label) if x_label is not None else x,
                    yLabel=str(y_label) if y_label is not None else y,
                    note=f'N = {len(points)}; {count - len(points)} rows excluded for missing or non-finite coordinates or missing groups. Group visibility does not change the axes. Plot-size zoom preserves the data scales.')
+    return payload
+
+
+def _pj_show_scatter(dataset, x, y, group=None, labels=None, name=None, title=None,
+                     x_label=None, y_label=None, color='#3e6da9', width=None,
+                     height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
+    """Grouped scatter of finite coordinate pairs, without fitting a model."""
+    payload = _pj_prepare_scatter(dataset, x, y, group, labels, name, title, x_label, y_label, color, width, height, accordion, expanded, result_type, accordion_type)
     _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
@@ -163,7 +171,7 @@ def _pj_plot_quantile(values, probability):
     return values[low] + (values[high] - values[low]) * (position - low)
 
 
-def _pj_show_boxplot(dataset, variable, group=None, labels=None, show_points=False,
+def _pj_prepare_boxplot(dataset, variable, group=None, labels=None, show_points=False,
                      name=None, title=None, x_label=None, y_label=None,
                      color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Quartili interpolati linearmente e baffi entro 1.5 IQR, senza test inferenziali."""
@@ -210,14 +218,18 @@ def _pj_show_boxplot(dataset, variable, group=None, labels=None, show_points=Fal
                    xLabel=str(x_label) if x_label is not None else (group or variable),
                    yLabel=str(y_label) if y_label is not None else variable,
                    note=f'N = {len(rows)}; {count - len(rows)} rows excluded. Quartiles use linear interpolation at (N - 1) p. Whiskers extend to observed values within 1.5 IQR, or stop at the quartile if no such value lies beyond it. Potential outliers are displayed, not excluded. Horizontal jitter only separates overlapping points.')
+    return payload
+
+
+def _pj_show_boxplot(dataset, variable, group=None, labels=None, show_points=False,
+                     name=None, title=None, x_label=None, y_label=None,
+                     color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
+    """Linear quartiles and 1.5-IQR whiskers with observed outliers retained."""
+    payload = _pj_prepare_boxplot(dataset, variable, group, labels, show_points, name, title, x_label, y_label, color, width, height, accordion, expanded, result_type, accordion_type)
     _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
-def _pj_show_bar(dataset, category, value=None, stat='count', orientation='vertical',
-                 name=None, title=None, x_label=None, y_label=None,
-                 color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
-    """Aggregazione esplicita: frequenze, somma, media o valori gia' riepilogati."""
-    function = 'mzpjShowBar'
+def _pj_bar_arguments(category, value, stat, orientation, function):
     if not isinstance(category, str) or not category:
         raise TypeError(f'{function}(): category must be a non-empty column name.')
     if stat not in ('count', 'sum', 'mean', 'identity'):
@@ -226,6 +238,14 @@ def _pj_show_bar(dataset, category, value=None, stat='count', orientation='verti
         raise ValueError(f"{function}(): orientation must be 'vertical' or 'horizontal'.")
     if (stat == 'count' and value is not None) or (stat != 'count' and (not isinstance(value, str) or not value)):
         raise ValueError(f'{function}(): count requires value=None; other statistics require a numeric value column.')
+
+
+def _pj_prepare_bar(dataset, category, value=None, stat='count', orientation='vertical',
+                 name=None, title=None, x_label=None, y_label=None,
+                 color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
+    """Aggregazione esplicita: frequenze, somma, media o valori gia' riepilogati."""
+    function = 'mzpjShowBar'
+    _pj_bar_arguments(category, value, stat, orientation, function)
     count = _pj_plot_columns(dataset, [category, value], function)
     rows = []
     for row in range(count):
@@ -259,10 +279,18 @@ def _pj_show_bar(dataset, category, value=None, stat='count', orientation='verti
                    xLabel=str(x_label) if x_label is not None else xlabel,
                    yLabel=str(y_label) if y_label is not None else ylabel,
                    note=f'N = {len(rows)}; {count - len(rows)} rows excluded. Statistic: {stat}. Categories are sorted by label; the numeric axis includes zero. No uncertainty interval is calculated.')
+    return payload
+
+
+def _pj_show_bar(dataset, category, value=None, stat='count', orientation='vertical',
+                 name=None, title=None, x_label=None, y_label=None,
+                 color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
+    """Explicit count, sum, mean or identity bars prepared in Python."""
+    payload = _pj_prepare_bar(dataset, category, value, stat, orientation, name, title, x_label, y_label, color, width, height, accordion, expanded, result_type, accordion_type)
     _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 
-def _pj_show_line(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=False,
+def _pj_prepare_line(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=False,
                   show_points=True, name=None, title=None, x_label=None, y_label=None,
                   color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
     """Collega le osservazioni nel loro ordine; i mancanti interrompono la linea per default."""
@@ -309,6 +337,14 @@ def _pj_show_line(dataset, x, y, group=None, labels=None, sort_x=False, connect_
                    ('Rows sorted by x within each series. ' if sort_x else 'Lines follow dataset order within each series. ') +
                    ('Gaps are connected explicitly. ' if connect_gaps else 'Missing coordinates break the line. ') +
                    'No interpolation, smoothing or statistical model is fitted.')
+    return payload
+
+
+def _pj_show_line(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=False,
+                  show_points=True, name=None, title=None, x_label=None, y_label=None,
+                  color='#3e6da9', width=None, height=None, accordion=True, expanded=True, result_type='html', accordion_type='line'):
+    """Observed profiles with explicit sorting and missing-value gaps."""
+    payload = _pj_prepare_line(dataset, x, y, group, labels, sort_x, connect_gaps, show_points, name, title, x_label, y_label, color, width, height, accordion, expanded, result_type, accordion_type)
     _pj_plot_html(payload, name, width, height, accordion, expanded, color, result_type, accordion_type)
 
 

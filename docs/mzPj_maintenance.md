@@ -1509,3 +1509,315 @@ Anteprima dimensioni per figura: compilazione Windows Pj_1.6.2_figure_dimensions
 
 
 Preparazione release1.6.2 autorizzata dopo conferme autore: feature/per-figure-dimensions aggiunge ShowImage width/height e ShowSvg nativo, mantiene accordion soloHtml e resizejamovi.50testPython interessati e API compilata2Python PASSED. Esempio76 e manualiEN/IT aggiornati. BinariRust1.1.0 invariati. Nuovo commit firmato e4build dello stesso snapshot; le compilazioni utente precedenti sono evidenza visiva, non sostituiscono le build finali dal commit. Rj commit91a27c8 pubblicato su ramo separato; processxRj rinviato per istruzione autore al secondo commit.
+
+
+## 20 novembre 2026 — mzGraphics e preview Pj 1.6.3
+
+Autore ha approvato sorgenti grafici comuni D3/Plotly e chiesto di completare
+in autonomia fino alla preview Pj Windows. Progetto canonico:
+Y:/A_Lavoro/mzGraphics, versione1.0.0 protocollo1. Sorgenti in src/d3 e
+src/plotly; generatore tools/build.cjs con Terser5.51.2/clean-css5.3.3,
+lockfile e manifest SHA256 riproducibile. Bundle mzD3.min.js/css e
+mzPlotly.min.js/css; librerie vendor restano separate. Documentazione:
+mzGraphics/README.md, docs/MANUALE_IT.md, CONTRACT.md e ROADMAP_IT.md.
+Non mantenere due sorgenti: local-tools/mzPj_d3_sources ora contiene solo
+strumenti/entry point di compatibilità che delegano al progetto comune;
+originali conservati in Pj_builds/shared_graphics_20261120/legacy_d3_sources.zip.
+
+Pj sul ramo feat/shared-graphics, preview1.6.3 (DESCRIPTION e0000.yaml).
+Helper pubblici compatibili; Plotly accetta anche dizionario data/layout
+senza pacchetto Python Plotly. Risorse comuni integrate nel trasporto R/Python
+anche per API in background. Nessun accordion/zoom Html su Svg/Image; solo
+contenuto grafico nelle esportazioni, cleanup observer, CSP/offline e
+namespace legacy protetti. La finestra popup e il codice statistico non
+sono stati cambiati. Sorgenti Rust indipendenti invariati.
+
+PASSED automatici: D3 Python25, Plotly5, accordion5, graphic types3,
+dimensioni3; browser26 casi con CSP/offline, Html/Svg/Image e caricamento
+compresso; API Embedded/System con77 e vecchio59 Plotly Figure. Test reale
+browser/motore per77: Pj/Pjp x duePython, dueimmagini native, tabella mantenuta,
+una sola esecuzione codice. D3 Svg nativo, Plotly Svg resta PNG incorporato.
+Build finale verificata nel manifest BUILD_VERIFIED.json; JMO senza tests,
+sorgenti comuni, toolnpm o vecchi mzPj_d3.min. Librerie Rust compilate mantenute.
+
+Installata preview Windows con backup e verifica66file; cold-load UTF8 PASSED.
+JMO Pj/Pj_1.6.3_win64.jmo. Script da provare:
+Pj/pjscript/77_shared_graphics.py, copiaunica Temp/Pj_shared_graphics/77_shared_graphics.py;
+impostare RESULT_TYPE html, svg, image nei dueeditor/duePython. PASSEDvisivo
+ancora pendente. Stato canonico Pj_builds/shared_graphics_20261120/STATE.json.
+Nessuna build Linux/macOS, nessun commit/push/release di questa preview.
+Rj resta pulito al commit ce989c2: ultimo blocco rinviato dopo verifica Pj.
+
+
+### 20 novembre 2026 — Plotly modebar nascosta per default
+
+Su richiesta autore, default unico nel renderer comune mzPlotly: displayModeBar false; config True o hover riattiva in Html, Svg/Image sempre senza barra. Docstring helper, guida Plotly, manuali Python IT/EN, script77 e contratto comune aggiornati. Test browser5casi + Python5 PASSED; JMO Windows ricompilato/verificato. NUOVA BUILD NON INSTALLATA: jamovi aperto durante le prove; non sovrascrivere lazy database attivi. Installare a jamovi chiuso con backup nuovo. Stato Pj_builds/shared_graphics_20261120/STATE.json. Nessun commit.
+
+
+## 20 novembre 2026 — cinque helper Plotly guidati Pj
+
+Registrato PASSED autore dello script75 Windows con entrambi i Python e della
+preview installata con modebar nascosta. Il PASSED non si estende ancora agli
+helper nuovi, compilati dopo quel riscontro.
+
+Nuovi nomi: mzpjShowPlotlyScatter, mzpjShowPlotlyLine, mzpjShowPlotlyBar,
+mzpjShowPlotlyBoxPlot, mzpjShowPlotlyHeatmap. Nessun pacchetto Python Plotly
+necessario. Ricette JS comuni in mzGraphics/src/plotly/recipes.js, riutilizzabili
+in Rj senza riscrivere i renderer. Preparazione D3 separata dal disegno e
+riusata in Python: quartili, baffi, mancanti e aggregazioni non duplicati.
+Opzioni hover unificato, lasso/pan/select, legenda, palette, barre raggruppate/
+impilate/orizzontali e matrice con limiti colori. Modebar nascosta per default,
+attivabile tramite modebar True/hover nei nuovihelper o config nel generico.
+Legenda sopra il grafico e note metodologiche sotto per evitare sovrapposizioni
+con il titoloasseX. Dati/parametri non modificati dalle interazioni.
+
+Guide: Pj/docs/mzPj_plotly_helpers.md e _it.md, manuali helper IT/EN aggiornati,
+autocomplete e docstring aggiornati. Script78 in Pj/pjscript e
+Temp/Pj_shared_graphics; dati simulati, 5grafici, RESULT_TYPE html/svg/image.
+
+PASSED: Python9nuovi +25D3 +5Plotlygenerico +5accordion; browser15casi guidati
+Html/Svg/Image e5modebar; backend Script78 Pj/Pjp x2Python xHtml/Svg;
+cattura nativa5figure Pj/Pjp x2Python con una sola esecuzione e tabella
+mantenuta, renderingnativo dellePNG verificato. APIstandalone singolafigura
+nuovohhelper nei duePython PASSED. La risposta standalone con5Plotly può
+superare il budget protettivo perché ogniiframe contiene il fallback compresso:
+non alzati i limiti; usare chiamate più piccole. L'editor carica libreria locale.
+
+JMO finale Pj/Pj_1.6.3_win64.jmo, verificaCRC/hash/asset/documentazione in
+Pj_builds/plotly_helpers_20261120. NUOVIHELPER NON INSTALLATI: jamoviWindows
+aperto durante ultimeprove; conservata buildmodebar già accettata. Attendere
+chiusura app e installareultimoJMO con backup nuovo. Stato canonico STATE.json
+in quella cartella; precedente shared_graphics/STATE rinvia al nuovo stato.
+Nessun commit/push/release, nessuna nuova buildLinux/macOS. Rj pulito ce989c2.
+
+
+## 21 novembre 2026 — preview helper Plotly installata Windows
+
+Autore ha chiuso jamovi; installato Pj1.6.3 dal JMO verificato77b7d62086d45675c146404b1cb32de428e54ee58e2ab495e5f991983d70790d. Tutti67file verificati, backup in Pj_builds/plotly_helpers_20261120/install_win. Script78 pronto in Temp/Pj_shared_graphics. Nuovo PASSED visivo pendente; nessun commit/push/release. Questo stato supera le precedenti note di installazione rinviata.
+
+
+## 21 novembre 2026 — Image senza segnaposto, installata Windows
+
+Autore PASSED script78 nei duePython per Html/Svg/Image, con osservazione
+estetica sui testi Preparing Image. Correzione nel solo host Pj: contenitore
+pending fuori flusso ma renderizzabile, status nascosto, titoli temporanei
+vuoti fin dalla costruzioneR e titolo originale in state$image_capture_title.
+Image finale riprende il titolo; vecchi pending senza campo conservano
+fallbackold$title. Errori JS/PNG/backend/budget ripristinano messaggi e titoli
+visibili; timeout di conferma e pulizia timer. Escape JSON dei titoli testato.
+Nessun display:none e nessuna riesecuzione Python.
+
+PASSED12casi browser D3/Chart/Plotly,4Python graphictypes+5accordion;
+ciclo5Image Pj/Pjp x2Python con titolifinali/tabella e unaesecuzione;
+regressioni PNGerrato/retry/persistenza/replay/Table/Text/dataext/Output.
+JMO1284c09cbb8201c5e60871ba3ce7a7b6552529787a50c92a71f7328fd8f6a01c
+installato a jamovi chiuso con backup e67file verificati. Stato canonico:
+Pj_builds/image_capture_quiet_20261121/STATE.json. Vecchia cartella
+plotly_helpers/STATE rinvia alla nuova. PASSEDvisivo della sola correzione
+silenziosa ancora da ricevere: riprovare78 RESULT_TYPE=image. Documentazione
+Pj e comune aggiornata; Rj e renderer condivisi invariati, nessun commit/release.
+
+
+## 21 novembre 2026 — PASSED e prossima Pj1.7.0
+
+Autore PASSED correzione Image silenziosa. Destinazione prossimo commit/release Pj1.7.0, non1.6.3; build accettata installata resta1.6.3 finché non si prepara la nuova. Proposta arricchimento helperD3/Plotly con funzione a due grafici per interazione statistica; preferenza categorica/continua richiesta. Roadmap in Pj/docs/ROADMAP_GRAFICI_1_7_0_IT.md; non inventare modello, CI o test da sola grafica. Nessun commit autorizzato né eseguito; Rj rinviato.
+
+
+## 21 novembre 2026 — interazione guidata Pj 1.7.0
+
+Implementato `mzpjShowInteraction`: OLS Y ~ X * moderatore + covariate numeriche,
+moderatore continuo/binario, HC3 (Normale asintotica) o OLS (t residua), due
+pannelli coordinati, IC puntuali, Johnson–Neyman nel range osservato, due tabelle
+native e report numerico. Righe indipendenti; identificatori ripetuti rifiutati
+se forniti tramite unit. NumPy/SciPy necessari; Statsmodels solo riferimento nei
+test, non dipendenza runtime. Calcoli nell'host Python; payload unico e renderer
+condivisi in mzGraphics. Html mantiene accordion; Svg/Image nativi senza
+contenitori Html e con dimensioni esplicite. Guide IT/EN e script79 aggiunti.
+Confronti numerici e browser offline PASSED; test motore e cattura documentati in
+Pj_builds/interaction_1_7_0_20261121. PASSED visivo del nuovo helper ancora atteso.
+Rj invariato. Nessun commit/push/release effettuato per questa preview.
+
+Preview interazione installata Windows: Pj1.7.0, backup e 69 file verificati; cold load UTF-8 PASSED. 16 casi backend e 8 cicli Image PASSED. Attesa prova visiva script79. Stato ripresa: Pj_builds/interaction_1_7_0_20261121/STATE.json.
+
+
+## 21 novembre 2026 — correzione layout interazione e zoom Html
+
+Dopo il riscontro visivo autore: pannelli interazione impilati per default in
+entrambi i renderer (`panel_layout='stacked'`, altezza automatica1020; variante
+`side-by-side` con altezza620). Plotly Html: Reset zoom, Show all curves,
+selezione del punto-pendenza collegata alla curva e descrizione numerica;
+note ricalcolate sulla larghezza Html effettiva anche dopo resize. Barra Plotly
+sempre nascosta per default. D3 Html: zoom scala figura, host e viewport insieme;
+nessuno scroll interno. Se la larghezza supera Results/schermo non si può creare
+spazio fisico: lo scorrimento eventuale appartiene al contenitore esterno.
+Nessuna modifica a Svg/Image nativi per aggiungere controlli Html. Statistica
+invariata e confronti numerici PASSED. Prove browser includono larghezza650px,
+selezione/reset e crescita del contenitore al130%. Build e stato corrente:
+Pj_builds/interaction_layout_20261121. Prova visiva autore ancora da ottenere.
+
+Preview corretta installata Windows con backup: 69 file verificati e cold load UTF-8 PASSED. Browser16 casi e cattura8 casi PASSED; attesa prova visiva script79 aggiornato. Stato ripresa: Pj_builds/interaction_layout_20261121/STATE.json. Nessun commit.
+
+
+## 21 novembre 2026 — controllo effettivo dei gesti Plotly
+
+Il precedente PASSED automatico verificava soprattutto cambiamenti di stato e
+non garantiva la correttezza dei gesti reali e dei pixel disegnati. Dopo il
+riscontro autore sono stati aggiunti: cursore Figure size per Plotly Html con
+crescita di larghezza/altezza e dell'host Results; Reset size; checkbox espliciti
+per curve/bande/punti abbinati; Show all curves disabilitato se non serve;
+Reset axes disabilitato agli intervalli originali. Selezione dei punti robusta
+anche quando Plotly intercetta la linea sottostante nei pannelli stretti.
+Ritaglio per pannello sul parent non trasformato, con coordinate SVG view-box,
+indipendente dagli URL frammento usati dai clip interni Plotly. Test reali del
+mouse (click e trascinamento), verifica dimensioni host e controllo dei pixel:
+entrambi i pannelli devono contenere tracce e nessun pixel colorato deve
+oltrepassare i rispettivi riquadri; provata anche l'assenza dei clip interni.
+Questi test non sostituiscono il PASSED visivo desktop dell'autore.
+Stato e build: Pj_builds/interaction_controls_20261121. Statistica invariata;
+Svg/Image nativi senza cursori, checkbox o accordion Html. Nessun commit.
+
+Preview controls pronta e verificata, installazione ancora PENDING: controllo processi elevato rileva jamovi28.18 Untitled aperto. Nessun file installato sostituito. Eseguire il controllo processi nello stesso contesto elevato dell’installer: il contesto sandbox può non mostrare i processi desktop dell’utente. Stato ripresa: Pj_builds/interaction_controls_20261121/STATE.json. Attesa chiusura jamovi e PASSED visivo della nuova preview.
+
+Aggiornamento stato: su richiesta autore installata la preview controls Windows, con controllo processi elevato (jamovi chiuso), backup install_win/before_install.zip, 69 file verificati e cold load UTF-8 PASSED. Superata la precedente attesa di installazione; resta la prova visiva autore dello script79. Stato: Pj_builds/interaction_controls_20261121/STATE.json.
+
+
+## 21 novembre 2026 — slider uniforme e preview Windows/WSL2
+
+Autore PASSED funzionale della preview controlli. Slider Plotly uniformato a
+D3/Chart (linea sottile, cursore arancione Z, percentuale, Reset). La sorgente CSS
+unica D3/Plotly è mzGraphics/src/common/zoom.css, inclusa dal build in entrambi i
+bundle e nel manifest: evitare copie dello stile da mantenere separatamente.
+Build e installazione Pj1.7.0 effettuate Windows e Ubuntu26.04 WSL2, con backup,
+verifica byte per byte e cold load. WSL2: 16 prove backend Html/Svg e8 catture
+Image Pj/Pjp con Embedded/System e D3/Plotly PASSED. In attesa della prova visiva
+finale sui due SO, poi commit firmato solo dopo conferma autore. Rj invariato.
+Stato completo: Pj_builds/zoom_style_20261121/STATE.json.
+
+Verifica packaging: `png` è una dipendenza R già dichiarata da Pj, ma non fa
+parte del runtime Flatpak testato. Ora è inclusa nei due JMO. Provare il
+caricamento/decodifica con .libPaths isolato dal profilo R personale, altrimenti
+le librerie installate sul PC possono mascherare dipendenze mancanti dal JMO.
+Con --skip-deps predisporre la cache necessaria prima della build; questo vale
+anche per le future build macOS. I metadati Flatpak riportano28.7 mentre
+/app/lib/jamovi/version conferma28.18.0.0: distinguere i due valori.
+
+Snapshot di lavoro: conservare anche le dipendenze vendorizzate e tracciate,
+come jamovi/js/node_modules/brace. Non escludere indiscriminatamente tutte le
+cartelle node_modules da un elenco git ls-files: i moduli del manutentore non
+versionati e le dipendenze UI già nel repository sono casi diversi.
+Test cattura da Windows verso WSL: inoltrare esplicitamente a flatpak --env le
+opzioni MZPJ_CAPTURE_*; MZPJ_RESOURCE_ROOT separa il percorso risorse Windows
+utilizzato dal browser dal root Linux usato dal motore R.
+
+
+### Regola operativa persistente — versione jamovi WSL2 (21 novembre 2026)
+
+Su questo PC, l'installazione Ubuntu26.04 WSL2 di org.jamovi.jamovi ha versione
+effettiva28.18.0.0, verificata in /app/lib/jamovi/version. I metadati Flatpak
+riportano28.7: è una discrepanza locale già nota, non un nuovo problema da
+segnalare a ogni compilazione o installazione. Per compatibilità e test usare
+la versione effettiva del programma. Tenere eventuali controlli ripetuti nei
+log tecnici; non ripetere all'autore questa comunicazione. Segnalare soltanto
+un cambiamento effettivo, una nuova discrepanza o un impedimento concreto.
+Non alterare i metadati gestiti da Flatpak solo per uniformare la visualizzazione.
+Istruzione esplicita dell'autore: ricordare questo fatto ed evitare avvisi ripetuti.
+
+
+## 21 novembre 2026 — regressione di sovrapposizione Html/Tabella
+
+Il riscontro autore invalida l'accettazione del layout nell'ultima preview:
+il secondo pannello Plotly può sovrapporsi al risultato Table successivo.
+Non equiparare il PASSED dello slider al PASSED del flusso dei risultati.
+Correzione: frame dedicato nel flusso normale riserva l'altezza del disegno;
+la superficie gestita da Plotly vive al suo interno. Ridimensionamento con
+un solo relayout in corso e applicazione dell'ultima misura richiesta;
+nessuna competizione tra Plots.resize e relayout. Risposta alle dimensioni
+tramite ResizeObserver del frame, non il resize globale Plotly. Il ritaglio
+del frame contiene anche disegni transitori prima del completamento del layout.
+
+Nuovo controllo layout_flow.test.cjs: due Html seguiti da Table, CSS Results
+jamovi, zoom interfaccia100%/150%, ingrandimenti/riduzioni60–140%, sequenze
+rapide e chiusura/riapertura accordion. Verifica coordinate e pixel nelle
+aree delle tabelle, che non devono contenere tracce dei grafici. Il test usa
+Pillow solo come dipendenza di sviluppo; percorso CSS opzionale MZ_JAMOVI_CSS.
+Fonte e build: Pj_builds/layout_reservation_20261121. Prova visiva autore ancora
+necessaria; nessun commit o release. Svg/Image nativi non ricevono il frame Html.
+
+Stato aggiornato: previa conferma autore «chiuso tutto», installata la preview layout_reservation_20261121 in Windows e WSL2; backup conservati,93/80 file verificati, cold load e PNG isolato PASSED. Attesa prova visiva corretta dello script79; nessun commit. Registro: Pj_builds/layout_reservation_20261121/STATE.json.
+
+
+## 21 novembre 2026 — precedenza dimensioni e script79/80
+
+Confermata dall'autore la regola: argomento esplicito > valore PopUp > default.
+Corretti gli helper nuovi che la scavalcavano: mzpjShowInteraction ora ha
+width=None,height=None, senza1100x1020 imposti né altezza automatica per layout.
+Plotly generico/guidato usa i campi globali quando omessi; width è disponibile,
+export_width resta alias compatibile (se entrambi specificati devono coincidere).
+Fallback dei grafici D3/Chart uniformati al600x500 di mzpjFigureSize. Le dimensioni
+esplicite Html di Plotly/Chart non sono più limitate dal generico host500px.
+I normali vincoli minimi/massimi dei singoli renderer restano validati.
+
+Script79 ora non passa dimensioni, per nessun result_type. Script80 mostra tre
+Html con gli stessi dati: D3 senza argomenti; Plotly640x360, Chart560x320 espliciti.
+Verifica reale Windows/WSL2 nei due Python: PopUp vuoto ->600x500/640x360/560x320;
+PopUp800x600 ->800x600/640x360/560x320. Controllate dimensioni DOM effettive con
+host Results block, non soltanto numeri nel payload. Script79 Image600x500
+verificato nei due Python con conservazione Table/titolo e una sola esecuzione.
+Non confondere dimensioni di visualizzazione e raster HiDPI. Restano i contratti
+specifici preesistenti di immagini/SVG già prodotti (esempio76: un solo argomento
+locale conserva il rapporto originale); non modificarli implicitamente.
+
+Installati entrambi i JMO con backup, cold load e PNG verificati. Nuova prova
+visiva autore79/80 attesa. Registro: Pj_builds/dimension_precedence_20261121/STATE.json.
+Rj invariato; nessun commit.
+
+
+## 21 novembre 2026 — Chart Html invariato nei Run completi
+
+L'autore precisa che Run esegue tutte le funzioni dello script80: non saltare
+la funzione Chart Python e non limitarsi a nasconderne l'animazione.
+Implementato riuso effettivo per host Html di jamovi: stesso oggetto Chart e
+stesso canvas se dati, opzioni, dimensioni risolte, titolo/contenitore e codice
+renderer/libreria sono identici. Firma SHA256 degli input effettivi; non del
+testo dello script né delle impostazioni globali già sovrascritte localmente.
+Cache WeakMap per singolo host Results: due analisi indipendenti non condividono
+istanze. La sostituzione Html di jamovi può cambiare gli ID generati: si adotta
+il vecchio nodo nel nuovo contenitore, riallacciando l'accordion e conservando
+lo stato della legenda. Cambiamenti rilevanti distruggono la vecchia istanza;
+rimozione del risultato libera observer/listener. Svg/Image restano sul loro
+percorso nativo senza questa cache Html.
+
+Test:12 varianti dell'intero script80, tutte con esecuzione dei tre helper;
+Run invariato/PopUp/soloPlotly mantengono canvas/istanza e zero Chart.update;
+modifiche Chart, dati condivisi o dimensioni ereditate aggiornano correttamente.
+Verificate apertura differita, isolamento fra host e cleanup. Installati i due
+JMO Windows/WSL2 con backup e cold load PASSED. Prova visiva autore attesa.
+Registro: Pj_builds/chart_reuse_20261121/STATE.json. Nessun commit; Rj invariato.
+
+
+## 21 novembre 2026 — PASSED Windows e consegna prove Ubuntu
+
+Autore PASSED dell'ultimo comportamento Chart in Windows. Su richiesta nuova
+compilazione e installazione Pj1.7.0 in Ubuntu26.04 WSL2, con backup,80 file
+verificati, cold load e decodifica PNG PASSED. Tre script aggiornati copiati e
+confrontati byte per byte in /home/magojam/Pj_test_1.7.0:
+78_plotly_guided_helpers.py,79_interaction_model.py,80_popup_dimension_precedence.py.
+Aggiunto LEGGIMI.txt per la prova. Registro di ripresa:
+Pj_builds/wsl_visual_20261121/STATE.json. Attesa prova visiva Ubuntu dell'autore;
+nessun commit/push/release. Rj invariato.
+
+
+## 2026-11-21 — Pj 1.7.0: accettazione e commit
+
+L’autore ha confermato PASSED su Windows e Ubuntu 26.04 WSL2 con entrambi
+i Python, inclusi gli script 78, 79 e 80, e autorizzato il commit firmato.
+La verifica sintattica dei sorgenti Python e degli esempi è passata.
+I controlli mirati dimensioni, Plotly, helper guidati e interazione sono passati
+(28 test). Il riuso del canvas Chart evita rigenerazioni senza variazioni
+degli input effettivi; ogni Run continua a eseguire tutte le funzioni Python.
+
+Restano da completare la revisione complessiva degli esempi precedenti e
+l’allineamento dei manuali generali IT/EN, inclusi DOCX/PDF: i manuali di
+libreria 1.6.0 non costituiscono ancora una guida completa alle novità 1.7.0.
+Le guide specifiche delle nuove funzioni sono incluse. Nessuna nuova release
+è pubblicata con questo commit; i pacchetti Apple restano da preparare.

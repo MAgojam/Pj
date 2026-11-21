@@ -44,7 +44,7 @@ for(mode in c('jamovi','system')) {
     analysis$run()
     stopifnot(grepl('Calculated by Python',analysis$results$status$content,fixed=TRUE),
         analysis$results$summary$asDF$n==3L,abs(analysis$results$summary$asDF$mean-7/3)<1e-12,
-        grepl('mzPjD3',analysis$results$plot$content,fixed=TRUE),identical(originalLibraries,.libPaths()))
+        grepl('mzD3',analysis$results$plot$content,fixed=TRUE),identical(originalLibraries,.libPaths()))
     failure <- PjServiceExample:::serviceDemoClass$new(
         options=PjServiceExample:::serviceDemoOptions$new(x='value',python=mode),data=data.frame(value=c(NA_real_,NA_real_)))
     failure$run()

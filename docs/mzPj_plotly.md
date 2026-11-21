@@ -1,5 +1,7 @@
 # Plotly in Pj 1.4.0
 
+> **Pj 1.6.3 preview:** see [shared mzGraphics renderers](mzPj_shared_graphics.md). The active D3 assets are now `mzD3.min.js/css`; Plotly uses `mzPlotly.min.js/css`. Existing helper names remain compatible. The older asset/source descriptions below are historical.
+
 > **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
 > jamovi 28.18.0, inclusive. The official runtime includes the native SVG
 > document-save fix. Earlier advisories below describe the affected 28.17
@@ -129,3 +131,24 @@ For a dataset-free comparison with Chart.js and D3, load
 [`61_chart_d3_plotly_export.py`](../pjscript/61_chart_d3_plotly_export.py).
 Its `EXPORT` flag selects ordinary interactive views or native figures for
 document export. The comments explain how each library implements that choice.
+
+
+## Plotly toolbar (modebar)
+
+The toolbar is **hidden by default**. This leaves hover labels and the clickable
+legend available in interactive Html without exposing the advanced tools.
+Control it through the existing `config` argument:
+
+```python
+mzpjShowPlotly(figure)  # Toolbar hidden by default.
+mzpjShowPlotly(figure, config={'displayModeBar': True})  # Always visible.
+mzpjShowPlotly(figure, config={'displayModeBar': 'hover'})  # Visible on hover.
+mzpjShowPlotly(figure, config={'displayModeBar': False})  # Explicitly hidden.
+```
+
+Choose one of these calls per result. Native Svg/Image always omit the toolbar,
+even if `displayModeBar=True` is supplied. The default is defined in the shared
+mzPlotly renderer, so future Rj integration inherits the same behavior.
+
+
+Guided helpers: [scatter, profiles, bars, boxplots and heatmap](mzPj_plotly_helpers.md), with example 78. No Python plotly package required.

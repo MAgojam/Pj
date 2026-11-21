@@ -37,7 +37,7 @@
             elem <- constructor$new(
                 self$options,
                 name=item$name,
-                title=if (!is.null(item$title)) item$title else "HTML Python"
+                title=if (!is.null(item$image_request)) "" else if (!is.null(item$title)) item$title else "HTML Python"
             )
             elem$setContent(item$content)
             if (!is.null(item$image_request)) {
@@ -45,7 +45,10 @@
                 if (item$type!='Html' || !is.character(token) || length(token)!=1L ||
                     !grepl('^[a-f0-9]{32}$',token))
                     stop('Python returned an invalid Image capture request.',call.=FALSE)
-                elem$setState(list(image_capture_token=token))
+                captureTitle <- if (is.null(item$title)) "" else item$title
+                if (!is.character(captureTitle) || length(captureTitle)!=1L || is.na(captureTitle))
+                    stop('Python returned an invalid Image capture title.',call.=FALSE)
+                elem$setState(list(image_capture_token=token,image_capture_title=captureTitle))
             }
             if (!is.null(item$scripts)) {
                 scripts <- unlist(item$scripts, use.names=FALSE)

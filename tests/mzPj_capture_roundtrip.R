@@ -10,7 +10,9 @@ optionPB<-function(value){z<-RProtoBuf::new(RProtoBuf::P('jamovi.coms.AnalysisOp
 optionsPB<-function(values){z<-RProtoBuf::new(RProtoBuf::P('jamovi.coms.AnalysisOptions'));z$hasNames<-TRUE;z$names<-names(values);for(value in values)z$add('options',optionPB(value));z}
 marker<-file.path(work,'executions.txt')
 if(Sys.getenv('MZPJ_CAPTURE_DEBUG')=='1') trace('.mzPj_pythonScript',exit=bquote(writeLines(returnValue(),.(file.path(work,'transport_script.py')),useBytes=TRUE)),where=asNamespace('Pj'),print=FALSE)
-code<-paste0('with open(',jsonlite::toJSON(marker,auto_unbox=TRUE),', "a") as marker: marker.write("run\\n")\n',paste(readLines(file.path(root,'pjscript/73_rust_repeated_measures.py'),encoding='UTF-8'),collapse='\n'))
+code<-paste0('with open(',jsonlite::toJSON(marker,auto_unbox=TRUE),', "a") as marker: marker.write("run\\n")\n',paste(readLines(file.path(root,'pjscript',Sys.getenv('MZPJ_CAPTURE_SCRIPT','73_rust_repeated_measures.py')),encoding='UTF-8'),collapse='\n'))
+if(nzchar(Sys.getenv('MZPJ_CAPTURE_RESULT_TYPE')))code<-gsub("RESULT_TYPE = 'html'",paste0("RESULT_TYPE = '",Sys.getenv('MZPJ_CAPTURE_RESULT_TYPE'),"'"),code,fixed=TRUE)
+if(nzchar(Sys.getenv('MZPJ_CAPTURE_RENDERER')))code<-gsub("RENDERER = 'plotly'",paste0("RENDERER = '",Sys.getenv('MZPJ_CAPTURE_RENDERER'),"'"),code,fixed=TRUE)
 cls<-getFromNamespace(paste0(prefix,'Class'),'Pj');opts<-getFromNamespace(paste0(prefix,'Options'),'Pj')
 o<-opts$new(code=code,python=mode,vars='x')
 if(command=='init')pb<-optionsPB(lapply(o$options,function(option)if(inherits(option,'OptionOutput'))list(value=TRUE,vars=list(),synced=list())else option$value)) else {
@@ -30,13 +32,13 @@ con<-file(file.path(work,'options.pb'),'wb');RProtoBuf::serialize(a$options$asPr
 items<-lapply(a$results$itemNames,function(n)a$results$get(n))
 pending<-Filter(function(x)inherits(x,'Html')&&!is.null(x$state$image_capture_token),items)
 images<-Filter(function(x)inherits(x,'Image'),items)
-manifest<-list(pending=lapply(pending,function(x)list(name=x$name,content=x$content)),imageNames=vapply(images,function(x)x$name,character(1)),runs=length(readLines(marker)),tables=sum(vapply(items,function(x)inherits(x,'Table'),logical(1))))
+manifest<-list(pending=lapply(pending,function(x)list(name=x$name,heading=x$title,title=if(is.null(x$state$image_capture_title))x$title else x$state$image_capture_title,content=x$content)),imageTitles=lapply(images,function(x)list(name=x$name,title=x$title)),imageNames=vapply(images,function(x)x$name,character(1)),runs=length(readLines(marker)),tables=sum(vapply(items,function(x)inherits(x,'Table'),logical(1))))
 writeLines(as.character(jsonlite::toJSON(manifest,auto_unbox=TRUE)),file.path(work,'manifest.json'),useBytes=TRUE)
 stopifnot(manifest$runs==1L)
 if(!length(pending)){
- stopifnot(length(images)==3L)
- grDevices::pdf(file.path(work,'script73_native_images.pdf'),width=9,height=6)
+ stopifnot(length(images)==as.integer(Sys.getenv('MZPJ_EXPECTED_IMAGES','3')))
+ grDevices::pdf(file.path(work,'native_images.pdf'),width=9,height=6)
  for(image in images){stopifnot(is.character(image$state),isTRUE(image$.render()))}
  grDevices::dev.off()
 }
-cat(prefix,mode,'Script 73:',length(pending),'pending;',length(images),'native Images; executions=',manifest$runs,'\n')
+cat(prefix,mode,Sys.getenv('MZPJ_CAPTURE_SCRIPT','73_rust_repeated_measures.py'),length(pending),'pending;',length(images),'native Images; executions=',manifest$runs,'\n')

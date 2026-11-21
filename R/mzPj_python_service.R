@@ -18,15 +18,17 @@
         gsub('[\r\n]', '', jsonlite::base64_enc(
             readBin(iconPath, what='raw', n=file.info(iconPath)$size)))
     }), resourceNames)
-    config$PLOT_JS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPj_d3.min.js'))
-    config$PLOT_CSS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPj_d3.min.css'))
+    config$PLOT_JS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzD3.min.js'))
+    config$PLOT_CSS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzD3.min.css'))
+    config$PLOTLY_JS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPlotly.min.js'))
+    config$PLOTLY_CSS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'mzPlotly.min.css'))
     config$CHART_JS <- .mzPj_readText(file.path(dirname(path), 'extdata', 'chart.umd.js'))
     # Il servizio esterno non possiede il percorso module/ di Pj: fallback offline compresso.
     config$PLOTLY_GZIP <- if (isTRUE(config$PLOTLY_INLINE))
         gsub('[\r\n]', '', jsonlite::base64_enc(memCompress(readBin(
             file.path(dirname(path),'extdata','plotly.min.js'), 'raw',
             n=file.info(file.path(dirname(path),'extdata','plotly.min.js'))$size), 'gzip'))) else ''
-    services <- c('mzPj_libraries.py', 'mzPj_environment.py', 'mzPj_data.py', 'mzPj_omv.py', 'mzPj_reshape.py', 'mzPj_dataext.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py')
+    services <- c('mzPj_libraries.py', 'mzPj_environment.py', 'mzPj_data.py', 'mzPj_omv.py', 'mzPj_reshape.py', 'mzPj_dataext.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py', 'mzPj_plotly_helpers.py', 'mzPj_interaction.py')
     config$SERVICES <- lapply(services, function(filename) {
         list(filename=filename, source=.mzPj_readText(file.path(
             dirname(path), 'python', filename)))

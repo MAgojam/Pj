@@ -37,6 +37,13 @@ module.exports = [
     {"name": "mzpjShowPaired", "value": "mzpjShowPaired", "meta": "Pj interactive plots", "type": "func"},
     {"name": "mzpjShowTestDistribution", "value": "mzpjShowTestDistribution", "meta": "Pj teaching plots", "type": "func"},
     {"name": "mzpjResourcePath", "value": "mzpjResourcePath", "meta": "Pj resources", "type": "func"},
+    {"name": "mzpjShowPlotly", "value": "mzpjShowPlotly", "meta": "Pj Plotly plots", "type": "func"},
+    {"name": "mzpjShowPlotlyScatter", "value": "mzpjShowPlotlyScatter", "meta": "Pj Plotly plots", "type": "func"},
+    {"name": "mzpjShowPlotlyLine", "value": "mzpjShowPlotlyLine", "meta": "Pj Plotly plots", "type": "func"},
+    {"name": "mzpjShowPlotlyBar", "value": "mzpjShowPlotlyBar", "meta": "Pj Plotly plots", "type": "func"},
+    {"name": "mzpjShowPlotlyBoxPlot", "value": "mzpjShowPlotlyBoxPlot", "meta": "Pj Plotly plots", "type": "func"},
+    {"name": "mzpjShowPlotlyHeatmap", "value": "mzpjShowPlotlyHeatmap", "meta": "Pj Plotly plots", "type": "func"},
+    {"name":"mzpjShowInteraction","value":"mzpjShowInteraction","meta":"Pj interaction model","type":"func"},
     // PAROLE CHIAVE PYTHON (33 totali)
     {"name": "and", "value": "and", "meta": "keyword", "type": "keyword"},
     {"name": "as", "value": "as", "meta": "keyword", "type": "keyword"},

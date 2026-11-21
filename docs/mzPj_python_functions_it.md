@@ -1145,3 +1145,16 @@ la guida dettagliata delle misure prima dell’utilizzo.
 
 
 Per-figure Image/Svg dimensions: [guide](mzPj_figure_dimensions.md), [italiano](mzPj_figure_dimensions_it.md). New helper: `mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)`.
+
+
+### Barra strumenti Plotly
+
+`mzpjShowPlotly()` nasconde la barra per default. Usare `config={'displayModeBar': True}` per mostrarla sempre, `'hover'` al passaggio del mouse, oppure `False` per nasconderla. Svg/Image la escludono sempre. Vedere la [guida Plotly](mzPj_plotly.md).
+
+
+Helper Plotly guidati: [guida italiana](mzPj_plotly_helpers_it.md), con script 78 per dispersione, profili, barre, boxplot e heatmap. Non richiedono pacchetti Python aggiuntivi.
+
+
+Pj1.7.0: [interazione in due pannelli](mzPj_interaction_it.md), `mzpjShowInteraction`, script79. L’helper stima il modello e richiede NumPy/SciPy; gli helper grafici semplici non acquisiscono questa dipendenza.
+
+Chart Html nei Run successivi: Python viene sempre eseguito. Se la configurazione effettiva del grafico è invariata, il risultato conserva canvas e istanza Chart. Modifiche ad altri grafici o a dimensioni globali sovrascritte localmente non lo ricreano; dati/opzioni/dimensioni effettive diverse sì. Lo stato della legenda è conservato soltanto per grafici invariati. Svg/Image non cambiano comportamento.

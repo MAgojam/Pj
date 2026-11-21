@@ -510,3 +510,8 @@ Pj is licensed under **GNU GPL version 2 or later**, as declared in
 Bundled third-party components retain their own notices:
 [Brace/Ace license](jamovi/js/node_modules/brace/LICENSE) and
 [D3 license](inst/licenses/mzPj_d3_LICENSE.txt).
+
+
+Development preview: [shared D3 and Plotly renderers](docs/mzPj_shared_graphics.md), with example 77. This is not a new published release.
+
+Guided Plotly preview: [five plotting helpers](docs/mzPj_plotly_helpers.md), [guida italiana](docs/mzPj_plotly_helpers_it.md), example 78.

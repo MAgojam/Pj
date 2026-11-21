@@ -1,24 +1,44 @@
 # Plotly: interactive Html, static Svg, or a native PNG Image.
-def _pj_show_plotly(figure, *, name=None, title=None, height=800, config=None,
-                    static=False, export_width=960, result_type=None,
+def _pj_show_plotly(figure, *, name=None, title=None, height=None, config=None,
+                    static=False, export_width=None, width=None, result_type=None,
                     accordion=True, expanded=True, accordion_type='line'):
-    """Show a Plotly Figure using result_type=html, svg or image (editor capture)."""
+    """Show a Figure or data/layout dictionary as Html, Svg or native Image.
+
+    The interactive modebar is hidden by default. Pass
+    config={'displayModeBar': True} to show it, or 'hover' to show it on hover.
+    Svg/Image always exclude the modebar. Hover labels and the clickable
+    legend remain available in Html when the modebar is hidden.
+    """
     import json
     import uuid
     import html
-    import re
     _pj_accordion_options(accordion, expanded, accordion_type)
     mode = _pj_graphic_mode(result_type, static)
     static = mode != 'html'
+    if width is not None and export_width is not None and width != export_width:
+        raise ValueError('width and export_width must agree when both are supplied.')
+    if width is not None:
+        export_width = width
+    if export_width is None:
+        export_width = _pj_figure_dimension(globals().get('FIGWIDTH'), 600)
+    if height is None:
+        height = _pj_figure_dimension(globals().get('FIGHEIGHT'), 500)
     if not isinstance(static, bool):
         raise TypeError('static must be True or False.')
     if isinstance(export_width, bool) or not isinstance(export_width, int) or not 400 <= export_width <= 2400:
         raise ValueError('export_width must be an integer between 400 and 2400.')
     if isinstance(height, bool) or not isinstance(height, int) or not 200 <= height <= 3000:
         raise ValueError('height must be an integer between 200 and 3000.')
-    if not hasattr(figure, 'to_json'):
-        raise TypeError('mzpjShowPlotly() expects a Plotly Figure.')
-    payload = json.loads(figure.to_json())
+    if isinstance(figure, dict):
+        payload = json.loads(json.dumps(figure, allow_nan=False))
+    elif hasattr(figure, 'to_json'):
+        payload = json.loads(figure.to_json())
+    else:
+        raise TypeError('mzpjShowPlotly() expects a Plotly Figure or a data/layout dictionary.')
+    if not isinstance(payload, dict) or not isinstance(payload.get('data'), list):
+        raise TypeError('Plotly data must be a list of trace dictionaries.')
+    if not isinstance(payload.get('layout', {}), dict):
+        raise TypeError('Plotly layout must be a dictionary.')
     payload.setdefault('layout', {})['height'] = height
     payload['layout']['autosize'] = not static
     payload['layout'].pop('width', None)
@@ -34,73 +54,34 @@ def _pj_show_plotly(figure, *, name=None, title=None, height=800, config=None,
         return json.dumps(value, ensure_ascii=True, allow_nan=False).replace('<', '\\u003c')
     root_id = 'mzpj_plotly_' + uuid.uuid4().hex
     name = _pj_result_name(name, 'plotly', _plot_counter)
-    heading = html.escape(str(title or payload['layout'].get('title', {}).get('text', 'Plotly figure')))
+    plot_title = payload['layout'].get('title', {})
+    plot_title = plot_title.get('text', 'Plotly figure') if isinstance(plot_title, dict) else str(plot_title)
+    heading = html.escape(str(title or plot_title))
     if static:
         # La superficie temporanea scompare dopo toImage: nessun listener persistente.
-        content = (f'<div id="{root_id}" style="width:max-content;max-width:100%">'
-                   '<p class="mzpj-plotly-status ignore-html" role="status" '
-                   'style="font:12px Arial;color:#657b9b">Preparing static Plotly imageâ€¦</p>'
+        content = (f'<div id="{root_id}" class="mz-plotly" style="width:max-content;max-width:100%">'
+                   '<p class="mz-plotly-status ignore-html" role="status" '
+                   'style="font:12px Arial;color:#657b9b">Preparing static Plotly image...</p>'
                    f'<svg xmlns="http://www.w3.org/2000/svg" class="jmv-results-svg-content jmv-results-svg-selection" '
                    f'width="{export_width}" height="{height}" viewBox="0 0 {export_width} {height}" '
                    'style="max-width:100%;height:auto">'
                    f'<title>{heading}</title><image width="{export_width}" height="{height}" /></svg></div>')
     else:
-        content = f'<div id="{root_id}" style="width:100%;height:{height}px">Loading Plotlyâ€¦</div>'
-    renderer = r'''<script>(async function(){
-const root=document.getElementById(__ROOT__),figure=__FIGURE__,config=__CONFIG__,asset=__ASSET__;
-if(!root)return;
-const isStatic=__STATIC__,status=isStatic?root.querySelector('.mzpj-plotly-status'):null;
-let plot=root,P,resize,removal,temporary=false;
-function fail(e){const target=status||root;target.hidden=false;target.style.minHeight='0';
- const detail=e&&e.message?e.message:typeof e==='string'?e:'Static image preparation failed.';
- target.textContent='Plotly could not be displayed: '+detail;target.style.color='#b42318';}
-try{
- if(!window.mzPjPlotly411&&asset){
-  if(!window.mzPjPlotlyLoading411)window.mzPjPlotlyLoading411=(async()=>{
-   const bytes=Uint8Array.from(atob(asset),c=>c.charCodeAt(0));
-   const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
-   const script=document.createElement('script');script.textContent=await new Response(stream).text();
-   document.head.appendChild(script);script.remove();
-  })().catch(e=>{delete window.mzPjPlotlyLoading411;throw e;});
-  await window.mzPjPlotlyLoading411;
- }
- P=window.mzPjPlotly411;if(!P)throw new Error('The Pj Plotly resource could not be loaded.');
- if(!root.isConnected)return;
- if(isStatic){
-  plot=document.createElement('div');temporary=true;
-  plot.style.cssText='position:absolute;left:-100000px;top:0;width:__WIDTH__px;height:__HEIGHT__px';
-  root.appendChild(plot);
-  await P.newPlot(plot,figure.data,figure.layout,config);
-  // Il PNG diretto usa blob:, vietato dalla CSP jamovi. SVG completo via data:.
-  const source=await P.toImage(plot,{format:'svg',width:__WIDTH__,height:__HEIGHT__});
-  const bitmap=new Image();
-  await new Promise((resolve,reject)=>{bitmap.onload=resolve;
-   bitmap.onerror=()=>reject(new Error('The static Plotly SVG image could not be decoded.'));
-   bitmap.src=source;});
-  const canvas=document.createElement('canvas');canvas.width=__WIDTH__*2;canvas.height=__HEIGHT__*2;
-  const context=canvas.getContext('2d');
-  if(!context)throw new Error('The static Plotly image requires a 2D canvas context.');
-  context.drawImage(bitmap,0,0,canvas.width,canvas.height);
-  const image=canvas.toDataURL('image/png');
-  if(!root.isConnected)return;
-  root.querySelector('svg.jmv-results-svg-content image').setAttribute('href',image);
-  root.dataset.mzpjExportReady='true';status.hidden=true;
- }else{
-  root.textContent='';await P.newPlot(plot,figure.data,figure.layout,config);
-  resize=new ResizeObserver(()=>{if(root.isConnected)Promise.resolve(P.Plots.resize(plot)).catch(fail);});
-  resize.observe(plot);
-  removal=new MutationObserver(()=>{if(!root.isConnected){resize.disconnect();removal.disconnect();P.purge(plot);}});
-  removal.observe(document.body,{childList:true,subtree:true});
- }
-}catch(e){fail(e);}
-finally{if(temporary){if(P)P.purge(plot);plot.remove();}}
-})();</script>'''
-    # Sostituzione unica: mai reinterpretare le etichette dell'utente come template.
-    substitutions = dict(ROOT=safe(root_id), FIGURE=safe(payload), CONFIG=safe(settings),
-                         ASSET=safe(_pj_plotly_gzip), STATIC=safe(static),
-                         WIDTH=str(export_width), HEIGHT=str(height))
-    content += re.sub(r'__(ROOT|FIGURE|CONFIG|ASSET|STATIC|WIDTH|HEIGHT)__',
-                      lambda match: substitutions[match.group(1)], renderer)
+        content = f'<div id="{root_id}" class="mz-plotly" style="width:{export_width}px;max-width:100%;height:{height}px">Loading Plotly...</div>'
+    if not _pj_plotly_js or not _pj_plotly_css:
+        raise RuntimeError('The shared Plotly renderer is unavailable. Reinstall the updated Pj module.')
+    options = dict(figure=payload, config=settings, asset=_pj_plotly_gzip,
+                   static=static, width=export_width, height=height,
+                   libraryName='mzPjPlotly411')
+    # Serialize once: user labels are never reinterpreted as template tokens.
+    content = '<style>' + _pj_plotly_css + '</style>' + content
+    if not static:
+        content = ('<style>.jmv-results-html:has(#' + root_id + ':not([data-mz-size-zoom]))'
+                   '{width:' + str(export_width) + 'px;min-width:0;max-width:100%}</style>') + content
+    content += ('<script>' + _pj_plotly_js + '</script><script>(function(){'
+                'const root=document.getElementById(' + safe(root_id) + ');'
+                'window.mzPlotly.render(root,' + safe(options) + ').catch(()=>{});'
+                '})();</script>')
     scripts = ['extdata/plotly.min.js'] if not _pj_plotly_gzip else None
     if static:
         _pj_emit_graphic(content, name, html.unescape(heading), mode, scripts=scripts,

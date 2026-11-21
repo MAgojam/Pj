@@ -1138,3 +1138,16 @@ intervals do not back-transform vi. Read the detailed measure guide before use.
 
 
 Per-figure Image/Svg dimensions: [guide](mzPj_figure_dimensions.md), [italiano](mzPj_figure_dimensions_it.md). New helper: `mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)`.
+
+
+### Plotly modebar
+
+`mzpjShowPlotly()` hides the toolbar by default. Set `config={'displayModeBar': True}` to show it, `'hover'` to show it on hover, or `False` to hide it. Svg/Image always omit it. See [Plotly guide](mzPj_plotly.md).
+
+
+Guided helpers: [scatter, profiles, bars, boxplots and heatmap](mzPj_plotly_helpers.md), with example 78. No Python plotly package required.
+
+
+Pj1.7.0 preview: [two-panel interaction model](mzPj_interaction.md), `mzpjShowInteraction`, example79. This fitted helper requires NumPy/SciPy; the simpler graphic helpers retain their previous dependencies.
+
+Chart Html reruns: Python always executes, but an unchanged effective chart configuration reuses its existing canvas/Chart instance in the same Results host. Unrelated plots and overridden global sizes do not trigger reconstruction. Relevant data/options/dimension changes do; interactive legend state is preserved only for the unchanged chart. Svg/Image rendering is unaffected.

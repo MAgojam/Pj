@@ -106,8 +106,8 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
         raise ValueError('mzpjShowChart(): expanded=False requires accordion=True.')
     dimensions = []
     for key, value, default, minimum in (
-            ('width', width, _pj_figure_dimension(FIGWIDTH, 800), 320),
-            ('height', height, _pj_figure_dimension(FIGHEIGHT, 420), 240)):
+            ('width', width, _pj_figure_dimension(FIGWIDTH, 600), 320),
+            ('height', height, _pj_figure_dimension(FIGHEIGHT, 500), 240)):
         value = max(minimum, default) if value is None else value
         if isinstance(value, bool) or not isinstance(value, Integral) or not minimum <= value <= 10000:
             raise ValueError(f'mzpjShowChart(): {key} must be an integer between {minimum} and 10000 pixels.')
@@ -153,6 +153,8 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
 @media print{.mzpj-chartjs canvas{visibility:visible!important}
 .mzpj-chartjs .mzpj-cj-note,.mzpj-chartjs .mzpj-cj-float{display:none!important}.mzpj-chartjs .mzpj-cj-surface{background-image:none!important;break-inside:avoid}}
 </style>'''
+    style += ('<style>.jmv-results-html:has(#' + root_id + '){width:' + str(dimensions[0]) +
+              'px;min-width:0;max-width:100%}</style>')
     surface = (f'<div class="mzpj-cj-body"><div class="mzpj-cj-surface" '
                f'style="width:{dimensions[0]}px;height:{dimensions[1]}px" role="img" '
                f'aria-label="{heading}"><canvas aria-label="{heading}" role="img"></canvas></div>'
@@ -167,12 +169,24 @@ def _pj_show_chart(chart_type, datasets, *, labels=None, name=None, title=None,
                '\nwindow.mzPjChart461=window.Chart;window.Chart=previous;})();</script>')
     renderer = r'''<script>(function(){
 const root=document.getElementById('__ROOT__'),config=__PAYLOAD__;
+const host=root.closest('.jmv-results-html'),signature='__SIGNATURE__';
+const views=window.mzPjChartHtmlViews||(window.mzPjChartHtmlViews=new WeakMap());
+const previous=host&&views.get(host);
+if(previous&&previous.signature===signature){
+ const parent=root.closest('.mzpj-accordion'),id=root.id;
+ root.replaceWith(previous.root);previous.root.id=id;previous.adopt(parent);
+ return;
+}
+if(previous)previous.dispose();
 const legendInfo=config._mzpjLegend;delete config._mzpjLegend;
 const surface=root.querySelector('.mzpj-cj-surface'),canvas=surface.querySelector('canvas');
-const details=root.querySelector('details'),error=root.querySelector('.mzpj-cj-error');
+let details=root.closest('.mzpj-accordion');
+const error=root.querySelector('.mzpj-cj-error');
 const C=window.mzPjChart461;let chart=null,frame=0,observer,printing=false,floating=null,legendResize=null;
 function snapshot(c){if(c.width&&c.height)surface.style.backgroundImage='url("'+c.toBase64Image()+'")';}
 function dispose(){cancelAnimationFrame(frame);if(observer)observer.disconnect();
+ if(details)details.removeEventListener('toggle',onToggle);
+ if(host&&views.get(host)?.root===root)views.delete(host);
  if(legendResize)legendResize.disconnect();
  window.removeEventListener('beforeprint',preparePrint);window.removeEventListener('afterprint',finishPrint);
  if(chart){chart.destroy();chart=null;}}
@@ -219,10 +233,15 @@ function makeLegend(){
  fold();place(surface.clientWidth-floating.offsetWidth-10,10);refreshLegend(chart);
  legendResize=new ResizeObserver(()=>place(x,y));legendResize.observe(surface);legendResize.observe(floating);
 }
+function remember(){if(host&&chart)views.set(host,{signature,root,dispose,adopt(parent){
+ const open=details?details.open:true;
+ if(details)details.removeEventListener('toggle',onToggle);
+ details=parent;if(details){details.open=open;details.addEventListener('toggle',onToggle);}
+}});}
 function render(){
  if(!root.isConnected||(details&&!details.open))return;
  try{
-  if(chart){chart.resize();return;}
+  if(chart){if(chart.width!==surface.clientWidth||chart.height!==surface.clientHeight)chart.resize();return;}
   const colors=['#3e6da9','#ed9950','#429587','#a580b7','#d66a70','#7e929c'];
   config.data.datasets.forEach((d,i)=>{if(d.borderColor===undefined)d.borderColor=colors[i%colors.length];
    if(d.backgroundColor===undefined)d.backgroundColor=colors[i%colors.length]+'99';});
@@ -235,16 +254,25 @@ function render(){
    ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.restore();}}];
   chart=new C(canvas,config);
   canvas.style.backgroundColor='white';
-  makeLegend();
+  makeLegend();remember();
  }catch(e){const partial=C.getChart(canvas);if(partial)partial.destroy();chart=null;showError(e);}
 }
-if(details)details.addEventListener('toggle',()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(render);});
+function onToggle(){cancelAnimationFrame(frame);frame=requestAnimationFrame(render);}
+if(details)details.addEventListener('toggle',onToggle);
 observer=new MutationObserver(()=>{if(!root.isConnected)dispose();});
 observer.observe(document.documentElement,{childList:true,subtree:true});
 window.addEventListener('beforeprint',preparePrint);window.addEventListener('afterprint',finishPrint);
 render();
+
 })();</script>'''
-    renderer = renderer.replace('__ROOT__', root_id).replace('__PAYLOAD__', encoded)
+    # Only this chart's effective inputs and renderer implementation identify it.
+    # Unrelated Python code and global sizes overridden locally are excluded.
+    import hashlib
+    signature = hashlib.sha256(json.dumps(
+        [payload, dimensions, heading, accordion, expanded, accordion_type,
+         style.replace(root_id, '__ROOT__'), renderer, _pj_chart_js],
+        sort_keys=True, ensure_ascii=True, allow_nan=False).encode('utf-8')).hexdigest()
+    renderer = renderer.replace('__ROOT__', root_id).replace('__SIGNATURE__', signature).replace('__PAYLOAD__', encoded)
     _pj_add_html(style + content + library + renderer, name=name,
                  title=html.unescape(heading) if accordion else '',
                  accordion=accordion, expanded=expanded, accordion_type=accordion_type)
