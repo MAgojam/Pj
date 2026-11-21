@@ -1,4 +1,4 @@
-# Guided Plotly helpers — Pj 1.6.3 preview
+# Guided Plotly helpers — Pj 1.7.0
 
 These helpers work with both Python interpreters and ordinary Python data.
 No Python Plotly, pandas or NumPy package is required. Rendering uses the
@@ -15,10 +15,10 @@ fit a statistical model, alter the dataset or rerun Python during interaction.
 
 ## Shared display options
 
-`name`, `title`, `height=500`, `result_type='html'`, `static=False`,
+`name`, `title`, `height=None`, `result_type='html'`, `static=False`,
 `width=None`, `export_width=None` (legacy alias), `accordion=True`, `expanded=True`, `accordion_type='line'`,
 `config=None` and `layout=None` select the result and its presentation.
-Native Svg/Image have no Html accordion or zoom. Plotly Svg embeds a PNG
+Explicit dimensions override Settings per axis; omitted dimensions inherit Settings, then 600 by 500 pixels. Native Svg/Image have no Html accordion or zoom. Plotly Svg embeds a PNG
 snapshot; it is not pure vector output. Native Image needs the Pj/Pjp capture
 bridge. For API hosts without that bridge choose Html/Svg or direct PNG bytes.
 

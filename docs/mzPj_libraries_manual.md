@@ -1,15 +1,8 @@
-# Python libraries in Pj
+# Python libraries and graphics in Pj
 
-> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
-> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
-> document-save fix. Earlier advisories below describe the affected 28.17
-> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
-> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
+Pj 1.7.0, pj_stats_rust 1.1.0. Edition of 21 November 2026.
 
-
-Practical guide with worked examples and statistical reference. Pj 1.6.0, pj_stats_rust 1.1.0. Edition of 16 November 2026.
-
-This manual is for readers writing scripts in the Pj and Pjp editors in jamovi. It explains library selection, data preparation, result creation and the native Rust statistical backend. The examples are reproducible; analyses still require a suitable design and interpretation of their hypotheses.
+A practical guide to libraries, graphic helpers and the statistical backend in Pj and Pjp. Includes reproducible examples and interpretation limits. Requires jamovi 28.18.0 or later.
 
 ## 1 Workspace and data
 
@@ -159,9 +152,17 @@ mzpjShowPlotly(fig, name='manual_plot', static=True,
 
 ### Choosing the native graphic type
 
-Graphics update (16 November 2026): Chart.js, Plotly and D3 share `result_type='html'|'svg'|'image'`. For native PNG export use Image and wait for preparation in Results. Legacy `static=True` remains Svg. See the [graphic types guide](mzPj_graphic_result_types.md) for examples, limits and Windows verification scope.
+Chart.js, Plotly and D3 share result_type='html'|'svg'|'image'. Html retains
+interaction; Svg preserves D3 vectors, while Chart.js and Plotly embed PNG.
+Image captures only the figure as a native result. Wait for the final image
+before exporting: preparation happens offscreen without temporary messages.
+The callback does not rerun Python.
 
-Html keeps interactive controls. Svg preserves D3 vectors but contains PNG for Chart.js and Plotly. Image captures only the figure and stores a native Image: wait until its preparation message is replaced before exporting. The callback does not rerun Python. This capture requires the Pj/Pjp editors; R service hosts can still use mzpjShowImage with ready PNG bytes. This update is tested only on Windows; desktop exports with the new selector still require acceptance.
+JavaScript-generated Image capture requires Pj/Pjp editors; R API hosts can use
+mzpjShowImage with ready PNG bytes. The author accepted the new figures on
+Windows and WSL2 with both Python interpreters. Check the intended export format.
+static=True keeps the Svg behavior. Chapter 9 covers dimensions, accordions,
+size sliders and the new helpers.
 
 ```python
 mzpjShowChart('bar', [{'data': [2.5, 3.8]}],
@@ -598,11 +599,9 @@ The table reports the multivariate Time test. Each row tests its own profile and
 
 ## 7 Checking results and compatibility
 
-The declared minimum is jamovi 28.17.0. Release packages remain Pj 1.6.0 for Windows x64, Linux x64, macOS Intel and macOS Apple Silicon; the two macOS builds use GitHub Actions and need their own successful outcomes. Visual checks on jamovi 28.17.0 in Windows and Ubuntu WSL2 precede the signed commit and release. Successful compilation or a numerical test is not a GUI save/export certification.
+The minimum is jamovi 28.18.0 inclusive. Pj 1.7.0 targets Windows x64, Linux x64, macOS Intel and Apple Silicon. The author accepted visual tests on Windows and Ubuntu 26.04 WSL2 with both Python interpreters. macOS builds and final packages require their own checks; numerical tests do not certify the macOS GUI.
 
-The RM library has 24 independent R reference designs and 2,405 numerical comparisons. Windows and Ubuntu WSL2 pass the automatic tests, with the Flatpak Python checked separately. Flatpak may show an outdated AppStream label: in this environment the 28.7 label corresponded to the actual program 28.17.0.0. Identify the version from the program and jamovi --version.
-
-If a function is missing, check the backend version in the installed JMO, not just in the source tree. For rank errors inspect duplicate covariates and insufficient groups; for None or unavailable statuses read the reason. When an optional package is absent, check the selected interpreter before installing elsewhere. For conflicting import sources correct the order and Run again.
+The RM library retains 24 independent R reference designs and 2,405 numerical comparisons. The Rust backend is unchanged. Check the installed module version and selected Python before diagnosing missing functions or dependencies. Library versions follow the supplied catalog rather than automatically tracking upstream releases.
 
 ## 8 References and working material
 
@@ -613,3 +612,132 @@ Examples 71, 72 and 73 are in the repository pjscript directory. The complete Pj
 - [R mixed models with nlme](https://stat.ethz.ch/R-manual/R-devel/library/nlme/html/lme.html)
 - [R mixed models with lme4](https://lme4.github.io/lme4/reference/lmer.html)
 - [PyO3 parallelism](https://pyo3.rs/v0.29.0/parallelism)
+
+## 9 Graphics in Pj 1.7.0
+
+Pj includes offline JavaScript engines D3, Plotly and Chart.js. Their Pj helpers
+create results without installing their Python packages. Shared mzGraphics
+renderers provide the D3 and Plotly presentation; statistical preparation remains
+in the Python helper. pj_stats_rust 1.1.0 is unchanged in this release.
+
+### Choose the result and its dimensions
+
+Use result_type='html' for interactive figures, 'svg' for a native vector result,
+or 'image' for a native raster result. Native Svg and Image have no Html accordion
+or Html zoom controls. Wait for Image capture to finish before exporting.
+Direct PNG and SVG helpers can also display existing image data.
+
+Generated figures resolve each dimension in this order: explicit width or height
+argument, the corresponding Settings popup value, then 600 by 500 pixels.
+Use None or omit an argument to inherit Settings. The whole script runs after Run;
+changing a global default does not override a local dimension. Raw Image/Svg
+helpers preserve the original aspect ratio if only one local dimension is given;
+without local dimensions they use popup values, or the intrinsic image size when
+no popup size was supplied. Script 76 demonstrates this separate asset contract.
+
+Html accordions default to accordion=True, expanded=True, accordion_type='line'.
+Choose 'bordered' for the alternate heading or accordion=False for no container.
+The thin figure-size slider enlarges the complete figure and its reserved area;
+it is separate from zooming the statistical axes. Physical Results width can
+still require outer horizontal scrolling. Use Reset to restore figure size.
+Plotly's modebar is hidden by default; modebar=True displays it and 'hover'
+shows it on pointer hover. Static results always omit it. Reset axes restores
+the original axis ranges after dragging a rectangle inside an Html Plotly panel.
+
+### Three engines and independent dimensions
+
+The following dataset is invented; no external file is needed. Change Settings
+and Run again: only the D3 figure inherits those dimensions. Change the explicit
+arguments to resize Plotly and Chart individually. Every call runs on each Run.
+An unchanged Html Chart keeps its existing canvas and legend state; data, options
+or dimensions affecting that Chart cause the necessary update.
+
+```python
+sample = {'Time': [0, 1, 2, 3], 'Score': [12, 15, 14, 19]}
+mzpjShowLine(sample, 'Time', 'Score', name='d3_profile',
+             title='Observed illustrative scores', result_type='html')
+mzpjShowPlotlyLine(sample, 'Time', 'Score', sort_x=True,
+                   name='plotly_profile', width=640, height=360)
+mzpjShowChart('line', [{'label': 'Score',
+    'data': sample['Score']}], labels=sample['Time'],
+    name='chart_profile', width=560, height=320)
+```
+
+Script 80 is the full dimension-precedence check. For raw Plotly figures use
+mzpjShowPlotly with a dictionary containing data/layout or a Python Plotly figure.
+Its width argument is preferred; export_width is a compatibility alias and,
+when both are supplied, they must agree. Neither installs Python Plotly.
+
+### Five guided Plotly helpers
+
+Scatter supports groups, point labels and hover. Line supports grouped profiles,
+explicit sorting and missing-value gaps. Bar supports count, sum, mean and
+identity statistics, with grouped, stacked or relative bars. BoxPlot uses linear
+quartiles and 1.5-IQR whiskers, with optional observed points; it does not test
+group differences. Heatmap displays a numeric matrix with row and column labels.
+Script 78 exercises all five with reproducible data. Detailed options and
+statistical conventions are in the Plotly helper guide.
+
+```python
+sample = {'Group': ['A', 'A', 'B', 'B'],
+          'Dose': [1, 2, 1, 2], 'Score': [12, 18, 14, 22]}
+mzpjShowPlotlyScatter(sample, 'Dose', 'Score', group='Group',
+                      name='scatter', width=640, height=400)
+mzpjShowPlotlyBar(sample, 'Group', 'Score', stat='mean',
+                  name='means', title='Illustrative group means')
+mzpjShowPlotlyBoxPlot(sample, 'Score', group='Group',
+                      show_points=True, name='boxes')
+mzpjShowPlotlyHeatmap([[1, .4], [.4, 1]],
+    x_labels=['A', 'B'], y_labels=['A', 'B'], name='matrix')
+```
+
+### A fitted interaction in one call
+
+mzpjShowInteraction fits Y = X + moderator + X by moderator plus optional numeric
+additive covariates. It needs NumPy and SciPy in the selected Python. It accepts
+independent observations only: repeated unit identifiers are rejected. It is not
+a mixed or repeated-measures model and does not imply a causal effect.
+
+```python
+# First open pjscript/79_interaction_model.py for a self-contained lesson.
+# For your own data, select these exact columns in Pjp, or use Pj.
+# report = mzpjShowInteraction(
+#     data, x='Dose', y='Score', moderator='Age',
+#     covariates=['Baseline'], unit='Participant',
+#     covariance='HC3', renderer='plotly', result_type='html',
+#     panel_layout='stacked', name='dose_age')
+```
+
+The first panel shows fitted mean curves and pointwise confidence intervals at
+moderator probes. The second shows the conditional slope and its interval over
+the moderator, zero and observed-range Johnson–Neyman crossings. HC3 uses
+asymptotic Normal/Wald inference; covariance='OLS' uses residual degrees of
+freedom and Student t. Intervals are pointwise, not simultaneous or individual
+prediction intervals. Covariates are held at complete-case means; gray observed
+points are not covariate-adjusted. The function uses complete cases, reports
+exclusions and returns coefficients, covariance, slopes and J–N information.
+Two native result tables are included by default (tables=False omits them).
+
+Visible curves checkboxes control each curve, interval band and matching slope
+point. Click a colored slope point to highlight its corresponding prediction
+curve; Show all curves restores hidden curves and clears highlighting. These
+controls do not refit the model or update native tables. A binary moderator is
+supported with moderator_type='binary' and an explicit reference category;
+there is no continuous J–N region for a binary moderator.
+
+The default stacked layout gives each panel the full figure width; use
+panel_layout='side-by-side' when sufficient width is available. Width accepts
+400–2400 pixels (720 minimum side by side), height 440–1600. If inherited
+Settings are outside those bounds the function reports a validation error.
+For a taller stacked lesson use Settings height 800. Explicit local dimensions
+override Settings for Html, Svg and Image alike. Script 79 covers both renderers
+and all three result types; scripts 75–77 cover containers and native assets.
+
+### Data Library examples and saved analyses
+
+When a script requests a Pj Data Library example, open that example first. Its
+saved analyses and Results are already restored. Add a NEW Pj or Pjp analysis
+in the SAME open document and load the script there to compare both results.
+The library original is protected: saving edits requires a file outside the
+Data Library. Scripts 23–30 and later dataset-dependent lessons identify their
+required example in their comments; do not invent a local OMV path.

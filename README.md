@@ -21,8 +21,8 @@ passed their numerical reference tests through the authorised temporary CI
 transfer. Platform JMO checks are recorded separately from desktop GUI tests.
 
 Complete library manuals, with guided examples and repeated-measures models:
-[Italian PDF](docs/manuals/Pj_1.6.0_Libraries_IT.pdf),
-[English PDF](docs/manuals/Pj_1.6.0_Libraries_EN.pdf).
+[Italian PDF](docs/manuals/Pj_1.7.0_Libraries_IT.pdf),
+[English PDF](docs/manuals/Pj_1.7.0_Libraries_EN.pdf).
 Editable DOCX versions are available in the same directory.
 
 Python function handbook: [English](docs/mzPj_python_functions.md) ·
@@ -515,3 +515,17 @@ Bundled third-party components retain their own notices:
 Development preview: [shared D3 and Plotly renderers](docs/mzPj_shared_graphics.md), with example 77. This is not a new published release.
 
 Guided Plotly preview: [five plotting helpers](docs/mzPj_plotly_helpers.md), [guida italiana](docs/mzPj_plotly_helpers_it.md), example 78.
+
+
+## Pj 1.7.0 documentation
+
+Shared D3/Plotly renderers, five guided Plotly helpers, fitted interaction panels
+and independent figure dimensions are covered by the updated
+[library manual](docs/mzPj_libraries_manual.md) and
+[manuale italiano](docs/mzPj_libraries_manual_it.md).
+Word and PDF editions: [EN Word](docs/manuals/Pj_1.7.0_Libraries_EN.docx),
+[EN PDF](docs/manuals/Pj_1.7.0_Libraries_EN.pdf),
+[IT Word](docs/manuals/Pj_1.7.0_Libraries_IT.docx),
+[IT PDF](docs/manuals/Pj_1.7.0_Libraries_IT.pdf).
+Examples 78–80 cover the new helpers, model interpretation and size precedence.
+Native Svg/Image omit Html containers; the Rust backend remains 1.1.0.

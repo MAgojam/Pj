@@ -1821,3 +1821,26 @@ l’allineamento dei manuali generali IT/EN, inclusi DOCX/PDF: i manuali di
 libreria 1.6.0 non costituiscono ancora una guida completa alle novità 1.7.0.
 Le guide specifiche delle nuove funzioni sono incluse. Nessuna nuova release
 è pubblicata con questo commit; i pacchetti Apple restano da preparare.
+
+
+## 2026-11-21 — Manuali 1.7.0 e controllo degli esempi completati
+
+Aggiornati i manuali librerie IT/EN e i riferimenti Python alla 1.7.0, con
+firme ricavate dai sorgenti, nuovi helper Plotly/interazione, precedenza dimensioni,
+assenza di placeholder Image e riuso Chart. Rigenerati Word/PDF (22 pagine per
+lingua) e controllate tutte le pagine renderizzate. Preservate le edizioni 1.6.0
+come materiali storici del precedente rilascio. Note release IT/EN predisposte.
+
+Audit sui 77 esempi pubblici: System Python 77 PASSED; Embedded 73 PASSED e
+4 requisiti opzionali segnalati correttamente (06,11,24,39). Nessun errore
+inesplicato. Esempio locale52 escluso. Le 13 ricette di ciascun manuale e
+i nuovi blocchi del capitolo9 sono eseguibili; nessuna nuova certificazione
+visiva degli esempi precedenti viene dedotta da questa prova backend.
+Evidenze locali: Pj_builds/examples_1_7_0_20261121 e docs_1_7_0_20261121.
+
+I JMO finali Windows/Linux sono ricompilati da snapshot del commit firmato
+5922eb3, senza installazione. Test dei due Python, API, dimensioni e loader
+Rust PASSED; Windows anche capture/OMV. Build macOS Actions44920465019.
+Il progetto privato MAgojam/pj_stats_rust, locale Y:/A_Lavoro/pj_stats_rust,
+resta pulito a409236a: i quattro binari Rust1.1.0 sono invariati e vengono
+riutilizzati. Nessuna ricompilazione Rust. Staging release in Pj_builds/release_1_7_0.

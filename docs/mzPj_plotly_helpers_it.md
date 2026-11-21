@@ -1,4 +1,4 @@
-# Helper Plotly guidati — Pj 1.6.3 di prova
+# Helper Plotly guidati — Pj 1.7.0
 
 I cinque helper funzionano con Python Embedded e System, senza richiedere
 pacchetti Python Plotly, pandas o NumPy. Le ricette JavaScript sono comuni
@@ -15,8 +15,9 @@ La selezione interattiva non cambia il dataset e non riesegue Python.
 
 ## Opzioni comuni
 
-Nome e titolo: `name`, `title`. Altezza: `height=500`; larghezza statica:
-`export_width=960`. Tipo risultato: `result_type='html'`, `'svg'` o `'image'`.
+Nome e titolo: `name`, `title`. Dimensioni: `width=None`, `height=None`;
+`export_width=None` è un alias compatibile di width. Gli argomenti locali
+prevalgono per ciascun asse su Settings, poi sul default 600 per 500 pixel. Tipo risultato: `result_type='html'`, `'svg'` o `'image'`.
 Accordion solo Html: `accordion`, `expanded`, `accordion_type='line'` oppure
 `'bordered'`. Svg/Image sono risultati nativi senza accordion o zoom Html.
 Lo Svg Plotly incorpora una PNG; non è vettoriale puro.

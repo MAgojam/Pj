@@ -1,15 +1,6 @@
 # Pj Python function handbook
 
-> **Pj 1.6.2:** shared Html accordions, `line` and `bordered` styles.
-> [Full guide and examples](mzPj_accordions.md). Native Image and Table are excluded.
-
-
-> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
-> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
-> document-save fix. Earlier advisories below describe the affected 28.17
-> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
-> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
-
+Pj 1.7.0 — jamovi 28.18.0 or later. Updated 21 November 2026.
 
 Use Pj API1 from Rj with the [R script](../rjusepj/01_pj_api_libraries.R) and its [instructions](../rjusepj/README.md).
 
@@ -21,13 +12,13 @@ The [library user manual](mzPj_libraries_manual.md) covers all eleven supplied
 Python libraries and the 26 native APIs, with tested examples. DOCX/PDF
 editions are available under `docs/manuals`. The [RM guide](mzPj_repeated_measures.md)
 documents RM-ANOVA, RM-ANCOVA, RM-MANOVA and RM-MANCOVA in pj_stats_rust1.1.0;
-these functions do not require NumPy/SciPy. Pj remains1.6.0, minApp jamovi28.17.0.
+these functions do not require NumPy/SciPy. Pj 1.7.0 requires jamovi 28.18.0 or later.
 Interpreter and bundled/system source selection are separate choices.
 
 
 Interpreter selection: **Python interpreter → Embedded / System**. Embedded is the Python included with jamovi; System uses the Python installed on the computer.
 
-## External datasets and OMV functions - Pj 1.6.0 candidate
+## External datasets and OMV functions
 
 `dataext` is an initially empty dataset, separate from jamovi's `data`. The
 Settings buttons **Read...** and **Save...** load and save it. **Show preview in
@@ -110,7 +101,7 @@ an informative size error; reduce points/rows or split results, not statistical 
 
 ## Function reference
 
-All Show functions append results; they are not fitted-model objects. Use stable
+Show functions append results. mzpjShowInteraction also fits a model and returns its numerical report. Use stable
 distinct `name` values for multiple results. The signatures list actual defaults;
 the tables explain arguments. Complex style/renderer dictionaries are specified
 in the linked specialist guides rather than accepting arbitrary Python code.
@@ -290,9 +281,9 @@ mzpjShowScatter(dataset, x, y, group=None, labels=None, name=None, title=None, x
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -336,9 +327,9 @@ mzpjShowHistogram(dataset, variable, bins=10, density=False, name=None, title=No
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -384,9 +375,9 @@ mzpjShowBoxPlot(dataset, variable, group=None, labels=None, show_points=False, n
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -432,9 +423,9 @@ mzpjShowBar(dataset, category, value=None, stat='count', orientation='vertical',
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -486,9 +477,9 @@ mzpjShowLine(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -538,9 +529,9 @@ mzpjShowIntervals(dataset, estimate, lower, upper, labels=None, reference=None, 
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -586,9 +577,9 @@ mzpjShowDistribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=True, n
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -630,9 +621,9 @@ mzpjShowCorrelation(dataset, columns, labels=None, missing='pairwise', method='p
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -680,9 +671,9 @@ mzpjShowPaired(dataset, first, second, group=None, labels=None, name=None, title
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -726,9 +717,9 @@ mzpjShowTestDistribution(distribution='t', df=10, df2=20, statistic=2, tail='rig
 
 | `color` | Plot colour; use a CSS colour such as #3e6da9. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -766,9 +757,9 @@ mzpjShowChart(chart_type, datasets, *, labels=None, name=None, title=None, optio
 
 | `options` | Chart.js options dictionary; no Python callbacks or JavaScript functions in this JSON configuration. |
 
-| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `width` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `accordion` | True wraps eligible Html content. ShowTable None selects True for HTML and False for native Table; native Svg/Image/Table are not wrapped. |
 
@@ -789,7 +780,7 @@ Render a supplied Plotly figure interactively or as an explicit static snapshot.
 
 
 ```python
-mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None, static=False, export_width=960, result_type=None, accordion=True, expanded=True, accordion_type='line')
+mzpjShowPlotly(figure, *, name=None, title=None, height=None, config=None, static=False, export_width=None, width=None, result_type=None, accordion=True, expanded=True, accordion_type='line')
 ```
 
 
@@ -802,13 +793,13 @@ mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None, static
 
 | `title` | Visible result heading; None uses the function default. |
 
-| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Plotly height defaults to 800. Not a font size. |
+| `height` | Requested figure/container dimensions in CSS pixels; None uses the helper default. Dimensions inherit Settings, then 600 by 500; explicit arguments take priority. Not a font size. |
 
 | `config` | Plotly browser configuration dictionary, e.g. displaylogo=False; separate from figure.layout. |
 
 | `static` | False: interactive HTML, no native snapshot. True: one static snapshot in native Svg for document export; it does not remain interactive. |
 
-| `export_width` | Integer static Plotly snapshot width, 400–2400 pixels; default 960. |
+| `export_width` | Compatibility alias of width for all result types. None inherits Settings; width and export_width must agree when both are supplied. |
 
 
 
@@ -1151,3 +1142,58 @@ Guided helpers: [scatter, profiles, bars, boxplots and heatmap](mzPj_plotly_help
 Pj1.7.0 preview: [two-panel interaction model](mzPj_interaction.md), `mzpjShowInteraction`, example79. This fitted helper requires NumPy/SciPy; the simpler graphic helpers retain their previous dependencies.
 
 Chart Html reruns: Python always executes, but an unchanged effective chart configuration reuses its existing canvas/Chart instance in the same Results host. Unrelated plots and overridden global sizes do not trigger reconstruction. Relevant data/options/dimension changes do; interactive legend state is preserved only for the unchanged chart. Svg/Image rendering is unaffected.
+
+
+## Graphic functions added in 1.7.0
+
+[Worked library guide](mzPj_libraries_manual.md), [Plotly helpers](mzPj_plotly_helpers.md), [interaction model](mzPj_interaction.md).
+
+### mzpjShowPlotlyScatter
+
+```python
+mzpjShowPlotlyScatter(dataset, x, y, group=None, labels=None, *, marker_size=8, opacity=0.85, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='closest', drag_mode='zoom', modebar=None, **display)
+```
+
+Interactive grouped scatter. Select/lasso/pan through drag_mode; modebar hidden by default.
+
+### mzpjShowPlotlyLine
+
+```python
+mzpjShowPlotlyLine(dataset, x, y, group=None, labels=None, *, sort_x=False, connect_gaps=False, show_points=True, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='x unified', drag_mode='zoom', modebar=None, **display)
+```
+
+Grouped profiles with explicit sorting, missing-value gaps and unified hover.
+
+### mzpjShowPlotlyBar
+
+```python
+mzpjShowPlotlyBar(dataset, category, value=None, group=None, *, stat='count', orientation='vertical', bar_mode='group', show_values=False, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='closest', drag_mode='zoom', modebar=None, **display)
+```
+
+Count/sum/mean/identity bars with grouped, stacked or relative presentation.
+
+### mzpjShowPlotlyBoxPlot
+
+```python
+mzpjShowPlotlyBoxPlot(dataset, variable, group=None, labels=None, *, show_points=False, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='closest', drag_mode='zoom', modebar=None, **display)
+```
+
+Host-computed linear quartiles and 1.5-IQR whiskers, with outliers retained.
+
+### mzpjShowPlotlyHeatmap
+
+```python
+mzpjShowPlotlyHeatmap(matrix, x_labels=None, y_labels=None, *, color_scale='Viridis', show_values=False, zmin=None, zmax=None, reverse_scale=False, x_label='', y_label='', hover_mode='closest', modebar=None, **display)
+```
+
+Display a rectangular numeric matrix, without implicit correlation or normalization.
+
+### mzpjShowInteraction
+
+```python
+mzpjShowInteraction(dataset, x, y, moderator, *, moderator_type='continuous', covariates=None, unit=None, reference=None, moderator_values=None, covariance='HC3', level=0.95, renderer='plotly', show_points=True, tables=True, points=81, name=None, title=None, width=None, height=None, panel_layout='stacked', result_type='html', accordion=True, expanded=True, accordion_type='line', modebar=None, palette=None)
+```
+
+Fit Y ~ X * moderator + numeric covariates and draw two linked panels.
+
+The Plotly helpers accept width, height, name, title, result_type, accordion, expanded and accordion_type through **display. modebar defaults to False. Chapter 9 of the library manual explains dimension precedence, the three result types and examples 78–80.

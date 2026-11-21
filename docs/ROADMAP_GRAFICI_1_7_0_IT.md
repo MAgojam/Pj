@@ -2,11 +2,12 @@
 
 ## Stato e versione
 
-Il 21 novembre 2026 l’autore ha confermato PASSED per la cattura Image
-silenziosa. Gli helper Plotly precedenti sono accettati nei due Python per
-Html, Svg e Image. La prossima versione da portare al commit è **Pj 1.7.0**,
-non 1.6.3. La preview Windows installata è ora 1.7.0; la precedente 1.6.3 resta il
-riferimento visivamente accettato finché lo script79 non riceve il PASSED. Nessun commit, tag o release è autorizzato da questa nota.
+Pj 1.7.0: l’autore ha confermato PASSED Windows e Ubuntu 26.04 WSL2 con
+entrambi i Python, inclusi gli script 78–80. Il commit di implementazione
+5922eb3 è firmato. I manuali IT/EN e le relative edizioni Word/PDF sono stati
+aggiornati; gli esempi pubblici sono stati ricontrollati sul runner corrente.
+Le quattro build finali sono in preparazione; la release non è ancora pubblicata.
+Il backend pj_stats_rust 1.1.0 resta invariato e non viene ricompilato.
 
 ## Funzione scelta e implementata
 
@@ -26,8 +27,8 @@ misto o per misure ripetute. Guida completa e limiti:
 
 Confronti indipendenti Statsmodels PASSED per coefficienti, covarianza,
 previsioni, effetti, intervalli e soglie; prove browser offline nei due renderer
-con Html/Svg/Image PASSED. Build Windows 1.7.0 predisposta; accettazione visiva
-del nuovo script79 ancora da ottenere. Nessun commit o rilascio automatico.
+con Html/Svg/Image PASSED. Prova visiva dello script79 accettata su Windows e WSL2 nei due Python.
+Nessuna nuova prova desktop macOS è dedotta dai test automatici.
 
 ## Ulteriori proposte da selezionare
 
@@ -51,8 +52,8 @@ affiancati e, se utile, impilati. Ogni tipo deve esportare solo la figura; nessu
 accordion o zoom Html nei risultati nativi. Preparazione Image silenziosa, errori
 visibili e titoli conservati restano requisiti. Aggiungere esempi inglesi con dati
 simulati e guide IT/EN. Confrontare i calcoli con riferimenti indipendenti, poi
-provare Windows nei due Python e negli editor Pj/Pjp. Linux/macOS seguiranno
-quando richiesto; Rj resta rinviato al suo ultimo blocco.
+verificare le quattro piattaforme. Windows e WSL2 sono stati accettati;
+Rj resta rinviato al suo ultimo blocco.
 
 ## Riferimenti consultati
 
@@ -63,4 +64,4 @@ quando richiesto; Rj resta rinviato al suo ultimo blocco.
 Verifica finale Windows: 16 casi backend Html/Svg e 8 cicli Image Pj/Pjp con
 entrambi i Python e renderer PASSED; una sola esecuzione Python, due tabelle e
 titolo conservati. Installata preview 1.7.0 con backup e 69 file verificati;
-caricamento a freddo UTF-8 PASSED. Attesa prova visiva dello script79.
+caricamento a freddo UTF-8 PASSED. Prova visiva dello script79 PASSED su Windows e WSL2.
