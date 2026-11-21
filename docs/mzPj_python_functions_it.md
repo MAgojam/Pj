@@ -1,15 +1,6 @@
 # Manuale delle funzioni Python di Pj
 
-> **Pj 1.6.2:** accordion condivisi Html, stili `line` e `bordered`.
-> [Guida completa ed esempi](mzPj_accordions_it.md). Svg, Image e Table nativi esclusi.
-
-
-> **Pj 1.6.1 / jamovi 28.18 (18 novembre 2026).** Il minimo è ora
-> jamovi 28.18.0 inclusa. Il runtime ufficiale include la correzione del
-> salvataggio dei documenti con Svg nativo. Gli avvisi precedenti qui sotto
-> descrivono la 28.17. Restano separati i limiti delle proporzioni Office e del
-> ridimensionamento Rj; vedi le [note 1.6.1](mzPj_release_1_6_1.md).
-
+Pj 1.7.0 — jamovi 28.18.0 o successiva. Aggiornato il 21 novembre 2026.
 
 Per provare API1 da Rj usare lo [script R](../rjusepj/01_pj_api_libraries.R) e la [guida italiana](mzPj_rj_api_it.md).
 
@@ -22,13 +13,13 @@ le undici librerie del bundle e le 26 API native, con esempi verificati.
 Sono disponibili anche le edizioni DOCX/PDF in `docs/manuals`.
 La [guida RM](mzPj_repeated_measures_it.md) documenta RM-ANOVA, RM-ANCOVA,
 RM-MANOVA e RM-MANCOVA di pj_stats_rust 1.1.0. Queste funzioni non richiedono
-NumPy/SciPy. Pj resta 1.6.0, minApp jamovi 28.17.0. Interprete e sorgente
+NumPy/SciPy. Pj 1.7.0 richiede jamovi 28.18.0 o successiva. Interprete e sorgente
 bundled/system sono scelte distinte; verificare il catalogo effettivo.
 
 
 Scelta dell’interprete: **Python interpreter → Embedded / System**. Embedded è il Python incluso in jamovi; System usa quello installato sul computer.
 
-## Dataset esterni e funzioni OMV - candidata Pj 1.6.0
+## Dataset esterni e funzioni OMV
 
 `dataext` e' un dataset inizialmente vuoto, separato da `data` di jamovi. I
 pulsanti **Read...** e **Save...** nelle impostazioni lo leggono e salvano.
@@ -295,9 +286,9 @@ mzpjShowScatter(dataset, x, y, group=None, labels=None, name=None, title=None, x
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -341,9 +332,9 @@ mzpjShowHistogram(dataset, variable, bins=10, density=False, name=None, title=No
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -389,9 +380,9 @@ mzpjShowBoxPlot(dataset, variable, group=None, labels=None, show_points=False, n
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -437,9 +428,9 @@ mzpjShowBar(dataset, category, value=None, stat='count', orientation='vertical',
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -491,9 +482,9 @@ mzpjShowLine(dataset, x, y, group=None, labels=None, sort_x=False, connect_gaps=
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -543,9 +534,9 @@ mzpjShowIntervals(dataset, estimate, lower, upper, labels=None, reference=None, 
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -591,9 +582,9 @@ mzpjShowDistribution(mean=0, sd=1, n=30, mode='sample_mean', interactive=True, n
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -635,9 +626,9 @@ mzpjShowCorrelation(dataset, columns, labels=None, missing='pairwise', method='p
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -685,9 +676,9 @@ mzpjShowPaired(dataset, first, second, group=None, labels=None, name=None, title
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -731,9 +722,9 @@ mzpjShowTestDistribution(distribution='t', df=10, df2=20, statistic=2, tail='rig
 
 | `color` | Colore del grafico; usare un colore CSS come #3e6da9. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -771,9 +762,9 @@ mzpjShowChart(chart_type, datasets, *, labels=None, name=None, title=None, optio
 
 | `options` | Dizionario di opzioni Chart.js; questa configurazione JSON non accetta callback Python o funzioni JavaScript. |
 
-| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `width` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `accordion` | True racchiude contenuti Html compatibili. ShowTable None sceglie True per HTML e False per Table nativa; Svg/Image/Table nativi non vengono racchiusi. |
 
@@ -794,7 +785,7 @@ Presenta una figura Plotly interattiva oppure una fotografia statica esplicita.
 
 
 ```python
-mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None, static=False, export_width=960, result_type=None, accordion=True, expanded=True, accordion_type='line')
+mzpjShowPlotly(figure, *, name=None, title=None, height=None, config=None, static=False, export_width=None, width=None, result_type=None, accordion=True, expanded=True, accordion_type='line')
 ```
 
 
@@ -807,13 +798,13 @@ mzpjShowPlotly(figure, *, name=None, title=None, height=800, config=None, static
 
 | `title` | Titolo visibile; None usa quello predefinito della funzione. |
 
-| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Plotly ha altezza predefinita 800. Non indica la dimensione del font. |
+| `height` | Dimensioni richieste della figura/contenitore in pixel CSS; None usa il default. Le dimensioni ereditano Settings, poi 600 per 500; gli argomenti espliciti prevalgono. Non indica la dimensione del font. |
 
 | `config` | Dizionario di configurazione browser Plotly, es. displaylogo=False; distinto da figure.layout. |
 
 | `static` | False: HTML interattivo, senza fotografia nativa. True: una sola fotografia statica in Svg nativo per l’esportazione; non conserva l’interattività. |
 
-| `export_width` | Larghezza intera della fotografia statica Plotly, 400–2400 pixel; default 960. |
+| `export_width` | Alias compatibile di width per tutti i tipi di risultato. None eredita Settings; se width ed export_width sono entrambi forniti devono coincidere. |
 
 
 
@@ -1145,3 +1136,71 @@ la guida dettagliata delle misure prima dell’utilizzo.
 
 
 Per-figure Image/Svg dimensions: [guide](mzPj_figure_dimensions.md), [italiano](mzPj_figure_dimensions_it.md). New helper: `mzpjShowSvg(content, name=None, title=None, *, width=None, height=None)`.
+
+
+### Barra strumenti Plotly
+
+`mzpjShowPlotly()` nasconde la barra per default. Usare `config={'displayModeBar': True}` per mostrarla sempre, `'hover'` al passaggio del mouse, oppure `False` per nasconderla. Svg/Image la escludono sempre. Vedere la [guida Plotly](mzPj_plotly.md).
+
+
+Helper Plotly guidati: [guida italiana](mzPj_plotly_helpers_it.md), con script 78 per dispersione, profili, barre, boxplot e heatmap. Non richiedono pacchetti Python aggiuntivi.
+
+
+Pj1.7.0: [interazione in due pannelli](mzPj_interaction_it.md), `mzpjShowInteraction`, script79. L’helper stima il modello e richiede NumPy/SciPy; gli helper grafici semplici non acquisiscono questa dipendenza.
+
+Chart Html nei Run successivi: Python viene sempre eseguito. Se la configurazione effettiva del grafico è invariata, il risultato conserva canvas e istanza Chart. Modifiche ad altri grafici o a dimensioni globali sovrascritte localmente non lo ricreano; dati/opzioni/dimensioni effettive diverse sì. Lo stato della legenda è conservato soltanto per grafici invariati. Svg/Image non cambiano comportamento.
+
+
+## Nuove funzioni grafiche della 1.7.0
+
+[Guida operativa con esempi](mzPj_libraries_manual_it.md), [helper Plotly](mzPj_plotly_helpers_it.md), [modello di interazione](mzPj_interaction_it.md).
+
+### mzpjShowPlotlyScatter
+
+```python
+mzpjShowPlotlyScatter(dataset, x, y, group=None, labels=None, *, marker_size=8, opacity=0.85, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='closest', drag_mode='zoom', modebar=None, **display)
+```
+
+Dispersione interattiva per gruppi con selezione, lazo o spostamento tramite drag_mode; barra strumenti nascosta per default.
+
+### mzpjShowPlotlyLine
+
+```python
+mzpjShowPlotlyLine(dataset, x, y, group=None, labels=None, *, sort_x=False, connect_gaps=False, show_points=True, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='x unified', drag_mode='zoom', modebar=None, **display)
+```
+
+Profili per gruppo con ordinamento esplicito, interruzioni per mancanti e hover unificato.
+
+### mzpjShowPlotlyBar
+
+```python
+mzpjShowPlotlyBar(dataset, category, value=None, group=None, *, stat='count', orientation='vertical', bar_mode='group', show_values=False, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='closest', drag_mode='zoom', modebar=None, **display)
+```
+
+Barre di conteggio, somma, media o valori originali, raggruppate, impilate o relative.
+
+### mzpjShowPlotlyBoxPlot
+
+```python
+mzpjShowPlotlyBoxPlot(dataset, variable, group=None, labels=None, *, show_points=False, color='#3e6da9', palette=None, x_label=None, y_label=None, show_legend=True, hover_mode='closest', drag_mode='zoom', modebar=None, **display)
+```
+
+Quartili lineari e baffi a 1,5 IQR calcolati in Python, conservando gli outlier.
+
+### mzpjShowPlotlyHeatmap
+
+```python
+mzpjShowPlotlyHeatmap(matrix, x_labels=None, y_labels=None, *, color_scale='Viridis', show_values=False, zmin=None, zmax=None, reverse_scale=False, x_label='', y_label='', hover_mode='closest', modebar=None, **display)
+```
+
+Matrice numerica con etichette, scala di colore configurabile e valori mancanti espliciti; non calcola correlazioni o cluster.
+
+### mzpjShowInteraction
+
+```python
+mzpjShowInteraction(dataset, x, y, moderator, *, moderator_type='continuous', covariates=None, unit=None, reference=None, moderator_values=None, covariance='HC3', level=0.95, renderer='plotly', show_points=True, tables=True, points=81, name=None, title=None, width=None, height=None, panel_layout='stacked', result_type='html', accordion=True, expanded=True, accordion_type='line', modebar=None, palette=None)
+```
+
+Stima Y ~ X * moderatore con covariate numeriche e disegna due pannelli collegati.
+
+Gli argomenti **display degli helper Plotly includono width, height, name, title, result_type, accordion, expanded e accordion_type. modebar è False per default. Vedere il capitolo 9 del manuale per la precedenza delle dimensioni, i tre tipi di risultato e gli esempi 78–80.

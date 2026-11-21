@@ -23,7 +23,7 @@ for(mode in c('jamovi','system')) {
         identical(input$x,c(1,2,NA,4)))
     row <- serviceItem(response,'summary','Table')$rows[[1]]
     stopifnot(row[[1]]==3L,abs(row[[2]]-7/3)<1e-12,
-        grepl('mzPjD3',serviceItem(response,'plot','Html')$content,fixed=TRUE),
+        grepl('mzD3',serviceItem(response,'plot','Html')$content,fixed=TRUE),
         serviceItem(response,'text','Text')$content=='**Service text**',
         serviceItem(response,'image','Image')$width==800L)
     stopifnot(any(vapply(response$items,function(x)identical(x$type,'Preformatted')&&grepl('service console',x$content,fixed=TRUE),logical(1))))

@@ -47,7 +47,7 @@ for(prefix in c('Pj','Pjp')) for(mode in c('bundled','external')) {
  broken<-entry;broken$content<-'AAAA'
  brokenText<-jsonlite::toJSON(list(version=1L,images=list(broken)),auto_unbox=TRUE)
  z<-make(z$options$asProtoBuf(),brokenText);z$run();z$.save()
- stopifnot(inherits(z$results$get('chart'),'Html'),length(readLines(marker))==1L)
+ stopifnot(inherits(z$results$get('chart'),'Html'),identical(z$results$get('chart')$title,'Native Image'),length(readLines(marker))==1L)
  text<-jsonlite::toJSON(list(version=1L,images=list(entry,entry)),auto_unbox=TRUE)
  before<-a$results$get('preview')$asProtoBuf(status=3L)$table$columns[[1]]$cells
  external<-a$results$get('omvExport')$state
@@ -61,7 +61,7 @@ for(prefix in c('Pj','Pjp')) for(mode in c('bundled','external')) {
  synced$options[[i]] <- optionPB(list(json='{}'))
  b<-make(synced,text)
  b$run()
- stopifnot(inherits(b$results$get('chart'),'Image'),identical(b$results$get('chart')$state,entry$content),
+ stopifnot(inherits(b$results$get('chart'),'Image'),identical(b$results$get('chart')$title,'Native Image'),identical(b$results$get('chart')$state,entry$content),
   identical(b$results$get('omvExport')$state,external),b$results$get('explanation')$isFilled(),
   length(readLines(marker))==1L,identical(b$options$graphicCapture,''))
  # jamovi has already consumed Output values: retain its column metadata,

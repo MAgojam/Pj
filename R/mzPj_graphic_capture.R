@@ -34,6 +34,20 @@
     value
 }
 
+.mzPj_captureTitle <- function(old) {
+    title <- old$state$image_capture_title
+    if (is.character(title) && length(title)==1L && !is.na(title)) title else old$title
+}
+
+# A failed pending result regains its original heading and remains retryable.
+.mzPj_captureError <- function(self, old, content) {
+    error <- jmvcore::Html$new(self$options,name=old$name,title=.mzPj_captureTitle(old))
+    error$setState(old$state)
+    error$setContent(content)
+    self$results$add(error)
+    invisible(error)
+}
+
 .mzPj_applyGraphicCapture <- function(self) {
     text <- self$options$graphicCapture
     if (!is.character(text) || length(text)!=1L || !nzchar(text) ||
@@ -54,10 +68,10 @@
         if (!is.list(state) || !identical(state$image_capture_token,value$token)) next
         capture <- tryCatch(.mzPj_capturePng(value),error=function(e)NULL)
         if (is.null(capture)) {
-            old$setContent('<p>Native Image preparation failed. Reduce the figure size and run again.</p>')
+            .mzPj_captureError(self,old,'<p>Native Image preparation failed. Reduce the figure size and run again.</p>')
             next
         }
-        image <- jmvcore::Image$new(self$options,name=value$name,title=old$title,
+        image <- jmvcore::Image$new(self$options,name=value$name,title=.mzPj_captureTitle(old),
             renderFun='.render',width=as.integer(capture$width),height=as.integer(capture$height))
         image$setState(capture$content)
         replaced[[value$name]] <- old
@@ -66,8 +80,7 @@
     if (length(replaced)) {
         tryCatch(.mzPj_checkNativeSize(self$results),mzPjResultSizeError=function(e) {
             for (old in replaced) {
-                old$setContent('<p>The native Image results are too large. Reduce the figure size and run again.</p>')
-                self$results$add(old)
+                .mzPj_captureError(self,old,'<p>The native Image results are too large. Reduce the figure size and run again.</p>')
             }
             replaced <<- list()
         })

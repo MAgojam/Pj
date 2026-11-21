@@ -43,6 +43,14 @@ class GraphicTypesTests(unittest.TestCase):
             tokens.append(token)
         self.assertEqual(len(set(tokens)), 3)
 
+    def test_pending_title_is_script_safe(self):
+        self.ns['_pj_image_capture_enabled'] = True
+        self.ns['_pj_emit_graphic']('<svg class="jmv-results-svg-content" width="20" height="20"></svg>',
+            'safe', '</script><script>throw Error(1)</script>', 'image')
+        content = self.ns['results']['items'][-1]['content']
+        self.assertNotIn('"</script><script>', content)
+        self.assertIn('data-image-error-title hidden', content)
+
     def test_image_failure_does_not_append_results(self):
         with self.assertRaises(RuntimeError):
             self.ns['_pj_show_chart']('bar', [{'data': [1]}], result_type='image')

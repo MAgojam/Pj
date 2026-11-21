@@ -102,3 +102,16 @@ omitted them; successful PNG Image export does not certify native Svg export.
 The corrected portable 28.17.2 is Windows-only. No new Ubuntu/macOS build or test
 is performed for this change. Wide Word table layout and full TeX compilation
 remain separate checks.
+
+
+## Quiet native Image preparation
+
+Pending Image capture containers and their temporary headings are rendered
+offscreen until the native Image replaces them. No Preparing Image text is
+shown in Results. The original title is retained for the final Image.
+The container remains renderable; display:none is not used because it can
+break plot measurement. Capture/decode errors, backend errors and a missing
+acknowledgement restore a visible error result. Timers are cleared when the
+pending result is removed. Python is not rerun during that replacement.
+This applies to D3, Chart.js and Plotly Image capture; direct PNG results and
+Html/Svg behavior are unchanged. Wait for final Images before export.

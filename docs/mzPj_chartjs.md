@@ -49,7 +49,7 @@ mzpjShowChart(
 | `name` | Unique result name: initial letter, followed by letters, digits or underscores. Omit to generate a name. |
 | `title` | Heading above the chart, or the accordion title. |
 | `options` | Dictionary of JSON-compatible Chart.js settings for axes, legend, interaction and animation. |
-| `width`, `height` | Integer pixels, minimum 320/240 respectively, maximum 10000. Omitted values use the popup dimensions, or defaults 800×420. Width fits narrower panels. |
+| `width`, `height` | Integer pixels, minimum 320/240 respectively, maximum 10000. Omitted values use the popup dimensions, or defaults 600×500. Width fits narrower panels. |
 | `accordion`, `expanded` | Booleans; default to an open accordion. `expanded=False` requires `accordion=True`. |
 | `static` | `False` keeps the interactive HTML result. `True` produces a native static figure from a PNG snapshot. |
 | `floating_legend` | `None`/`False` omits the optional panel; `True` builds a series panel; a dictionary adds descriptions and notes. Used only in interactive mode. |

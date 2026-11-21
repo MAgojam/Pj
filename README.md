@@ -1,13 +1,14 @@
 # Pj — Python inside jamovi
 
-Version **1.6.2** requires **jamovi 28.18.0 or later**.
-This update adds per-figure Image/Svg dimensions, shared line/bordered accordions
-for Html results, clearer editor scrollbars and compact toolbar spacing. Native
-Svg resizing remains controlled by jamovi. Teaching scripts and Data Library
-instructions have been expanded, and native-image capture preserves its state
-when PNG acknowledgements arrive with informational option changes. The Python
-service API remains version 1; pj_stats_rust 1.1.0 binaries are unchanged.
-See the [release notes](docs/mzPj_release_1_6_2.md) and
+Version **1.7.0** requires **jamovi 28.18.0 or later**.
+This update adds shared offline D3/Plotly renderers, five guided Plotly helpers
+and a fitted two-panel interaction helper. Generated figures use explicit local
+width/height first, then Settings, then 600 by 500 pixels. Html size controls
+expand the reserved result area; unchanged Chart canvases are reused and native
+Image capture prepares figures offscreen. Native Svg/Image omit Html containers.
+The service API remains version 1; pj_stats_rust 1.1.0 binaries are unchanged.
+See the [release notes](docs/mzPj_release_1_7_0.md),
+[interaction guide](docs/mzPj_interaction.md) and
 [per-figure dimensions guide](docs/mzPj_figure_dimensions.md).
 
 Try the public Python API from Rj with three examples: [libraries and calculations](rjusepj/01_pj_api_libraries.R), [tables and graphics](rjusepj/02_pj_api_graphics.R), and [optional System libraries](rjusepj/03_pj_api_system_libraries.R).
@@ -15,14 +16,14 @@ Try the public Python API from Rj with three examples: [libraries and calculatio
 No Pj editor analysis is opened; the current dataset remains unchanged.
 
 Native Rust binaries and their loader are included for Windows x64, Linux x64,
-macOS Intel and macOS Apple Silicon. The unfinished root `pj_stats_rust/`
-development project is excluded from Git and JMO packages. Native Apple builds
-passed their numerical reference tests through the authorised temporary CI
-transfer. Platform JMO checks are recorded separately from desktop GUI tests.
+macOS Intel and macOS Apple Silicon. Their development project is maintained
+separately and is not included in this repository or the JMO. The existing
+pj_stats_rust 1.1.0 binaries are reused unchanged in Pj 1.7.0. Platform build
+and backend checks are recorded separately from desktop visual acceptance.
 
 Complete library manuals, with guided examples and repeated-measures models:
-[Italian PDF](docs/manuals/Pj_1.6.0_Libraries_IT.pdf),
-[English PDF](docs/manuals/Pj_1.6.0_Libraries_EN.pdf).
+[Italian PDF](docs/manuals/Pj_1.7.0_Libraries_IT.pdf),
+[English PDF](docs/manuals/Pj_1.7.0_Libraries_EN.pdf).
 Editable DOCX versions are available in the same directory.
 
 Python function handbook: [English](docs/mzPj_python_functions.md) ·
@@ -510,3 +511,22 @@ Pj is licensed under **GNU GPL version 2 or later**, as declared in
 Bundled third-party components retain their own notices:
 [Brace/Ace license](jamovi/js/node_modules/brace/LICENSE) and
 [D3 license](inst/licenses/mzPj_d3_LICENSE.txt).
+
+
+Shared graphics: [shared D3 and Plotly renderers](docs/mzPj_shared_graphics.md), with example 77. Release publication is tracked separately from this source branch.
+
+Guided Plotly helpers: [five plotting helpers](docs/mzPj_plotly_helpers.md), [guida italiana](docs/mzPj_plotly_helpers_it.md), example 78.
+
+
+## Pj 1.7.0 documentation
+
+Shared D3/Plotly renderers, five guided Plotly helpers, fitted interaction panels
+and independent figure dimensions are covered by the updated
+[library manual](docs/mzPj_libraries_manual.md) and
+[manuale italiano](docs/mzPj_libraries_manual_it.md).
+Word and PDF editions: [EN Word](docs/manuals/Pj_1.7.0_Libraries_EN.docx),
+[EN PDF](docs/manuals/Pj_1.7.0_Libraries_EN.pdf),
+[IT Word](docs/manuals/Pj_1.7.0_Libraries_IT.docx),
+[IT PDF](docs/manuals/Pj_1.7.0_Libraries_IT.pdf).
+Examples 78–80 cover the new helpers, model interpretation and size precedence.
+Native Svg/Image omit Html containers; the Rust backend remains 1.1.0.

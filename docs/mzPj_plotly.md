@@ -1,131 +1,79 @@
-# Plotly in Pj 1.4.0
+# Plotly in Pj 1.7.0
 
-> **Pj 1.6.1 / jamovi 28.18 (18 November 2026).** The minimum is now
-> jamovi 28.18.0, inclusive. The official runtime includes the native SVG
-> document-save fix. Earlier advisories below describe the affected 28.17
-> baseline. The separate Office aspect-ratio and Rj resize limitations remain;
-> see the [1.6.1 release notes](mzPj_release_1_6_1.md).
+Pj supports offline Plotly graphics in Html, native Svg and native Image results.
+Requires jamovi 28.18.0 or later. The five guided helpers need no Python plotly
+import; a supplied Plotly Figure requires plotly in the selected interpreter,
+or mzpjUseLibrary('plotly') before importing the supplied Python library.
+A JSON-compatible dictionary with data/layout works without a Python Plotly package.
 
-
-See [graphic result types](mzPj_graphic_result_types.md): `result_type='html'|'svg'|'image'` is now supported in Pj/Pjp. Native Image uses the editor capture bridge; Svg still wraps a PNG snapshot.
-
-> **Compatibility advisory — 5 November 2026.** On jamovi 28.17.0.0,
-> native Svg results can prevent saving the `.omv` document
-> (`DataSetModel.instance_path` error), reproduced on Windows and Linux.
-> This affects D3 `result_type='svg'`, Chart.js/Plotly `static=True`, and service
-> hosts creating native Svg results. See the [compatibility advisory](mzPj_jamovi_svg_compatibility.md)
-> and [upstream issue #1907](https://github.com/jamovi/jamovi/issues/1907).
-> The separate LaTeX export report is [#1902](https://github.com/jamovi/jamovi/issues/1902).
-> This advisory updates documentation only; no public API or rendering defaults change.
-
-Pj 1.4.0 supplies Plotly 7.1.0, Narwhals 2.26.0 and Packaging 26.3 in the
-pure-Python ZIP. Plotly.js 4.1.1 is a separate offline module resource.
-These additions require Pj 1.4.0 or newer.
-
-## Choose the result you need
+## Core function
 
 ```python
-mzpjUseLibrary('plotly')
-import plotly.graph_objects as go
-figure = go.Figure(go.Bar(x=['A', 'B', 'C'], y=[12, 18, 15]))
-
-# Interactive Results: hover, zoom and clickable legend; no image capture.
-mzpjShowPlotly(figure, name='explore', height=500)
-
-# Static image for native jamovi PDF, Word and OpenDocument export.
-mzpjShowPlotly(figure, name='report', height=500, static=True)
+mzpjShowPlotly(figure, *, name=None, title=None, height=None,
+    config=None, static=False, export_width=None, width=None,
+    result_type=None, accordion=True, expanded=True, accordion_type='line')
 ```
 
-Use distinct names when creating both results in the same run. Normally choose
-only the form needed for the task. The numeric calculations do not change.
+figure accepts a Plotly Figure or a dictionary with data and optional layout.
+Python callbacks are not supported. Distinct name values identify multiple results.
+The result title is separate from a title inside the Plotly layout.
 
-## Arguments
+Explicit width and height take priority over the corresponding Settings popup
+values, then defaults 600 by 500 pixels. This applies to Html, Svg and Image.
+export_width is a compatibility alias of width; if both are supplied they must
+agree. For this core function width accepts 400–2400 pixels and height 200–3000.
+Inherited values are validated just like explicit arguments.
+
+result_type selects 'html', 'svg' or 'image'. Without result_type, static=False
+selects Html and static=True selects Svg. Static Svg is a native Svg wrapper of
+a PNG snapshot; it is not a promise of editable Plotly vectors. Native Image
+uses the Pj/Pjp capture bridge and is unavailable in a standalone API call without
+that bridge. Native results omit Html accordions and interactive controls.
+
+## A figure without importing Plotly
 
 ```python
-mzpjShowPlotly(figure, *, name=None, title=None, height=800,
-               config=None, static=False, export_width=960)
+mzpjShowPlotly({
+    'data': [{'type': 'scatter', 'mode': 'lines+markers',
+              'x': [1, 2, 3], 'y': [12, 18, 15]}],
+    'layout': {'xaxis': {'title': {'text': 'Time'}},
+               'yaxis': {'title': {'text': 'Illustrative score'}}}},
+    name='observed', title='Illustrative observed profile',
+    width=640, height=400, result_type='html')
 ```
 
-| Argument | Meaning |
-|---|---|
-| `figure` | A Plotly Figure containing the data and layout to display. Build it with the ordinary Plotly Python API. |
-| `name` | Unique result identifier, such as `'regression_plot'`. It identifies the result, not a dataset variable. If omitted, Pj generates a name. |
-| `title` | Optional jamovi result heading. This is independent of `figure.layout.title`, which belongs inside the chart. |
-| `height` | Plot height in pixels, an integer from 200 to 3000. Also determines static image height. Default: 800. |
-| `config` | Optional dictionary of JSON-compatible Plotly browser options. Python callbacks are not supported. Interactive defaults enable responsive layout, hide the Plotly logo and disable wheel zoom to preserve Results scrolling. |
-| `static` | Boolean. `False` is the default interactive HTML result. `True` produces one static PNG inside a native jamovi Svg result. It disables interaction and removes the temporary Plotly chart after capture. |
-| `export_width` | Static image width in pixels, an integer from 400 to 2400. Default: 960. Used only when `static=True`; it does not resize the interactive chart. |
+## Toolbar and zoom
 
-For example, `config={'displayModeBar': False}` hides Plotly's toolbar in the
-interactive view. In static mode, Pj always sets `responsive=False`,
-`staticPlot=True` and `displayModeBar=False` regardless of those config values:
-they are necessary to make a non-interactive image.
+The modebar is hidden by default. The core function uses
+config={'displayModeBar': True} to show it, or 'hover' to show it on pointer
+hover. Guided helpers and mzpjShowInteraction expose modebar=True or 'hover'
+directly. Static results always hide the bar.
 
-## Interactive mode
+Html uses a line accordion by default; choose accordion_type='bordered' or
+accordion=False. The thin figure-size slider and Reset resize the complete
+figure and its reserved Results area. Drag inside a Plotly panel to zoom its
+axes; Reset axes restores their original ranges. These actions do not rerun
+Python, refit a model or update native tables. A figure wider than the physical
+Results pane can still need outer horizontal scrolling.
 
-With `static=False`, the result uses HTML and the native module-script resource.
-It has no snapshot/export preparation work. Browser interactions affect that
-view only; they do not rerun Python or refit a statistical model.
+## Guided helpers and fitted interaction
 
-Use this mode for exploration, demonstrations and teaching. It is not the
-native document-export representation: jamovi's HTML-to-Word/ODT converter
-does not capture JavaScript figures, and its PDF window does not inherit the
-native HTML script dependency. Plotly's own image-download button is a separate
-feature, not jamovi's analysis export.
+[The five guided helpers](mzPj_plotly_helpers.md) cover scatter, grouped profiles,
+aggregated bars, boxplots and heatmaps. Script 78 demonstrates them.
+[The interaction helper](mzPj_interaction.md) fits an explicit model and creates
+two complementary panels plus native tables; it requires NumPy and SciPy.
+Script 79 covers both renderers and three result types; script 80 checks size
+precedence across D3, Plotly and Chart.js.
 
-## Static mode and document export
+## Capture and exports
 
-Set `static=True` when the figure must be included in a report. The browser
-draws the supplied Figure once in a temporary area, obtains its complete SVG
-with `Plotly.toImage()`, converts that data URL to a 2× PNG on a temporary canvas,
-and removes the temporary chart. This avoids image blob URLs blocked by jamovi's
-content security policy. All subplot layers and
-the legend are included. No capture observer or interactive chart is retained.
+Image preparation happens offscreen without a Preparing Image placeholder.
+Wait until final native results appear before exporting. Capture/decode errors
+return a visible error; Python is not rerun by image replacement.
+Html JavaScript views are not equivalent to native document-export figures.
+Use native results and check the target format. The earlier jamovi 28.17 SVG
+save defect is historical: the minimum 28.18 includes its fix. Separate export
+limitations are recorded in the [result type guide](mzPj_graphic_result_types.md).
 
-During that one operation, **Preparing static Plotly image…** may appear.
-It is a progress indication, not an option or a repeating notification.
-Wait until it disappears, then use **Analysis → Export** or **All → Export**
-for PDF, Word or OpenDocument. The figure's own menu offers PNG/SVG. The SVG
-contains a raster PNG; it does not turn the chart into vector geometry.
-Exported HTML also contains the static figure rather than Plotly controls.
-
-Static output comes from the Python Figure at that execution. It does not
-inherit a zoom or hidden series from a previous interactive Results view.
-Set the desired axis ranges or trace visibility in the Python Figure before
-calling the helper if those choices must appear in the static image.
-
-Example59 exposes `STATIC = False` near its initial parameters. Change it to
-`True` and run again for document export; change it back to `False` and run
-again for exploration. A new preview installation requires reloading the
-updated example; code already in the editor is not changed automatically.
-
-## Interpreters and service API
-
-Both jamovi Python and System Python can activate the supplied Plotly copy:
-`mzpjUseLibrary('plotly')`. No pip installation, server, Dash, Kaleido, pandas
-or matplotlib is required for this example. Optional Plotly APIs can have
-additional dependencies; the bundle does not include every extra.
-
-If matplotlib already imported Packaging, Plotly reuses that environment copy
-because its upstream Packaging requirement has no version constraint. Pj does
-not replace loaded modules. Explicit bundled Packaging activation still enforces
-source consistency. The JavaScript uses a private namespace and preserves
-another module's global Plotly object; upstream license notices are retained.
-
-`mzPjRunPython()` exposes the same helper and options. The API uses a compressed
-offline JavaScript fallback because a calling module cannot use Pj's own
-`module/` URL. The caller maps `Html` for interactive output and `Svg` for static
-output to the matching native jmvcore result, then calls `setContent()`.
-The fallback requires browser `DecompressionStream` and is subject to the
-[aggregate result budget](mzPj_output_size.md). Do not coerce Svg into Html.
-
-Verify export in the target application. Native Office converters control image
-placement and may use default dimensions; exact proportions are not guaranteed
-by a successful image-presence test. Saved/reopened Plotly OMV behavior and
-acceptance on each OS must be verified separately.
-
-
-For a dataset-free comparison with Chart.js and D3, load
-[`61_chart_d3_plotly_export.py`](../pjscript/61_chart_d3_plotly_export.py).
-Its `EXPORT` flag selects ordinary interactive views or native figures for
-document export. The comments explain how each library implements that choice.
+Shared renderer sources and reproducible asset generation are documented in
+[mzGraphics integration](mzPj_shared_graphics.md); never hand-edit minified assets.

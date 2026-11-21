@@ -1,5 +1,7 @@
 # General D3 plots from Python
 
+> **Pj 1.7.0:** see [shared mzGraphics renderers](mzPj_shared_graphics.md). The active D3 assets are now `mzD3.min.js/css`; Plotly uses `mzPlotly.min.js/css`. Existing helper names remain compatible. The older asset/source descriptions below are historical.
+
 Available in **Pj 1.1.0 or newer**. Earlier 1.0.1 packages do not include
 these plotting helpers.
 
@@ -292,3 +294,5 @@ views, brushing and theoretical tail/critical-region controls. See the
 [linked explorer guide](mzPj_linked_d3.md) for complete signatures, interactions
 and examples 40–42. The maintainer confirmed 40–42 PASSED on 14 October 2026;
 all D3 examples 29–42 now have manual approval.
+
+D3 Html size zoom also expands the figure container and Results host; it does not introduce a fixed internal scroll viewport. A figure wider than the available Results/screen area may still require outer scrolling. Native Svg/Image sizing is unchanged.

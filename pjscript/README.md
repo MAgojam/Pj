@@ -126,3 +126,15 @@ native tables and Python-generated Chart.js, D3 and Plotly graphics. Script 03
 uses System Python with pandas/Matplotlib already installed and returns PNG. They are
 R scripts, not Python editor or Service examples. 01/02 use default Embedded and 03 explicitly selects System Python; keep
 jamovi R selected in Rj. The dataset is unchanged.
+
+
+## Dimension precedence check
+
+`80_popup_dimension_precedence.py` displays three Html figures using the same observations. D3 omits width/height and follows Settings (600x500 when blank); Plotly explicitly uses640x360 and Chart.js560x320. Change popup values and Run, then change individual function arguments and Run. Compare at100% figure-size zoom. `79_interaction_model.py` now omits dimensions for every result type, following the same Settings/default precedence.
+
+
+## Pj 1.7.0 verification
+
+See the [example audit](../docs/mzPj_examples_1_7_0.md). Scripts 06, 11, 24 and 39
+require optional packages; use a suitably equipped System Python when they are
+absent from Embedded. Loading an example is not an instruction to install packages.

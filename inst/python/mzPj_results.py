@@ -122,14 +122,14 @@ def _pj_emit_graphic(content, name, title, result_type, scripts=None, *,
     import uuid
     token = uuid.uuid4().hex
     root_id = 'mzpj_image_' + token
-    request = json.dumps(dict(root=root_id, name=name, token=token), ensure_ascii=True)
+    request = json.dumps(dict(root=root_id, name=name, token=token, title=str(title or '')), ensure_ascii=True).replace('<', '\\u003c')
     # Rendering occurs offscreen, in this analysis's Results iframe. Only the
     # PNG is sent through the native option channel; Python is not rerun.
     bridge = r'''<script>(async function(){
 const request=__REQUEST__,root=document.getElementById(request.root);
 if(!root)return;
-const status=root.querySelector('[data-image-status]');
-function fail(error){if(root.isConnected)status.textContent='Image preparation failed: '+String(error&&error.message||error)+'. Run again after correcting the figure.';}
+const status=root.querySelector('[data-image-status]'),errorTitle=root.querySelector('[data-image-error-title]');
+function fail(error){if(!root.isConnected)return;root.dataset.mzpjImageCapture='error';root.setAttribute('aria-busy','false');errorTitle.hidden=false;errorTitle.textContent=request.title||request.name;status.hidden=false;status.setAttribute('role','alert');status.textContent='Image preparation failed: '+String(error&&error.message||error)+'. Run again after correcting the figure.';}
 try{
  if(typeof window.setOption!=='function')throw Error('the native Image capture bridge is unavailable');
  const deadline=Date.now()+30000;
@@ -138,7 +138,7 @@ try{
  while(root.isConnected&&Date.now()<deadline){
   source=root.querySelector('svg.jmv-results-svg-content');
   const error=root.querySelector('.mzpj-cj-error:not([hidden])');
-  const plotlyError=root.querySelector('.mzpj-plotly-status');
+  const plotlyError=root.querySelector('.mz-plotly-status, .mzpj-plotly-status');
   if(error)throw Error(error.textContent);
   if(plotlyError&&plotlyError.textContent.startsWith('Plotly could not'))throw Error(plotlyError.textContent);
   if(source&&Array.from(source.querySelectorAll('image')).every(i=>(i.getAttribute('href')||'').startsWith('data:image/'))){await frame();await frame();break;}
@@ -154,7 +154,7 @@ try{
  const bitmap=new Image();
  await new Promise((resolve,reject)=>{bitmap.onload=resolve;bitmap.onerror=()=>reject(Error('the graphic could not be rasterized'));bitmap.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(copy));});
  if(!root.isConnected)return;
- const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
+ const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.floor(width*scale));canvas.height=Math.max(1,Math.floor(height*scale));
  const context=canvas.getContext('2d');if(!context)throw Error('a 2D canvas is unavailable');
  context.fillStyle='white';context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(bitmap,0,0,canvas.width,canvas.height);
  const content=canvas.toDataURL('image/png').split(',')[1];
@@ -163,9 +163,9 @@ try{
  const entry={name:request.name,token:request.token,content,width:Math.max(1,Math.round(width*displayScale)),height:Math.max(1,Math.round(height*displayScale))};
  let queue=window.mzPjNativeImageQueue;
  if(!queue){
-  queue=window.mzPjNativeImageQueue={entries:new Map(),timer:null};
-  queue.prune=()=>{for(const [id]of queue.entries)if(!document.getElementById(id))queue.entries.delete(id);};
-  queue.observer=new MutationObserver(queue.prune);queue.observer.observe(document.documentElement,{childList:true,subtree:true});
+  queue=window.mzPjNativeImageQueue={entries:new Map(),ackTimers:new Map(),timer:null};
+  queue.prune=()=>{for(const [id]of queue.entries)if(!document.getElementById(id)){clearTimeout(queue.ackTimers?.get(id));queue.ackTimers?.delete(id);queue.entries.delete(id);}};
+  queue.observer=new MutationObserver(()=>queue.prune());queue.observer.observe(document.documentElement,{childList:true,subtree:true});
  }
  queue.prune();queue.entries.set(request.root,entry);clearTimeout(queue.timer);
  const accepted=queue.entries.size<=20&&JSON.stringify({version:1,images:Array.from(queue.entries.values())}).length<=1500000;
@@ -173,11 +173,22 @@ try{
  queue.timer=setTimeout(()=>{queue.prune();const payload=JSON.stringify({version:1,images:Array.from(queue.entries.values())});
   if(queue.entries.size)window.setOption('graphicCapture',payload);
  },50);
- if(accepted)status.textContent='Preparing native Image result…';
+ if(accepted){
+  root.dataset.mzpjImageReady='true';
+  if(!queue.ackTimers)queue.ackTimers=new Map();
+  if(!queue.ackTimers.has(request.root))queue.ackTimers.set(request.root,setTimeout(()=>{queue.ackTimers.delete(request.root);if(root.isConnected)fail(Error('the native Image result was not acknowledged'));},30000));
+ }
 }catch(error){fail(error);}
 })();</script>'''.replace('__REQUEST__', request)
-    wrapper = ('<div id="' + root_id + '"><p data-image-status role="status">Preparing native Image…</p>'
-               '<div class="ignore-html" style="position:absolute;left:-100000px;top:0;pointer-events:none">'
+    # Keep the pending host laid out offscreen: display:none would break plot
+    # measurements. The CSS applies before scripts run, including its heading.
+    # A failure changes the state and restores the ordinary visible result.
+    pending_style = ('<style>.jmv-results-html:has([data-mzpj-image-capture="pending"])'
+                     '{position:fixed!important;left:-100000px!important;top:0!important;'
+                     'margin:0!important;pointer-events:none!important}</style>')
+    wrapper = (pending_style + '<div id="' + root_id + '" data-mzpj-image-capture="pending" aria-busy="true">'
+               '<strong data-image-error-title hidden></strong><p data-image-status role="status" hidden></p>'
+               '<div class="ignore-html" aria-hidden="true" style="position:absolute;left:-100000px;top:0;pointer-events:none">'
                + content + '</div></div>' + bridge)
     item = dict(type='Html', name=name, title=title, content=wrapper,
                 image_request=dict(version=1, token=token))
