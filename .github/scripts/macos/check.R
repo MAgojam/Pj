@@ -33,8 +33,8 @@ cat('Embedded app libraries:',embeddedLib,'\n')
 pythonCall <- function(python,args,...) {
     # Imposta il percorso soltanto nel processo embedded di prova, non nel System.
     if(identical(python,embedded)) {
-        prefix <- paste0("import sys,runpy; sys.path.insert(0,",jsonlite::toJSON(embeddedLib,auto_unbox=TRUE),
-                         "); script=sys.argv[1]; sys.argv=sys.argv[1:]; runpy.run_path(script,run_name='__main__')")
+        prefix <- paste0("import os,sys,runpy; sys.path.insert(0,",jsonlite::toJSON(embeddedLib,auto_unbox=TRUE),
+                         "); script=sys.argv[1]; sys.path.insert(0,os.path.dirname(os.path.abspath(script))); sys.argv=sys.argv[1:]; runpy.run_path(script,run_name='__main__')")
         return(system2(python,c('-c',shQuote(prefix),args),...))
     }
     system2(python,args,...)
