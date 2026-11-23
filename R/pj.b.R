@@ -11,14 +11,23 @@ PjClass <- R6::R6Class(
         .dataextUiOnly=FALSE,
         .dataextRead=FALSE,
         .graphicCaptureOnly=FALSE,
+        .resultsUiOnly=FALSE,
 
         .postInit=function() .mzPj_dataextInfo(self),
 
         .run = function() {
 
             if (private$.graphicCaptureOnly) {
-                on.exit(.mzPj_clearGraphicCapture(self),add=TRUE)
+                on.exit({
+                    private$.graphicCaptureOnly <- FALSE
+                    private$.resultsUiOnly <- FALSE
+                    .mzPj_clearGraphicCapture(self)
+                },add=TRUE)
                 .mzPj_applyGraphicCapture(self)
+                return()
+            }
+            if (private$.resultsUiOnly) {
+                private$.resultsUiOnly <- FALSE
                 return()
             }
             if (!is.null(self$options$graphicCapture) && nzchar(self$options$graphicCapture))
@@ -410,6 +419,7 @@ PjClass <- R6::R6Class(
 
         .load=function(vChanges=character()) {
             private$.graphicCaptureOnly <- FALSE
+            private$.resultsUiOnly <- FALSE
             jmvcore:::initProtoBuf()
             path <- private$.statePathSource()
             Encoding(path) <- 'UTF-8'
@@ -425,9 +435,13 @@ PjClass <- R6::R6Class(
                 # aggiornato dal backend. Non convertirlo in un nuovo Run.
                 capturePending <- is.character(self$options$graphicCapture) &&
                     length(self$options$graphicCapture)==1L && nzchar(self$options$graphicCapture)
+                resizeChanges <- grep('^results/.+/(widthScale|heightScale|width|height)$',oChanges,value=TRUE)
+                presentationChanges <- c(resizeChanges,'graphicCapture','editorState','dataextInfo','createdColumns')
                 private$.graphicCaptureOnly <- length(vChanges)==0L &&
                     ('graphicCapture' %in% oChanges || capturePending) &&
-                    all(oChanges %in% c('graphicCapture','editorState','dataextInfo','createdColumns'))
+                    all(oChanges %in% presentationChanges)
+                private$.resultsUiOnly <- length(vChanges)==0L && length(resizeChanges)>0L &&
+                    all(oChanges %in% presentationChanges)
                 # La preview e' un comando di sola visualizzazione: le opzioni
                 # accessorie sincronizzate dal motore non devono convertirlo in Run.
                 # Un Run esplicito (toggle) mantiene invece la normale esecuzione.
@@ -440,7 +454,7 @@ PjClass <- R6::R6Class(
 
                 # Un'azione di salvataggio non invalida i risultati dell'ultimo Run.
                 saving <- isTRUE(self$options$saveOmvFile) || isTRUE(self$options$saveEditorScript) ||
-                    private$.dataextUiOnly || private$.dataextRead || private$.graphicCaptureOnly
+                    private$.dataextUiOnly || private$.dataextRead || private$.graphicCaptureOnly || private$.resultsUiOnly
                 restoreWith <- if (saving) character() else '*'
 
                 for (itemPB in groupPB$elements) {
@@ -451,10 +465,7 @@ PjClass <- R6::R6Class(
                         self$results$add(jmvcore::Preformatted$new(
                             self$options, name=itemPB$name, title=itemPB$title, clearWith=restoreWith))
                     } else if (itemPB$has('image')) {
-                        self$results$add(jmvcore::Image$new(
-                            self$options, name=itemPB$name, title=itemPB$title,
-                            renderFun='.render', width=itemPB$image$width,
-                            height=itemPB$image$height, clearWith=restoreWith))
+                        self$results$add(.mzPj_imageFromProto(self,itemPB,restoreWith,pb$options))
                     } else if (itemPB$has('table')) {
                         elem <- jmvcore::Table$new(
                             self$options, name=itemPB$name, title=itemPB$title,
@@ -485,6 +496,17 @@ PjClass <- R6::R6Class(
                 private$.results$fromProtoBuf(pb$results,
                     if(saving)character() else oChanges,
                     if(saving)character() else vChanges)
+                # The desktop saves the INIT response before creating a fresh
+                # RUN instance. Options already match in that second phase;
+                # carry the presentation-only intent in the persisted root state.
+                rootState <- self$results$state
+                if (!is.list(rootState)) rootState <- list()
+                resumeResize <- isTRUE(rootState$mzPjNativeResize) &&
+                    length(vChanges)==0L && all(oChanges %in% presentationChanges)
+                if (resumeResize) private$.resultsUiOnly <- TRUE
+                rootState$mzPjNativeResize <- isTRUE(private$.resultsUiOnly)
+                self$results$setState(rootState)
+                if(private$.resultsUiOnly) .mzPj_resizeNativeImages(self$results,groupPB,resizeChanges)
             }
             private$.clear(vChanges)
         }

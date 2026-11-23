@@ -39,6 +39,36 @@
     if (is.character(title) && length(title)==1L && !is.na(title)) title else old$title
 }
 
+# Restore the original size coefficients, not the already scaled pixel size.
+# Otherwise every state load applies the persisted scale for a second time.
+.mzPj_imageFromProto <- function(self, item, clearWith='*', previousOptions=NULL) {
+    image <- item$image
+    oldScale <- function(axis) {
+        key <- paste('results',item$name,paste0(axis,'Scale'),sep='/')
+        index <- if(is.null(previousOptions))NA_integer_ else match(key,previousOptions$names)
+        value <- if(is.na(index))1 else previousOptions$options[[index]]$d
+        if(length(value)!=1L || !is.finite(value) || value<=0)1 else value
+    }
+    widthM <- image$widthM; heightM <- image$heightM
+    if(widthM==0 && image$widthB==0)widthM <- image$width/oldScale('width')
+    if(heightM==0 && image$heightB==0)heightM <- image$height/oldScale('height')
+    result <- jmvcore::Image$new(self$options,name=item$name,title=item$title,
+        renderFun='.render',width=widthM,height=heightM,clearWith=clearWith)
+    result$setSize2(widthM=widthM,heightM=heightM,widthB=image$widthB,heightB=image$heightB)
+    result
+}
+
+# Pass actual presentation changes only to native Images. jmvcore invalidates
+# the changed raster while retaining every other image path and source state.
+.mzPj_resizeNativeImages <- function(group, pb, changes) {
+    for(item in pb$elements) {
+        result <- group$get(item$name)
+        if(is.null(result))next()
+        if(item$has('image'))result$fromProtoBuf(item,changes,character())
+        else if(item$has('group')) .mzPj_resizeNativeImages(result,item$group,changes)
+    }
+}
+
 # A failed pending result regains its original heading and remains retryable.
 .mzPj_captureError <- function(self, old, content) {
     error <- jmvcore::Html$new(self$options,name=old$name,title=.mzPj_captureTitle(old))
