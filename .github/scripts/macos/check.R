@@ -47,7 +47,7 @@ for (index in seq_along(c(embedded,external))) {
     for(nativeTest in 'tests/mzPj_native_libraries.py')
         stopifnot(pythonCall(python,shQuote(file.path(root,nativeTest)))==0L)
     stopifnot(pythonCall(python,shQuote(file.path(root,'tests/mzPj_libraries.py')))==0L)
-    tests <- c('mzPj_environment.py','mzPj_data.py','mzPj_meta.py','mzPj_plots.py','mzPj_chart.py','mzPj_plotly.py','mzPj_plotly_helpers.py','mzPj_accordions.py','mzPj_figure_dimensions.py')
+    tests <- c('mzPj_environment.py','mzPj_data.py','mzPj_meta.py','mzPj_plots.py','mzPj_chart.py','mzPj_plotly.py','mzPj_plotly_helpers.py','mzPj_accordions.py','mzPj_figure_dimensions.py','mzPj_barber_johnson.py')
     for(test in tests)
         stopifnot(pythonCall(python,shQuote(file.path(root,'tests',test)))==0L)
 }

@@ -189,6 +189,7 @@ PjClass <- R6::R6Class(
             libraries <- .mzPj_prepareLibraries(scriptPath, pythonPath, flatpakExternal,
                 checkpoint=function() private$.checkpoint(flush=FALSE))
             script <- .mzPj_pythonScript(scriptPath, list(
+                BJ_MESSAGES=.mzPj_bjMessages(self),
                 LIBRARY_PATH=libraries$path, LIBRARY_ERROR=libraries$error,
                 OMV_INPUT=.mzPj_omvInput(self$options$omvFile,flatpakExternal),
                 DATAEXT_ENABLED=TRUE,

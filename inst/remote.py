@@ -16,6 +16,7 @@ import math
 # L’unica sostituzione contiene esclusivamente base64, mai codice interpolato.
 _config = json.loads(base64.b64decode('{{MZPJ_CONFIG}}').decode('utf-8'))
 _pj_resources = _config.get('RESOURCES', {})
+_pj_bj_messages = _config.get('BJ_MESSAGES', {})
 _pj_plot_js = _config.get('PLOT_JS', '')
 _pj_plot_css = _config.get('PLOT_CSS', '')
 _pj_chart_js = _config.get('CHART_JS', '')
@@ -120,6 +121,7 @@ def execute_user_code(code, ext_script_path=""):
     local_vars['mzpjShowChart'] = _pj_show_chart
     local_vars['mzpjShowPlotly'] = _pj_show_plotly
     local_vars['mzpjShowInteraction'] = _pj_show_interaction
+    local_vars['mzpjShowBarberJohnson'] = _pj_show_barber_johnson
     local_vars['mzpjShowPlotlyScatter'] = _pj_show_plotly_scatter
     local_vars['mzpjShowPlotlyLine'] = _pj_show_plotly_line
     local_vars['mzpjShowPlotlyBar'] = _pj_show_plotly_bar

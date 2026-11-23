@@ -19,7 +19,7 @@ def runner():
                   STDIO_MODE='true', FIGWIDTH='800', FIGHEIGHT='500',
                   OUTPUT_MODE='noEcho', PYTHON_MODE='embedded', SAVECOLUMNS='false')
     config['SERVICES'] = [dict(filename=name, source=(ROOT / 'inst/python' / name).read_text(encoding='utf-8'))
-                          for name in ('mzPj_environment.py', 'mzPj_data.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py', 'mzPj_plotly_helpers.py', 'mzPj_interaction.py', 'mzPj_omv.py', 'mzPj_reshape.py', 'mzPj_dataext.py')]
+                          for name in ('mzPj_environment.py', 'mzPj_data.py', 'mzPj_meta.py', 'mzPj_results.py', 'mzPj_tables.py', 'mzPj_plots.py', 'mzPj_chart.py', 'mzPj_plotly.py', 'mzPj_plotly_helpers.py', 'mzPj_interaction.py', 'mzPj_barber_johnson.py', 'mzPj_omv.py', 'mzPj_reshape.py', 'mzPj_dataext.py')]
     source = (ROOT / 'inst/remote.py').read_text(encoding='utf-8')
     source = source.replace('{{MZPJ_CONFIG}}', base64.b64encode(json.dumps(config).encode()).decode(), 1)
     namespace = {'__name__': 'mzPj_plot_test'}
