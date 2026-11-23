@@ -138,3 +138,9 @@ jamovi R selected in Rj. The dataset is unchanged.
 See the [example audit](../docs/mzPj_examples_1_7_0.md). Scripts 06, 11, 24 and 39
 require optional packages; use a suitably equipped System Python when they are
 absent from Embedded. Loading an example is not an instruction to install packages.
+
+## Hospital Barber–Johnson — Pj 1.8.0
+
+Script 81 demonstrates four D3 views using self-contained synthetic hospital data.
+The CSV is `pjscript/data/81_barber_johnson_hospital.csv`. See the bilingual
+Barber–Johnson manuals for variables, formulas, period basis and reference scenarios.

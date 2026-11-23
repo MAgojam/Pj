@@ -1204,3 +1204,14 @@ mzpjShowInteraction(dataset, x, y, moderator, *, moderator_type='continuous', co
 Stima Y ~ X * moderatore con covariate numeriche e disegna due pannelli collegati.
 
 Gli argomenti **display degli helper Plotly includono width, height, name, title, result_type, accordion, expanded e accordion_type. modebar è False per default. Vedere il capitolo 9 del manuale per la precedenza delle dimensioni, i tre tipi di risultato e gli esempi 78–80.
+
+
+## mzpjShowBarberJohnson — Pj 1.8.0
+
+```python
+mzpjShowBarberJohnson(dataset, *, name=None, width=None, height=None,
+    result_type="html", accordion=True, expanded=True,
+    accordion_type="line", tables=True, **options)
+```
+
+Quattro viste ospedaliere con durata per riga e soglie configurabili. Opzioni, dizionario dati, formule, esempi e limiti: [manuale Barber–Johnson](mzPj_barber_johnson_it.md). Esempio completo: `pjscript/81_barber_johnson.py`.

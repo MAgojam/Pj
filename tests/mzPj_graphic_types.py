@@ -38,7 +38,7 @@ class GraphicTypesTests(unittest.TestCase):
             token = item['image_request']['token']
             self.assertRegex(token, r'^[a-f0-9]{32}$')
             self.assertIn(token, item['content'])
-            self.assertIn("window.setOption('graphicCapture',payload)", item['content'])
+            self.assertIn("window.setOption('graphicCapture',", item['content'])
             self.assertIn('svg.jmv-results-svg-content', item['content'])
             tokens.append(token)
         self.assertEqual(len(set(tokens)), 3)

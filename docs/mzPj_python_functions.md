@@ -1197,3 +1197,14 @@ mzpjShowInteraction(dataset, x, y, moderator, *, moderator_type='continuous', co
 Fit Y ~ X * moderator + numeric covariates and draw two linked panels.
 
 The Plotly helpers accept width, height, name, title, result_type, accordion, expanded and accordion_type through **display. modebar defaults to False. Chapter 9 of the library manual explains dimension precedence, the three result types and examples 78–80.
+
+
+## mzpjShowBarberJohnson — Pj 1.8.0
+
+```python
+mzpjShowBarberJohnson(dataset, *, name=None, width=None, height=None,
+    result_type="html", accordion=True, expanded=True,
+    accordion_type="line", tables=True, **options)
+```
+
+Four hospital views with per-row duration and configurable references. Options, data dictionary, formulas, examples and limitations: [Barber–Johnson manual](mzPj_barber_johnson.md). Complete example: `pjscript/81_barber_johnson.py`.
